@@ -4,6 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.util.ObjectUtil;
 import com.ruoyi.common.core.exception.ServiceException;
+import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.core.utils.file.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.lionsoul.ip2region.xdb.Searcher;
@@ -12,9 +13,6 @@ import java.io.File;
 
 /**
  * 根据ip地址定位工具类，离线方式
- * 参考地址：<a href="https://gitee.com/lionsoul/ip2region/tree/master/binding/java">集成 ip2region 实现离线IP地址定位库</a>
- *
- * @author lishuyan
  */
 @Slf4j
 public class RegionUtils {
@@ -54,10 +52,10 @@ public class RegionUtils {
      */
     public static String getCityInfo(String ip) {
         try {
-            ip = ip.trim();
+            ip = StringUtils.trim(ip);
             // 3、执行查询
             String region = SEARCHER.search(ip);
-            return region.replace("0|", "").replace("|0", "");
+            return StringUtils.replace(StringUtils.replace(region, "0|", ""), "|0", "");
         } catch (Exception e) {
             log.error("IP地址离线获取城市异常 {}", ip);
             return "未知";

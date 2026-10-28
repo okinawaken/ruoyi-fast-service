@@ -8,13 +8,13 @@ import org.springframework.web.servlet.LocaleResolver;
 
 /**
  * 国际化配置
- *
- * @author Lion Li
  */
 @AutoConfiguration(before = WebMvcAutoConfiguration.class)
 public class I18nConfig {
 
-    /** 用途：注册国际化语言解析器；参数：无；返回值：语言解析器。 */
+    /**
+     * 用途：注册国际化语言解析器；参数：无；返回值：语言解析器。
+     */
     @Bean
     public LocaleResolver localeResolver() {
         return new I18nLocaleResolver();

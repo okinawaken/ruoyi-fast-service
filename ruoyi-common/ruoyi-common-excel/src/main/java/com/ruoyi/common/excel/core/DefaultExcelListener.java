@@ -1,11 +1,11 @@
 package com.ruoyi.common.excel.core;
 
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.exception.ExcelAnalysisException;
 import com.alibaba.excel.exception.ExcelDataConvertException;
 import com.ruoyi.common.core.utils.StreamUtils;
+import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.core.utils.ValidatorUtils;
 import com.ruoyi.common.json.utils.JsonUtils;
 import jakarta.validation.ConstraintViolation;
@@ -18,9 +18,6 @@ import java.util.Set;
 
 /**
  * Excel 导入监听
- *
- * @author Yjoioooo
- * @author Lion Li
  */
 @Slf4j
 @NoArgsConstructor
@@ -59,7 +56,7 @@ public class DefaultExcelListener<T> extends AnalysisEventListener<T> implements
             // 如果是某一个单元格的转换异常 能获取到具体行号
             Integer rowIndex = excelDataConvertException.getRowIndex();
             Integer columnIndex = excelDataConvertException.getColumnIndex();
-            errMsg = StrUtil.format("第{}行-第{}列-表头{}: 解析异常<br/>",
+            errMsg = StringUtils.format("第{}行-第{}列-表头{}: 解析异常<br/>",
                 rowIndex + 1, columnIndex + 1, headMap.get(columnIndex));
             if (log.isDebugEnabled()) {
                 log.error(errMsg);
@@ -68,7 +65,7 @@ public class DefaultExcelListener<T> extends AnalysisEventListener<T> implements
         if (exception instanceof ConstraintViolationException constraintViolationException) {
             Set<ConstraintViolation<?>> constraintViolations = constraintViolationException.getConstraintViolations();
             String constraintViolationsMsg = StreamUtils.join(constraintViolations, ConstraintViolation::getMessage, ", ");
-            errMsg = StrUtil.format("第{}行数据校验异常: {}", context.readRowHolder().getRowIndex() + 1, constraintViolationsMsg);
+            errMsg = StringUtils.format("第{}行数据校验异常: {}", context.readRowHolder().getRowIndex() + 1, constraintViolationsMsg);
             if (log.isDebugEnabled()) {
                 log.error(errMsg);
             }

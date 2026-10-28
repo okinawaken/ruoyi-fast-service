@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 
 /**
  * spring工具类
- *
- * @author Lion Li
  */
 @Component
 public final class SpringUtils extends SpringUtil {
@@ -24,7 +22,6 @@ public final class SpringUtils extends SpringUtil {
     /**
      * 判断以给定名字注册的bean定义是一个singleton还是一个prototype。
      * 如果与给定名字相应的bean定义没有被找到，将会抛出一个异常（NoSuchBeanDefinitionException）
-     *
      */
     public static boolean isSingleton(String name) throws NoSuchBeanDefinitionException {
         return getBeanFactory().isSingleton(name);
@@ -46,7 +43,6 @@ public final class SpringUtils extends SpringUtil {
 
     /**
      * 获取aop代理对象
-     *
      */
     @SuppressWarnings("unchecked")
     public static <T> T getAopProxy(T invoker) {
@@ -61,7 +57,9 @@ public final class SpringUtils extends SpringUtil {
         return getApplicationContext();
     }
 
-    /** 用途：读取虚拟线程开关；参数：无；返回值：是否启用虚拟线程。 */
+    /**
+     * 用途：读取虚拟线程开关；参数：无；返回值：是否启用虚拟线程。
+     */
     public static boolean isVirtual() {
         return Boolean.parseBoolean(getBean(Environment.class).getProperty("spring.threads.virtual.enabled", "false"));
     }

@@ -13,11 +13,11 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 时间工具类
- *
- * @author ruoyi
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
@@ -51,14 +51,23 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      *
      * @return String
      */
+    /**
+     * 获取当前日期, 默认格式为 yyyy-MM-dd
+     */
     public static String getDate() {
         return dateTimeNow(YYYY_MM_DD);
     }
 
+    /**
+     * 获取当前时间, 格式为 yyyy-MM-dd HH:mm:ss
+     */
     public static String getTime() {
         return dateTimeNow(YYYY_MM_DD_HH_MM_SS);
     }
 
+    /**
+     * 获取当前时间, 格式为 yyyyMMddHHmmss
+     */
     public static String dateTimeNow() {
         return dateTimeNow(YYYYMMDDHHMMSS);
     }
@@ -67,19 +76,30 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return parseDateToStr(format, new Date());
     }
 
+    /**
+     * 将日期格式化为 yyyy-MM-dd
+     */
     public static String dateTime(final Date date) {
         return parseDateToStr(YYYY_MM_DD, date);
     }
 
     public static String parseDateToStr(final String format, final Date date) {
-        return new SimpleDateFormat(format).format(date);
+        return DateFormatUtils.format(date, format);
     }
 
+    /**
+     * 按指定格式解析日期字符串
+     *
+     * @param format 日期格式
+     * @param ts     日期字符串
+     * @return 解析后的日期
+     * @throws IllegalArgumentException 字符串不符合指定格式时抛出
+     */
     public static Date dateTime(final String format, final String ts) {
         try {
             return new SimpleDateFormat(format).parse(ts);
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("日期解析失败, 格式: " + format + ", 内容: " + ts, e);
         }
     }
 
@@ -103,7 +123,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      * 日期型字符串转化为日期 格式
      */
     public static Date parseDate(Object str) {
-        if (str == null) {
+        if (Objects.isNull(str)) {
             return null;
         }
         try {
@@ -125,27 +145,18 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      * 计算相差天数
      */
     public static int differentDaysByMillisecond(Date date1, Date date2) {
-        return Math.abs((int) ((date2.getTime() - date1.getTime()) / (1000 * 3600 * 24)));
+        long diffMillis = Math.abs(date2.getTime() - date1.getTime());
+        return (int) TimeUnit.MILLISECONDS.toDays(diffMillis);
     }
 
     /**
-     * 计算两个时间差
+     * 计算两个时间差, 返回“X天X小时X分钟”格式
      */
     public static String getDatePoor(Date endDate, Date nowDate) {
-        long nd = 1000 * 24 * 60 * 60;
-        long nh = 1000 * 60 * 60;
-        long nm = 1000 * 60;
-        // long ns = 1000;
-        // 获得两个时间的毫秒时间差异
         long diff = endDate.getTime() - nowDate.getTime();
-        // 计算差多少天
-        long day = diff / nd;
-        // 计算差多少小时
-        long hour = diff % nd / nh;
-        // 计算差多少分钟
-        long min = diff % nd % nh / nm;
-        // 计算差多少秒//输出结果
-        // long sec = diff % nd % nh % nm / ns;
+        long day = TimeUnit.MILLISECONDS.toDays(diff);
+        long hour = TimeUnit.MILLISECONDS.toHours(diff) % TimeUnit.DAYS.toHours(1);
+        long min = TimeUnit.MILLISECONDS.toMinutes(diff) % TimeUnit.HOURS.toMinutes(1);
         return day + "天" + hour + "小时" + min + "分钟";
     }
 

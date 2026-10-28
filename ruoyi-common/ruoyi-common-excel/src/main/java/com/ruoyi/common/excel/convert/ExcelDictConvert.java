@@ -10,8 +10,8 @@ import com.alibaba.excel.metadata.data.ReadCellData;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
 import com.ruoyi.common.core.service.DictService;
-import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.core.utils.SpringUtils;
+import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.utils.ExcelUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +20,6 @@ import java.lang.reflect.Field;
 
 /**
  * 字典格式化转换处理
- *
- * @author Lion Li
  */
 @Slf4j
 public class ExcelDictConvert implements Converter<Object> {
@@ -38,7 +36,7 @@ public class ExcelDictConvert implements Converter<Object> {
 
     @Override
     public Object convertToJavaData(ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        ExcelDictFormat anno = getAnnotation(contentProperty.getField());
+        ExcelDictFormat anno = this.getAnnotation(contentProperty.getField());
         String type = anno.dictType();
         String label = cellData.getStringValue();
         String value;
@@ -55,7 +53,7 @@ public class ExcelDictConvert implements Converter<Object> {
         if (ObjectUtil.isNull(object)) {
             return new WriteCellData<>("");
         }
-        ExcelDictFormat anno = getAnnotation(contentProperty.getField());
+        ExcelDictFormat anno = this.getAnnotation(contentProperty.getField());
         String type = anno.dictType();
         String value = Convert.toStr(object);
         String label;

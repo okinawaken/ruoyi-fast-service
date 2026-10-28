@@ -4,16 +4,8 @@ import cn.hutool.core.lang.Dict;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.StopWatch;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import com.ruoyi.common.core.domain.bo.LoginUser;
+import com.ruoyi.common.core.utils.ArgsUtils;
 import com.ruoyi.common.core.utils.ServletUtils;
 import com.ruoyi.common.core.utils.SpringUtils;
 import com.ruoyi.common.core.utils.StringUtils;
@@ -22,19 +14,22 @@ import com.ruoyi.common.log.annotation.Log;
 import com.ruoyi.common.log.enums.BusinessStatus;
 import com.ruoyi.common.log.event.OperLogEvent;
 import com.ruoyi.common.satoken.utils.LoginHelper;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.StopWatch;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.http.HttpMethod;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
  * 操作日志记录处理
- *
- * @author Lion Li
  */
 @Slf4j
 @Aspect
@@ -44,8 +39,17 @@ public class LogAspect {
     /**
      * 排除敏感属性字段
      */
-    public static final String[] EXCLUDE_PROPERTIES = { "password", "oldPassword", "newPassword", "confirmPassword" };
+    private static final String[] EXCLUDE_PROPERTIES = {"password", "oldPassword", "newPassword", "confirmPassword"};
 
+    /**
+     * 请求地址最大记录长度
+     */
+    private static final int MAX_URL_LENGTH = 255;
+
+    /**
+     * 参数与结果最大记录长度
+     */
+    private static final int MAX_CONTENT_LENGTH = 2000;
 
     /**
      * 计时 key
@@ -85,21 +89,18 @@ public class LogAspect {
 
     protected void handleLog(final JoinPoint joinPoint, Log controllerLog, final Exception e, Object jsonResult) {
         try {
-
-            // *========数据库日志=========*//
             OperLogEvent operLog = new OperLogEvent();
             operLog.setStatus(BusinessStatus.SUCCESS.ordinal());
             // 请求的地址
-            String ip = ServletUtils.getClientIP();
-            operLog.setOperIp(ip);
-            operLog.setOperUrl(StringUtils.substring(ServletUtils.getRequest().getRequestURI(), 0, 255));
+            operLog.setOperIp(ServletUtils.getClientIP());
+            operLog.setOperUrl(StringUtils.substring(ServletUtils.getRequest().getRequestURI(), 0, MAX_URL_LENGTH));
             LoginUser loginUser = LoginHelper.getLoginUser();
             operLog.setOperName(loginUser.getUsername());
             operLog.setDeptName(loginUser.getDeptName());
 
-            if (e != null) {
+            if (Objects.nonNull(e)) {
                 operLog.setStatus(BusinessStatus.FAIL.ordinal());
-                operLog.setErrorMsg(StringUtils.substring(e.getMessage(), 0, 2000));
+                operLog.setErrorMsg(StringUtils.substring(e.getMessage(), 0, MAX_CONTENT_LENGTH));
             }
             // 设置方法名称
             String className = joinPoint.getTarget().getClass().getName();
@@ -108,65 +109,76 @@ public class LogAspect {
             // 设置请求方式
             operLog.setRequestMethod(ServletUtils.getRequest().getMethod());
             // 处理设置注解上的参数
-            getControllerMethodDescription(joinPoint, controllerLog, operLog, jsonResult);
+            fillAnnotationInfo(joinPoint, controllerLog, operLog, jsonResult);
             // 设置消耗时间
-            StopWatch stopWatch = KEY_CACHE.get();
-            stopWatch.stop();
-            operLog.setCostTime(stopWatch.getTime());
+            fillCostTime(operLog);
             // 发布事件保存数据库
             SpringUtils.context().publishEvent(operLog);
         } catch (Exception exp) {
-            // 记录本地异常日志
-            log.error("异常信息:{}", exp.getMessage());
-            exp.printStackTrace();
+            // 记录本地异常日志，避免日志记录失败影响业务主流程
+            log.error("操作日志记录异常", exp);
         } finally {
             KEY_CACHE.remove();
         }
     }
 
     /**
-     * 获取注解中对方法的描述信息 用于Controller层注解
+     * 填充注解中声明的操作描述、业务类型与请求响应数据
      *
-     * @param log     日志
-     * @param operLog 操作日志
-     * @throws Exception
+     * @param joinPoint       切点
+     * @param logAnnotation   操作日志注解
+     * @param operLog         操作日志实体
+     * @param jsonResult      方法返回结果
      */
-    public void getControllerMethodDescription(JoinPoint joinPoint, Log log, OperLogEvent operLog, Object jsonResult) throws Exception {
-        // 设置action动作
-        operLog.setBusinessType(log.businessType().ordinal());
-        // 设置标题
-        operLog.setTitle(log.title());
-        // 设置操作人类别
-        operLog.setOperatorType(log.operatorType().ordinal());
+    private void fillAnnotationInfo(JoinPoint joinPoint, Log logAnnotation, OperLogEvent operLog, Object jsonResult) {
+        operLog.setBusinessType(logAnnotation.businessType().ordinal());
+        operLog.setTitle(logAnnotation.title());
+        operLog.setOperatorType(logAnnotation.operatorType().ordinal());
         // 是否需要保存request，参数和值
-        if (log.isSaveRequestData()) {
-            // 获取参数的信息，传入到数据库中。
-            setRequestValue(joinPoint, operLog, log.excludeParamNames());
+        if (logAnnotation.isSaveRequestData()) {
+            fillRequestParam(joinPoint, operLog, logAnnotation.excludeParamNames());
         }
         // 是否需要保存response，参数和值
-        if (log.isSaveResponseData() && ObjectUtil.isNotNull(jsonResult)) {
-            operLog.setJsonResult(StringUtils.substring(JsonUtils.toJsonString(jsonResult), 0, 2000));
+        if (logAnnotation.isSaveResponseData() && ObjectUtil.isNotNull(jsonResult)) {
+            operLog.setJsonResult(StringUtils.substring(JsonUtils.toJsonString(jsonResult), 0, MAX_CONTENT_LENGTH));
         }
+    }
+
+    /**
+     * 填充耗时，切面未记录起始时间时保持默认值
+     *
+     * @param operLog 操作日志实体
+     */
+    private void fillCostTime(OperLogEvent operLog) {
+        StopWatch stopWatch = KEY_CACHE.get();
+        if (Objects.isNull(stopWatch)) {
+            return;
+        }
+        stopWatch.stop();
+        operLog.setCostTime(stopWatch.getTime());
     }
 
     /**
      * 获取请求的参数，放到log中
      *
-     * @param operLog 操作日志
-     * @throws Exception 异常
+     * @param joinPoint         切点
+     * @param operLog           操作日志实体
+     * @param excludeParamNames 需要排除的参数名
      */
-    private void setRequestValue(JoinPoint joinPoint, OperLogEvent operLog, String[] excludeParamNames) throws Exception {
+    private void fillRequestParam(JoinPoint joinPoint, OperLogEvent operLog, String[] excludeParamNames) {
         Map<String, String> paramsMap = ServletUtils.getParamMap(ServletUtils.getRequest());
         String requestMethod = operLog.getRequestMethod();
-        if (MapUtil.isEmpty(paramsMap)
-                && HttpMethod.PUT.name().equals(requestMethod) || HttpMethod.POST.name().equals(requestMethod)) {
+        // 表单参数为空且为 PUT/POST 时，参数只存在于请求体中，需要从方法入参序列化获取
+        boolean isBodyRequest = Objects.equals(HttpMethod.PUT.name(), requestMethod)
+            || Objects.equals(HttpMethod.POST.name(), requestMethod);
+        if (MapUtil.isEmpty(paramsMap) && isBodyRequest) {
             String params = argsArrayToString(joinPoint.getArgs(), excludeParamNames);
-            operLog.setOperParam(StringUtils.substring(params, 0, 2000));
-        } else {
-            MapUtil.removeAny(paramsMap, EXCLUDE_PROPERTIES);
-            MapUtil.removeAny(paramsMap, excludeParamNames);
-            operLog.setOperParam(StringUtils.substring(JsonUtils.toJsonString(paramsMap), 0, 2000));
+            operLog.setOperParam(StringUtils.substring(params, 0, MAX_CONTENT_LENGTH));
+            return;
         }
+        MapUtil.removeAny(paramsMap, EXCLUDE_PROPERTIES);
+        MapUtil.removeAny(paramsMap, excludeParamNames);
+        operLog.setOperParam(StringUtils.substring(JsonUtils.toJsonString(paramsMap), 0, MAX_CONTENT_LENGTH));
     }
 
     /**
@@ -177,9 +189,9 @@ public class LogAspect {
         if (ArrayUtil.isEmpty(paramsArray)) {
             return params.toString();
         }
-        for (Object o : paramsArray) {
-            if (ObjectUtil.isNotNull(o) && !isFilterObject(o)) {
-                String str = JsonUtils.toJsonString(o);
+        for (Object arg : paramsArray) {
+            if (!ArgsUtils.isFilterObject(arg)) {
+                String str = JsonUtils.toJsonString(arg);
                 Dict dict = JsonUtils.parseMap(str);
                 if (MapUtil.isNotEmpty(dict)) {
                     MapUtil.removeAny(dict, EXCLUDE_PROPERTIES);
@@ -190,31 +202,5 @@ public class LogAspect {
             }
         }
         return params.toString();
-    }
-
-    /**
-     * 判断是否需要过滤的对象。
-     *
-     * @param o 对象信息。
-     * @return 如果是需要过滤的对象，则返回true；否则返回false。
-     */
-    @SuppressWarnings("rawtypes")
-    public boolean isFilterObject(final Object o) {
-        Class<?> clazz = o.getClass();
-        if (clazz.isArray()) {
-            return MultipartFile.class.isAssignableFrom(clazz.getComponentType());
-        } else if (Collection.class.isAssignableFrom(clazz)) {
-            Collection collection = (Collection) o;
-            for (Object value : collection) {
-                return value instanceof MultipartFile;
-            }
-        } else if (Map.class.isAssignableFrom(clazz)) {
-            Map map = (Map) o;
-            for (Object value : map.values()) {
-                return value instanceof MultipartFile;
-            }
-        }
-        return o instanceof MultipartFile || o instanceof HttpServletRequest || o instanceof HttpServletResponse
-               || o instanceof BindingResult;
     }
 }

@@ -1,7 +1,8 @@
 package com.ruoyi.common.mybatis.core.page;
 
-import cn.hutool.http.HttpStatus;
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ruoyi.common.core.constant.HttpStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,8 +12,6 @@ import java.util.List;
 
 /**
  * 表格分页数据对象
- *
- * @author Lion Li
  */
 
 @Data
@@ -55,7 +54,7 @@ public class TableDataInfo<T> implements Serializable {
 
     public static <T> TableDataInfo<T> build(IPage<T> page) {
         TableDataInfo<T> rspData = new TableDataInfo<>();
-        rspData.setCode(HttpStatus.HTTP_OK);
+        rspData.setCode(HttpStatus.SUCCESS);
         rspData.setMsg("查询成功");
         rspData.setRows(page.getRecords());
         rspData.setTotal(page.getTotal());
@@ -64,16 +63,16 @@ public class TableDataInfo<T> implements Serializable {
 
     public static <T> TableDataInfo<T> build(List<T> list) {
         TableDataInfo<T> rspData = new TableDataInfo<>();
-        rspData.setCode(HttpStatus.HTTP_OK);
+        rspData.setCode(HttpStatus.SUCCESS);
         rspData.setMsg("查询成功");
         rspData.setRows(list);
-        rspData.setTotal(list.size());
+        rspData.setTotal(CollUtil.size(list));
         return rspData;
     }
 
     public static <T> TableDataInfo<T> build() {
         TableDataInfo<T> rspData = new TableDataInfo<>();
-        rspData.setCode(HttpStatus.HTTP_OK);
+        rspData.setCode(HttpStatus.SUCCESS);
         rspData.setMsg("查询成功");
         return rspData;
     }

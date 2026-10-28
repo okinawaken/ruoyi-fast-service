@@ -3,7 +3,11 @@ package com.ruoyi.common.redis.utils;
 import com.ruoyi.common.core.utils.SpringUtils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.redisson.api.*;
+import org.redisson.api.RBlockingQueue;
+import org.redisson.api.RBoundedBlockingQueue;
+import org.redisson.api.RDelayedQueue;
+import org.redisson.api.RPriorityBlockingQueue;
+import org.redisson.api.RedissonClient;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -13,7 +17,6 @@ import java.util.function.Consumer;
  * 轻量级队列 重量级数据量 请使用 MQ
  * 要求 redis 5.X 以上
  *
- * @author Lion Li
  * @version 3.6.0 新增
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

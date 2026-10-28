@@ -4,36 +4,45 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.excel.metadata.FieldCache;
 import com.alibaba.excel.metadata.FieldWrapper;
 import com.alibaba.excel.util.ClassUtils;
 import com.alibaba.excel.write.handler.SheetWriteHandler;
 import com.alibaba.excel.write.metadata.holder.WriteSheetHolder;
 import com.alibaba.excel.write.metadata.holder.WriteWorkbookHolder;
-import com.ruoyi.common.core.service.DictService;
 import com.ruoyi.common.core.exception.ServiceException;
+import com.ruoyi.common.core.service.DictService;
+import com.ruoyi.common.core.utils.SpringUtils;
 import com.ruoyi.common.core.utils.StreamUtils;
 import com.ruoyi.common.core.utils.StringUtils;
-import com.ruoyi.common.core.utils.SpringUtils;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.annotation.ExcelEnumFormat;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * <h1>Excel表格下拉选操作</h1>
  * 考虑到下拉选过多可能导致Excel打开缓慢的问题，只校验前1000行
  * <p>
  * 即只有前1000行的数据可以用下拉框，超出的自行通过限制数据量的形式，第二次输出
- *
- * @author Emil.Zhang
  */
 @Slf4j
 public class ExcelDownHandler implements SheetWriteHandler {
@@ -103,7 +112,7 @@ public class ExcelDownHandler implements SheetWriteHandler {
                 if (StringUtils.isNotBlank(dictType)) {
                     // 如果传递了字典名，则依据字典建立下拉
                     Collection<String> values = Optional.ofNullable(dictService.getAllDictByDictType(dictType))
-                        .orElseThrow(() -> new ServiceException(String.format("字典 %s 不存在", dictType)))
+                        .orElseThrow(() -> new ServiceException(StringUtils.format("字典 {} 不存在", dictType)))
                         .values();
                     options = new ArrayList<>(values);
                 } else if (StringUtils.isNotBlank(converterExp)) {
@@ -121,10 +130,10 @@ public class ExcelDownHandler implements SheetWriteHandler {
                 // 仅当下拉可选项不为空时执行
                 if (options.size() > 20) {
                     // 这里限制如果可选项大于20，则使用额外表形式
-                    dropDownWithSheet(helper, workbook, sheet, index, options);
+                    this.dropDownWithSheet(helper, workbook, sheet, index, options);
                 } else {
                     // 否则使用固定值形式
-                    dropDownWithSimple(helper, sheet, index, options);
+                    this.dropDownWithSimple(helper, sheet, index, options);
                 }
             }
         }
@@ -135,13 +144,13 @@ public class ExcelDownHandler implements SheetWriteHandler {
             // 如果传递了下拉框选择器参数
             if (!everyOptions.getNextOptions().isEmpty()) {
                 // 当二级选项不为空时，使用额外关联表的形式
-                dropDownLinkedOptions(helper, workbook, sheet, everyOptions);
+                this.dropDownLinkedOptions(helper, workbook, sheet, everyOptions);
             } else if (everyOptions.getOptions().size() > 10) {
                 // 当一级选项参数个数大于10，使用额外表的形式
-                dropDownWithSheet(helper, workbook, sheet, everyOptions.getIndex(), everyOptions.getOptions());
+                this.dropDownWithSheet(helper, workbook, sheet, everyOptions.getIndex(), everyOptions.getOptions());
             } else if (everyOptions.getOptions().size() != 0) {
                 // 当一级选项个数不为空，使用默认形式
-                dropDownWithSimple(helper, sheet, everyOptions.getIndex(), everyOptions.getOptions());
+                this.dropDownWithSimple(helper, sheet, everyOptions.getIndex(), everyOptions.getOptions());
             }
         });
     }
@@ -166,7 +175,7 @@ public class ExcelDownHandler implements SheetWriteHandler {
      * @param options 额外表格形式存储的下拉可选项
      */
     private void dropDownLinkedOptions(DataValidationHelper helper, Workbook workbook, Sheet sheet, DropDownOptions options) {
-        String linkedOptionsSheetName = String.format("%s_%d", LINKED_OPTIONS_SHEET_NAME, currentLinkedOptionsSheetIndex);
+        String linkedOptionsSheetName = StringUtils.format("{}_{}", LINKED_OPTIONS_SHEET_NAME, currentLinkedOptionsSheetIndex);
         // 创建联动下拉数据表
         Sheet linkedOptionsDataSheet = workbook.createSheet(WorkbookUtil.createSafeSheetName(linkedOptionsSheetName));
         // 将下拉表隐藏
@@ -180,10 +189,10 @@ public class ExcelDownHandler implements SheetWriteHandler {
         // 设置名称管理器的别名
         name.setNameName(linkedOptionsSheetName);
         // 以横向第一行创建一级下拉拼接引用位置
-        String firstOptionsFunction = String.format("%s!$%s$1:$%s$1",
+        String firstOptionsFunction = StringUtils.format("{}!${}$1:${}$1",
             linkedOptionsSheetName,
-            getExcelColumnName(0),
-            getExcelColumnName(firstOptions.size())
+            this.getExcelColumnName(0),
+            this.getExcelColumnName(firstOptions.size())
         );
         // 设置名称管理器的引用位置
         name.setRefersToFormula(firstOptionsFunction);
@@ -192,7 +201,7 @@ public class ExcelDownHandler implements SheetWriteHandler {
 
         for (int columIndex = 0; columIndex < firstOptions.size(); columIndex++) {
             // 先提取主表中一级下拉的列名
-            String firstOptionsColumnName = getExcelColumnName(columIndex);
+            String firstOptionsColumnName = this.getExcelColumnName(columIndex);
             // 一次循环是每一个一级选项
             int finalI = columIndex;
             // 本次循环的一级选项值
@@ -218,7 +227,7 @@ public class ExcelDownHandler implements SheetWriteHandler {
             // 设置名称管理器的别名
             sonName.setNameName(thisFirstOptionsValue);
             // 以第二行该列数据拼接引用位置
-            String sonFunction = String.format("%s!$%s$2:$%s$%d",
+            String sonFunction = StringUtils.format("{}!${}$2:${}${}",
                 linkedOptionsSheetName,
                 firstOptionsColumnName,
                 firstOptionsColumnName,
@@ -228,12 +237,12 @@ public class ExcelDownHandler implements SheetWriteHandler {
             sonName.setRefersToFormula(sonFunction);
             // 数据验证为序列模式，引用到每一个主表中的二级选项位置
             // 创建子项的名称管理器，只是为了使得Excel可以识别到数据
-            String mainSheetFirstOptionsColumnName = getExcelColumnName(options.getIndex());
+            String mainSheetFirstOptionsColumnName = this.getExcelColumnName(options.getIndex());
             for (int i = 0; i < 100; i++) {
                 // 以一级选项对应的主体所在位置创建二级下拉
-                String secondOptionsFunction = String.format("=INDIRECT(%s%d)", mainSheetFirstOptionsColumnName, i + 1);
+                String secondOptionsFunction = StringUtils.format("=INDIRECT({}{})", mainSheetFirstOptionsColumnName, i + 1);
                 // 二级只能主表每一行的每一列添加二级校验
-                markLinkedOptionsToSheet(helper, sheet, i, options.getNextIndex(), helper.createFormulaListConstraint(secondOptionsFunction));
+                this.markLinkedOptionsToSheet(helper, sheet, i, options.getNextIndex(), helper.createFormulaListConstraint(secondOptionsFunction));
             }
 
             for (int rowIndex = 0; rowIndex < secondOptions.size(); rowIndex++) {
@@ -286,13 +295,13 @@ public class ExcelDownHandler implements SheetWriteHandler {
         // 创建名称管理器
         Name name = workbook.createName();
         // 设置名称管理器的别名
-        String nameName = String.format("%s_%d", OPTIONS_SHEET_NAME, celIndex);
+        String nameName = StringUtils.format("{}_{}", OPTIONS_SHEET_NAME, celIndex);
         name.setNameName(nameName);
         // 以纵向第一列创建一级下拉拼接引用位置
-        String function = String.format("%s!$%s$1:$%s$%d",
+        String function = StringUtils.format("{}!${}$1:${}${}",
             OPTIONS_SHEET_NAME,
-            getExcelColumnName(currentOptionsColumnIndex),
-            getExcelColumnName(currentOptionsColumnIndex),
+            this.getExcelColumnName(currentOptionsColumnIndex),
+            this.getExcelColumnName(currentOptionsColumnIndex),
             value.size());
         // 设置名称管理器的引用位置
         name.setRefersToFormula(function);
@@ -308,7 +317,7 @@ public class ExcelDownHandler implements SheetWriteHandler {
                                     DataValidationConstraint constraint) {
         // 设置数据有效性加载在哪个单元格上,四个参数分别是：起始行、终止行、起始列、终止列
         CellRangeAddressList addressList = new CellRangeAddressList(1, 1000, celIndex, celIndex);
-        markDataValidationToSheet(helper, sheet, constraint, addressList);
+        this.markDataValidationToSheet(helper, sheet, constraint, addressList);
     }
 
     /**
@@ -318,7 +327,7 @@ public class ExcelDownHandler implements SheetWriteHandler {
                                           Integer celIndex, DataValidationConstraint constraint) {
         // 设置数据有效性加载在哪个单元格上,四个参数分别是：起始行、终止行、起始列、终止列
         CellRangeAddressList addressList = new CellRangeAddressList(rowIndex, rowIndex, celIndex, celIndex);
-        markDataValidationToSheet(helper, sheet, constraint, addressList);
+        this.markDataValidationToSheet(helper, sheet, constraint, addressList);
     }
 
     /**
@@ -363,10 +372,10 @@ public class ExcelDownHandler implements SheetWriteHandler {
         int thisCircleColumnIndex = columnIndex % 26;
         // 26一循环的次数大于0，则视为栏名至少两位
         String columnPrefix = columnCircleCount == 0
-            ? StrUtil.EMPTY
-            : StrUtil.subWithLength(EXCEL_COLUMN_NAME, columnCircleCount - 1, 1);
+            ? StringUtils.EMPTY
+            : StringUtils.mid(EXCEL_COLUMN_NAME, columnCircleCount - 1, 1);
         // 从26一循环内取对应的栏位名
-        String columnNext = StrUtil.subWithLength(EXCEL_COLUMN_NAME, thisCircleColumnIndex, 1);
+        String columnNext = StringUtils.mid(EXCEL_COLUMN_NAME, thisCircleColumnIndex, 1);
         // 将二者拼接即为最终的栏位名
         return columnPrefix + columnNext;
     }

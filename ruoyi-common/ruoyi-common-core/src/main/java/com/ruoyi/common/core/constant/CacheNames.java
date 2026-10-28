@@ -10,8 +10,6 @@ package com.ruoyi.common.core.constant;
  * maxSize 组最大长度 根据LRU算法清理溢出数据 如果设置为0则无限长 默认为0
  * <p>
  * 例子: test#60s、test#0#60s、test#0#1m#1000、test#1h#0#500
- *
- * @author Lion Li
  */
 public interface CacheNames {
 
@@ -29,15 +27,5 @@ public interface CacheNames {
      * 用户账户
      */
     String SYS_USER_NAME = "sys_user_name#30d";
-
-    /**
-     * 部门
-     */
-    String SYS_DEPT = "sys_dept#30d";
-
-    /**
-     * 在线用户
-     */
-    String ONLINE_TOKEN = "online_tokens";
 
 }

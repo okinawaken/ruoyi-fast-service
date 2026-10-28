@@ -2,36 +2,30 @@ package com.ruoyi.common.idempotent.aspectj;
 
 import cn.dev33.satoken.SaManager;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.crypto.SecureUtil;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import com.ruoyi.common.core.constant.GlobalConstants;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.exception.ServiceException;
+import com.ruoyi.common.core.utils.ArgsUtils;
 import com.ruoyi.common.core.utils.MessageUtils;
 import com.ruoyi.common.core.utils.ServletUtils;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.idempotent.annotation.RepeatSubmit;
 import com.ruoyi.common.json.utils.JsonUtils;
 import com.ruoyi.common.redis.utils.RedisUtils;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.multipart.MultipartFile;
+import jakarta.servlet.http.HttpServletRequest;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 
 import java.time.Duration;
-import java.util.Collection;
-import java.util.Map;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
- * 防止重复提交(参考美团GTIS防重系统)
- *
- * @author Lion Li
+ * 防止重复提交
  */
 @Aspect
 public class RepeatSubmitAspect {
@@ -41,7 +35,7 @@ public class RepeatSubmitAspect {
     /**
      * 提交前写入防重标识，重复请求直接拒绝。
      *
-     * @param point 被拦截的方法调用
+     * @param point        被拦截的方法调用
      * @param repeatSubmit 防重提交配置
      */
     @Before("@annotation(repeatSubmit)")
@@ -53,7 +47,7 @@ public class RepeatSubmitAspect {
             throw new ServiceException("重复提交间隔时间不能小于'1'秒");
         }
         HttpServletRequest request = ServletUtils.getRequest();
-        String nowParams = argsArrayToString(point.getArgs());
+        String nowParams = this.argsArrayToString(point.getArgs());
 
         // 请求地址（作为存放cache的key值）
         String url = request.getRequestURI();
@@ -78,9 +72,9 @@ public class RepeatSubmitAspect {
     /**
      * 请求正常返回后，失败结果释放防重标识并清理线程变量。
      *
-     * @param joinPoint 切点
+     * @param joinPoint    切点
      * @param repeatSubmit 防重提交配置
-     * @param jsonResult 方法返回结果
+     * @param jsonResult   方法返回结果
      */
     @AfterReturning(pointcut = "@annotation(repeatSubmit)", returning = "jsonResult")
     public void doAfterReturning(JoinPoint joinPoint, RepeatSubmit repeatSubmit, Object jsonResult) {
@@ -96,15 +90,15 @@ public class RepeatSubmitAspect {
     /**
      * 请求异常时释放防重标识并清理线程变量。
      *
-     * @param joinPoint 切点
+     * @param joinPoint    切点
      * @param repeatSubmit 防重提交配置
-     * @param e         异常
+     * @param e            异常
      */
     @AfterThrowing(value = "@annotation(repeatSubmit)", throwing = "e")
     public void doAfterThrowing(JoinPoint joinPoint, RepeatSubmit repeatSubmit, Exception e) {
         try {
             String key = KEY_CACHE.get();
-            if (key != null) {
+            if (Objects.nonNull(key)) {
                 RedisUtils.deleteObject(key);
             }
         } finally {
@@ -123,38 +117,12 @@ public class RepeatSubmitAspect {
         if (ArrayUtil.isEmpty(paramsArray)) {
             return params.toString();
         }
-        for (Object o : paramsArray) {
-            if (ObjectUtil.isNotNull(o) && !isFilterObject(o)) {
-                params.add(JsonUtils.toJsonString(o));
+        for (Object arg : paramsArray) {
+            if (!ArgsUtils.isFilterObject(arg)) {
+                params.add(JsonUtils.toJsonString(arg));
             }
         }
         return params.toString();
-    }
-
-    /**
-     * 判断参数是否为不参与防重判断的请求或上传对象。
-     *
-     * @param o 对象信息。
-     * @return 如果是需要过滤的对象，则返回true；否则返回false。
-     */
-    @SuppressWarnings("rawtypes")
-    public boolean isFilterObject(final Object o) {
-        Class<?> clazz = o.getClass();
-        if (clazz.isArray()) {
-            return MultipartFile.class.isAssignableFrom(clazz.getComponentType());
-        } else if (Collection.class.isAssignableFrom(clazz)) {
-            Collection collection = (Collection) o;
-            for (Object value : collection) {
-                return value instanceof MultipartFile;
-            }
-        } else if (Map.class.isAssignableFrom(clazz)) {
-            Map map = (Map) o;
-            for (Object value : map.values()) {
-                return value instanceof MultipartFile;
-            }
-        }
-        return o instanceof MultipartFile || o instanceof HttpServletRequest || o instanceof HttpServletResponse
-               || o instanceof BindingResult;
     }
 
 }

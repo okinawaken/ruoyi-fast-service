@@ -12,8 +12,6 @@ import java.lang.annotation.Target;
 
 /**
  * 数据脱敏注解
- *
- * @author zhujie
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

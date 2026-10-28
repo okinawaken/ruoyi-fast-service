@@ -9,8 +9,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.reflect.GenericTypeUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import com.ruoyi.common.core.utils.MapstructUtils;
 
 import java.io.Serializable;
@@ -26,13 +24,10 @@ import java.util.stream.Collectors;
  *
  * @param <T> table 泛型
  * @param <V> vo 泛型
- * @author Lion Li
  * @since 2021-05-13
  */
 @SuppressWarnings("unchecked")
 public interface BaseMapperPlus<T, V> extends BaseMapper<T> {
-
-    Log log = LogFactory.getLog(BaseMapperPlus.class);
 
     default Class<V> currentVoClass() {
         return (Class<V>) GenericTypeUtils.resolveTypeArguments(this.getClass(), BaseMapperPlus.class)[1];

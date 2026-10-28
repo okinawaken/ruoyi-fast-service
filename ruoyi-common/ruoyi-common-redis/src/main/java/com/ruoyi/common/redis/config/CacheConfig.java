@@ -12,8 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 缓存配置
- *
- * @author Lion Li
  */
 @AutoConfiguration
 @EnableCaching

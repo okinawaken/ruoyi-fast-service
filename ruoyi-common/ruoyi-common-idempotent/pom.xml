@@ -2,45 +2,46 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>com.ruoyi</groupId>
         <artifactId>ruoyi-common</artifactId>
         <version>${revision}</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ruoyi-common-idempotent</artifactId>
-
-    <description>
-        ruoyi-common-idempotent 幂等功能
-    </description>
+    <description>ruoyi-common-idempotent 幂等功能</description>
 
     <dependencies>
+        <!-- AOP -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aspectj</artifactId>
         </dependency>
 
+        <!-- 序列化模块 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-json</artifactId>
         </dependency>
 
+        <!-- 缓存服务 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-redis</artifactId>
         </dependency>
 
+        <!-- Hutool 加密 -->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-crypto</artifactId>
         </dependency>
 
+        <!-- Sa-Token 核心 -->
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-core</artifactId>
         </dependency>
-
     </dependencies>
-
 </project>

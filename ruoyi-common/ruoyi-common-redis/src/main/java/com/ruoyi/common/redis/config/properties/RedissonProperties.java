@@ -8,17 +8,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Redisson 配置属性
- *
- * @author Lion Li
  */
 @Data
 @ConfigurationProperties(prefix = "redisson")
 public class RedissonProperties {
-
-    /**
-     * redis缓存key前缀
-     */
-    private String keyPrefix;
 
     /**
      * 线程池数量,默认值 = 当前处理核数量 * 2

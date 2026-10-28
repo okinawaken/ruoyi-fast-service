@@ -7,17 +7,22 @@
     <groupId>com.ruoyi</groupId>
     <artifactId>ruoyi-fast</artifactId>
     <version>${revision}</version>
+    <packaging>pom</packaging>
 
     <name>ruoyi-fast</name>
-    <url>https://gitee.com/zccbbg/wms-ruoyi</url>
     <description>ruoyi-fast后台管理系统</description>
 
     <properties>
+        <!-- 项目版本 -->
         <revision>5.2.0</revision>
-        <spring-boot.version>4.1.1</spring-boot.version>
+
+        <!-- 基础环境 -->
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>21</java.version>
+
+        <!-- 依赖版本 -->
+        <spring-boot.version>4.1.1</spring-boot.version>
         <mybatis.version>3.5.19</mybatis.version>
         <mybatis-plus.version>3.5.17</mybatis-plus.version>
         <poi.version>5.2.3</poi.version>
@@ -26,33 +31,30 @@
         <hutool.version>5.8.27</hutool.version>
         <jackson2.version>2.20.1</jackson2.version>
         <redisson.version>4.7.0</redisson.version>
-        <mapstruct-plus.version>1.3.6</mapstruct-plus.version>
+        <mapstruct-plus.version>1.5.3</mapstruct-plus.version>
         <mapstruct-plus.lombok.version>0.2.0</mapstruct-plus.lombok.version>
         <lombok.version>1.18.44</lombok.version>
         <!-- 离线IP地址定位库 -->
         <ip2region.version>2.7.0</ip2region.version>
+        <!-- HTTP 客户端 -->
+        <forest.version>1.8.1</forest.version>
 
         <!-- 插件版本 -->
-        <maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
-        <maven-war-plugin.version>3.2.2</maven-war-plugin.version>
-        <maven-compiler-plugin.verison>3.11.0</maven-compiler-plugin.verison>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version>
     </properties>
+
+    <modules>
+        <module>ruoyi-admin</module>
+        <module>ruoyi-common</module>
+        <module>ruoyi-system</module>
+        <module>ruoyi-business</module>
+    </modules>
 
     <!-- 依赖声明 -->
     <dependencyManagement>
         <dependencies>
-
-            <!-- common 的依赖配置-->
-            <dependency>
-                <groupId>com.ruoyi</groupId>
-                <artifactId>ruoyi-common-bom</artifactId>
-                <version>${revision}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- SpringBoot的依赖配置-->
+            <!-- Spring Boot 依赖配置 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -60,6 +62,8 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- Jackson 依赖配置 -->
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
@@ -68,7 +72,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- hutool 的依赖配置-->
+            <!-- Hutool 依赖配置 -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-bom</artifactId>
@@ -77,12 +81,37 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- common 依赖配置 -->
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>ruoyi-common-bom</artifactId>
+                <version>${revision}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- 系统模块 -->
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>ruoyi-system</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 业务模块 -->
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>ruoyi-business</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- Lombok -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
 
+            <!-- Excel 导入导出 -->
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
@@ -105,13 +134,12 @@
                 </exclusions>
             </dependency>
 
-            <!-- Sa-Token 权限认证, 在线文档：http://sa-token.dev33.cn/ -->
+            <!-- Sa-Token 权限认证 -->
             <dependency>
                 <groupId>cn.dev33</groupId>
                 <artifactId>sa-token-spring-boot4-starter</artifactId>
                 <version>${satoken.version}</version>
             </dependency>
-            <!-- Sa-Token 整合 jwt -->
             <dependency>
                 <groupId>cn.dev33</groupId>
                 <artifactId>sa-token-jwt</artifactId>
@@ -129,18 +157,17 @@
                 <version>${satoken.version}</version>
             </dependency>
 
+            <!-- MyBatis -->
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis</artifactId>
                 <version>${mybatis.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-annotation</artifactId>
@@ -152,7 +179,7 @@
                 <version>${mybatis-plus.version}</version>
             </dependency>
 
-            <!--redisson-->
+            <!-- Redisson -->
             <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
@@ -171,35 +198,53 @@
                 <version>${ip2region.version}</version>
             </dependency>
 
-            <!-- 系统模块-->
-            <dependency>
-                <groupId>com.ruoyi</groupId>
-                <artifactId>ruoyi-system</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
+            <!-- MapStruct-Plus -->
             <dependency>
                 <groupId>io.github.linpeilie</groupId>
                 <artifactId>mapstruct-plus-spring-boot-starter</artifactId>
                 <version>${mapstruct-plus.version}</version>
             </dependency>
 
+            <!-- Forest HTTP 客户端 -->
+            <dependency>
+                <groupId>com.dtflys.forest</groupId>
+                <artifactId>forest-spring-boot-starter</artifactId>
+                <version>${forest.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <modules>
-        <module>ruoyi-admin</module>
-        <module>ruoyi-common</module>
-        <module>ruoyi-system</module>
-    </modules>
-    <packaging>pom</packaging>
+    <repositories>
+        <repository>
+            <id>public</id>
+            <name>huawei nexus</name>
+            <url>https://mirrors.huaweicloud.com/repository/maven/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>public</id>
+            <name>huawei nexus</name>
+            <url>https://mirrors.huaweicloud.com/repository/maven/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.verison}</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -231,6 +276,7 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
+
             <!-- 统一版本号管理 -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -258,51 +304,23 @@
                 </executions>
             </plugin>
         </plugins>
+
         <resources>
+            <!-- 不做过滤的资源 -->
             <resource>
                 <directory>src/main/resources</directory>
-                <!-- 关闭过滤 -->
                 <filtering>false</filtering>
             </resource>
+            <!-- 需要替换变量的资源 -->
             <resource>
                 <directory>src/main/resources</directory>
-                <!-- 引入所有 匹配文件进行过滤 -->
                 <includes>
                     <include>application*</include>
                     <include>bootstrap*</include>
                     <include>banner*</include>
                 </includes>
-                <!-- 启用过滤 即该资源中的变量将会被过滤器中的值替换 -->
                 <filtering>true</filtering>
             </resource>
         </resources>
     </build>
-
-    <repositories>
-        <repository>
-            <id>public</id>
-            <name>huawei nexus</name>
-            <url>https://mirrors.huaweicloud.com/repository/maven/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>public</id>
-            <name>huawei nexus</name>
-            <url>https://mirrors.huaweicloud.com/repository/maven/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-
 </project>
-
-

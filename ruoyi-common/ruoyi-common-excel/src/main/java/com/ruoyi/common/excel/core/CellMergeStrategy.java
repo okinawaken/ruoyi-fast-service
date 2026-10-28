@@ -2,12 +2,14 @@ package com.ruoyi.common.excel.core;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ReflectUtil;
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.metadata.Head;
 import com.alibaba.excel.write.handler.WorkbookWriteHandler;
 import com.alibaba.excel.write.handler.context.WorkbookWriteHandlerContext;
 import com.alibaba.excel.write.merge.AbstractMergeStrategy;
+import com.ruoyi.common.core.utils.StringUtils;
+import com.ruoyi.common.core.utils.reflect.ReflectUtils;
+import com.ruoyi.common.excel.annotation.CellMerge;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -15,16 +17,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
-import com.ruoyi.common.core.utils.reflect.ReflectUtils;
-import com.ruoyi.common.excel.annotation.CellMerge;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 列值重复合并策略
- *
- * @author Lion Li
  */
 @Slf4j
 public class CellMergeStrategy extends AbstractMergeStrategy implements WorkbookWriteHandler {
@@ -37,17 +39,17 @@ public class CellMergeStrategy extends AbstractMergeStrategy implements Workbook
         this.hasTitle = hasTitle;
         // 行合并开始下标
         this.rowIndex = hasTitle ? 1 : 0;
-        this.cellList = handle(list, hasTitle);
+        this.cellList = this.handle(list, hasTitle);
     }
 
     @Override
     protected void merge(Sheet sheet, Cell cell, Head head, Integer relativeRowIndex) {
         //单元格写入了,遍历合并区域,如果该Cell在区域内,但非首行,则清空
         final int rowIndex = cell.getRowIndex();
-        if (CollUtil.isNotEmpty(cellList)){
+        if (CollUtil.isNotEmpty(cellList)) {
             for (CellRangeAddress cellAddresses : cellList) {
                 final int firstRow = cellAddresses.getFirstRow();
-                if (cellAddresses.isInRange(cell) && rowIndex != firstRow){
+                if (cellAddresses.isInRange(cell) && rowIndex != firstRow) {
                     cell.setBlank();
                 }
             }
@@ -57,7 +59,7 @@ public class CellMergeStrategy extends AbstractMergeStrategy implements Workbook
     @Override
     public void afterWorkbookDispose(final WorkbookWriteHandlerContext context) {
         //当前表格写完后，统一写入
-        if (CollUtil.isNotEmpty(cellList)){
+        if (CollUtil.isNotEmpty(cellList)) {
             for (CellRangeAddress item : cellList) {
                 context.getWriteContext().writeSheetHolder().getSheet().addMergedRegion(item);
             }
@@ -70,7 +72,7 @@ public class CellMergeStrategy extends AbstractMergeStrategy implements Workbook
         if (CollUtil.isEmpty(list)) {
             return cellList;
         }
-        Field[] fields = ReflectUtils.getFields(list.get(0).getClass(), field -> !"serialVersionUID".equals(field.getName()));
+        Field[] fields = ReflectUtils.getFields(list.get(0).getClass(), field -> !Objects.equals("serialVersionUID", field.getName()));
 
         // 有注解的字段
         List<Field> mergeFields = new ArrayList<>();
@@ -101,18 +103,18 @@ public class CellMergeStrategy extends AbstractMergeStrategy implements Workbook
                 } else {
                     RepeatCell repeatCell = map.get(field);
                     Object cellValue = repeatCell.getValue();
-                    if (cellValue == null || "".equals(cellValue)) {
+                    if (Objects.isNull(cellValue) || Objects.equals("", cellValue)) {
                         // 空值跳过不合并
                         continue;
                     }
 
-                    if (!cellValue.equals(val)) {
-                        if ((i - repeatCell.getCurrent() > 1) && isMerge(list, i, field)) {
+                    if (!Objects.equals(cellValue, val)) {
+                        if ((i - repeatCell.getCurrent() > 1) && this.isMerge(list, i, field)) {
                             cellList.add(new CellRangeAddress(repeatCell.getCurrent() + rowIndex, i + rowIndex - 1, colNum, colNum));
                         }
                         map.put(field, new RepeatCell(val, i));
                     } else if (i == list.size() - 1) {
-                        if (i > repeatCell.getCurrent() && isMerge(list, i, field)) {
+                        if (i > repeatCell.getCurrent() && this.isMerge(list, i, field)) {
                             cellList.add(new CellRangeAddress(repeatCell.getCurrent() + rowIndex, i + rowIndex, colNum, colNum));
                         }
                     }
@@ -126,7 +128,7 @@ public class CellMergeStrategy extends AbstractMergeStrategy implements Workbook
         boolean isMerge = true;
         CellMerge cm = field.getAnnotation(CellMerge.class);
         final String[] mergeBy = cm.mergeBy();
-        if (StrUtil.isAllNotBlank(mergeBy)) {
+        if (StringUtils.isNoneBlank(mergeBy)) {
             //比对当前list(i)和list(i - 1)的各个属性值一一比对 如果全为真 则为真
             for (String fieldName : mergeBy) {
                 final Object valCurrent = ReflectUtil.getFieldValue(list.get(i), fieldName);

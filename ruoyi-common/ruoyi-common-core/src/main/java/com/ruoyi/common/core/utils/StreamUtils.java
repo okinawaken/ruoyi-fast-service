@@ -5,7 +5,15 @@ import cn.hutool.core.map.MapUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -13,8 +21,6 @@ import java.util.stream.Collectors;
 
 /**
  * stream 流工具类
- *
- * @author Lion Li
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StreamUtils {
@@ -23,15 +29,15 @@ public class StreamUtils {
      * 将collection过滤
      *
      * @param collection 需要转化的集合
-     * @param function   过滤方法
+     * @param predicate  过滤条件
      * @return 过滤后的list
      */
-    public static <E> List<E> filter(Collection<E> collection, Predicate<E> function) {
+    public static <E> List<E> filter(Collection<E> collection, Predicate<E> predicate) {
         if (CollUtil.isEmpty(collection)) {
             return CollUtil.newArrayList();
         }
         // 注意此处不要使用 .toList() 新语法 因为返回的是不可变List 会导致序列化问题
-        return collection.stream().filter(function).collect(Collectors.toList());
+        return collection.stream().filter(predicate).collect(Collectors.toList());
     }
 
     /**
@@ -64,15 +70,15 @@ public class StreamUtils {
      * 将collection排序
      *
      * @param collection 需要转化的集合
-     * @param comparing  排序方法
+     * @param comparator 排序比较器
      * @return 排序后的list
      */
-    public static <E> List<E> sorted(Collection<E> collection, Comparator<E> comparing) {
+    public static <E> List<E> sorted(Collection<E> collection, Comparator<E> comparator) {
         if (CollUtil.isEmpty(collection)) {
             return CollUtil.newArrayList();
         }
         // 注意此处不要使用 .toList() 新语法 因为返回的是不可变List 会导致序列化问题
-        return collection.stream().sorted(comparing).collect(Collectors.toList());
+        return collection.stream().sorted(comparator).collect(Collectors.toList());
     }
 
     /**
@@ -89,7 +95,7 @@ public class StreamUtils {
         if (CollUtil.isEmpty(collection)) {
             return MapUtil.newHashMap();
         }
-        return collection.stream().filter(Objects::nonNull).collect(Collectors.toMap(key, Function.identity(), (l, r) -> l));
+        return collection.stream().filter(Objects::nonNull).collect(Collectors.toMap(key, Function.identity(), (existing, duplicate) -> existing));
     }
 
     /**
@@ -108,7 +114,7 @@ public class StreamUtils {
         if (CollUtil.isEmpty(collection)) {
             return MapUtil.newHashMap();
         }
-        return collection.stream().filter(Objects::nonNull).collect(Collectors.toMap(key, value, (l, r) -> l));
+        return collection.stream().filter(Objects::nonNull).collect(Collectors.toMap(key, value, (existing, duplicate) -> existing));
     }
 
     /**
@@ -164,12 +170,12 @@ public class StreamUtils {
      * @return 分类后的map
      */
     public static <E, T, U> Map<T, Map<U, E>> group2Map(Collection<E> collection, Function<E, T> key1, Function<E, U> key2) {
-        if (CollUtil.isEmpty(collection) || key1 == null || key2 == null) {
+        if (CollUtil.isEmpty(collection) || Objects.isNull(key1) || Objects.isNull(key2)) {
             return MapUtil.newHashMap();
         }
         return collection
             .stream().filter(Objects::nonNull)
-            .collect(Collectors.groupingBy(key1, LinkedHashMap::new, Collectors.toMap(key2, Function.identity(), (l, r) -> l)));
+            .collect(Collectors.groupingBy(key1, LinkedHashMap::new, Collectors.toMap(key2, Function.identity(), (existing, duplicate) -> existing)));
     }
 
     /**
@@ -205,7 +211,7 @@ public class StreamUtils {
      * @return 转化后的Set
      */
     public static <E, T> Set<T> toSet(Collection<E> collection, Function<E, T> function) {
-        if (CollUtil.isEmpty(collection) || function == null) {
+        if (CollUtil.isEmpty(collection) || Objects.isNull(function)) {
             return CollUtil.newHashSet();
         }
         return collection
@@ -231,24 +237,21 @@ public class StreamUtils {
     public static <K, X, Y, V> Map<K, V> merge(Map<K, X> map1, Map<K, Y> map2, BiFunction<X, Y, V> merge) {
         if (MapUtil.isEmpty(map1) && MapUtil.isEmpty(map2)) {
             return MapUtil.newHashMap();
-        } else if (MapUtil.isEmpty(map1)) {
-            map1 = MapUtil.newHashMap();
-        } else if (MapUtil.isEmpty(map2)) {
-            map2 = MapUtil.newHashMap();
         }
-        Set<K> key = new HashSet<>();
-        key.addAll(map1.keySet());
-        key.addAll(map2.keySet());
-        Map<K, V> map = new HashMap<>();
-        for (K t : key) {
-            X x = map1.get(t);
-            Y y = map2.get(t);
-            V z = merge.apply(x, y);
-            if (z != null) {
-                map.put(t, z);
+        Map<K, X> left = MapUtil.isEmpty(map1) ? MapUtil.newHashMap() : map1;
+        Map<K, Y> right = MapUtil.isEmpty(map2) ? MapUtil.newHashMap() : map2;
+
+        Set<K> keys = new HashSet<>(left.keySet());
+        keys.addAll(right.keySet());
+
+        Map<K, V> merged = new HashMap<>();
+        for (K key : keys) {
+            V value = merge.apply(left.get(key), right.get(key));
+            if (Objects.nonNull(value)) {
+                merged.put(key, value);
             }
         }
-        return map;
+        return merged;
     }
 
 }

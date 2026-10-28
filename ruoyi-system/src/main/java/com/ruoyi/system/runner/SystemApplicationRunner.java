@@ -1,6 +1,5 @@
 package com.ruoyi.system.runner;
 
-import com.ruoyi.common.core.config.RuoYiConfig;
 import com.ruoyi.system.service.SysConfigService;
 import com.ruoyi.system.service.SysDictTypeService;
 import lombok.RequiredArgsConstructor;
@@ -11,15 +10,12 @@ import org.springframework.stereotype.Component;
 
 /**
  * 初始化 system 模块对应业务数据
- *
- * @author Lion Li
  */
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class SystemApplicationRunner implements ApplicationRunner {
 
-    private final RuoYiConfig ruoyiConfig;
     private final SysConfigService configService;
     private final SysDictTypeService dictTypeService;
 
@@ -29,14 +25,9 @@ public class SystemApplicationRunner implements ApplicationRunner {
      * @param args 应用启动参数
      */
     @Override
-    public void run(ApplicationArguments args) throws Exception {
-        if (ruoyiConfig.isCacheLazy()) {
-            return;
-        }
-        configService.loadingConfigCache();
-        log.info("加载参数缓存数据成功");
-        dictTypeService.loadingDictCache();
-        log.info("加载字典缓存数据成功");
+    public void run(ApplicationArguments args) {
+        configService.loadConfigCache();
+        dictTypeService.loadDictCache();
     }
 
 }

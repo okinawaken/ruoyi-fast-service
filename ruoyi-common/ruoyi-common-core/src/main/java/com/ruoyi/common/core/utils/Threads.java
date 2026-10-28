@@ -4,12 +4,15 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.*;
+import java.util.Objects;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 线程相关工具类.
- *
- * @author ruoyi
  */
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -17,12 +20,14 @@ public class Threads {
 
     /**
      * sleep等待,单位为毫秒
+     * <p>
+     * 被中断时恢复中断标记后返回，交由调用方决定后续处理，避免中断信号被吞掉。
      */
     public static void sleep(long milliseconds) {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
-            return;
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -34,7 +39,7 @@ public class Threads {
      * 另对在shutdown时线程本身被调用中断做了处理.
      */
     public static void shutdownAndAwaitTermination(ExecutorService pool) {
-        if (pool != null && !pool.isShutdown()) {
+        if (Objects.nonNull(pool) && !pool.isShutdown()) {
             pool.shutdown();
             try {
                 if (!pool.awaitTermination(120, TimeUnit.SECONDS)) {
@@ -54,7 +59,7 @@ public class Threads {
      * 打印线程异常信息
      */
     public static void printException(Runnable r, Throwable t) {
-        if (t == null && r instanceof Future<?>) {
+        if (Objects.isNull(t) && r instanceof Future<?>) {
             try {
                 Future<?> future = (Future<?>) r;
                 if (future.isDone()) {
@@ -68,7 +73,7 @@ public class Threads {
                 Thread.currentThread().interrupt();
             }
         }
-        if (t != null) {
+        if (Objects.nonNull(t)) {
             log.error(t.getMessage(), t);
         }
     }

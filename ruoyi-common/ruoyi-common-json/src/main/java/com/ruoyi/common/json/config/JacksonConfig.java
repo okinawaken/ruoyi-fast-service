@@ -1,9 +1,9 @@
 package com.ruoyi.common.json.config;
 
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
@@ -20,14 +20,14 @@ import java.util.TimeZone;
 
 /**
  * jackson 配置
- *
- * @author Lion Li
  */
 @Slf4j
 @AutoConfiguration
 public class JacksonConfig {
 
-    /** 用途：提供项目使用的 Jackson 2 JSON 解析器；参数：无；返回值：已配置的 ObjectMapper。 */
+    /**
+     * 用途：提供项目使用的 Jackson 2 JSON 解析器；参数：无；返回值：已配置的 ObjectMapper。
+     */
     @Bean
     public ObjectMapper objectMapper() {
         JavaTimeModule javaTimeModule = new JavaTimeModule();

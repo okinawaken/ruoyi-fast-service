@@ -2,68 +2,71 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>ruoyi-fast</artifactId>
         <groupId>com.ruoyi</groupId>
+        <artifactId>ruoyi-fast</artifactId>
         <version>${revision}</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ruoyi-system</artifactId>
 
-    <description>
-        system系统模块
-    </description>
+    <description>system 系统模块</description>
 
     <dependencies>
-
-        <!-- 通用工具-->
+        <!-- 核心工具 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-core</artifactId>
         </dependency>
 
-        <!-- excel -->
+        <!-- Excel -->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-excel</artifactId>
         </dependency>
 
+        <!-- 日志 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-log</artifactId>
         </dependency>
 
+        <!-- 脱敏 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-sensitive</artifactId>
         </dependency>
 
+        <!-- 缓存 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-redis</artifactId>
         </dependency>
 
+        <!-- Web -->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-web</artifactId>
         </dependency>
 
+        <!-- 防重提交 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-idempotent</artifactId>
         </dependency>
 
+        <!-- 安全 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-security</artifactId>
         </dependency>
 
+        <!-- 数据库 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-mybatis</artifactId>
         </dependency>
-
     </dependencies>
-
 </project>

@@ -9,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 获取地址类
- *
- * @author Lion Li
  */
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

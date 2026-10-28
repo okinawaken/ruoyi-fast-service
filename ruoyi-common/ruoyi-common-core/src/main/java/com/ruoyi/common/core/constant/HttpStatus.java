@@ -2,8 +2,6 @@ package com.ruoyi.common.core.constant;
 
 /**
  * 返回状态码
- *
- * @author Lion Li
  */
 public interface HttpStatus {
     /**
@@ -75,6 +73,11 @@ public interface HttpStatus {
      * 资源不被允许访问
      */
     int NOT_ACCEPTABLE = 406;
+
+    /**
+     * 请求实体过大
+     */
+    int PAYLOAD_TOO_LARGE = 413;
 
     /**
      * 不支持的数据，媒体类型

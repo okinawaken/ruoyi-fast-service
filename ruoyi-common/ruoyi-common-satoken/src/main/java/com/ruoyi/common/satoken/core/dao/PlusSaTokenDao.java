@@ -16,8 +16,6 @@ import java.util.concurrent.TimeUnit;
  * Sa-Token持久层接口(使用框架自带RedisUtils实现 协议统一)
  * <p>
  * 采用 caffeine + redis 多级缓存 优化并发查询效率
- *
- * @author Lion Li
  */
 public class PlusSaTokenDao implements SaTokenDaoBySessionFollowObject {
 
@@ -105,7 +103,7 @@ public class PlusSaTokenDao implements SaTokenDaoBySessionFollowObject {
     /**
      * 按指定类型获取对象。
      *
-     * @param key 缓存键
+     * @param key  缓存键
      * @param type 对象类型
      * @return 对应类型的对象，不存在时返回 null
      */

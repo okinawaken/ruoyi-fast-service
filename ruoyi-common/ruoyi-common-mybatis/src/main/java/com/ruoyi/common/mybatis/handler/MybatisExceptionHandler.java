@@ -1,18 +1,15 @@
 package com.ruoyi.common.mybatis.handler;
 
 import com.ruoyi.common.core.domain.R;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 /**
  * Mybatis异常处理器
- *
- * @author Lion Li
  */
 @Slf4j
 @RestControllerAdvice
@@ -31,7 +28,7 @@ public class MybatisExceptionHandler {
     /**
      * 处理 MyBatis 系统异常。
      *
-     * @param e MyBatis 系统异常
+     * @param e       MyBatis 系统异常
      * @param request 当前请求
      * @return 包含异常信息的失败响应
      */

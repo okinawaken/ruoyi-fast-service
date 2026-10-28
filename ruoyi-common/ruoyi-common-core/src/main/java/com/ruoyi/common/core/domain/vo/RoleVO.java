@@ -7,10 +7,7 @@ import java.io.Serializable;
 
 /**
  * 角色
- *
- * @author Lion Li
  */
-
 @Data
 @NoArgsConstructor
 public class RoleVO implements Serializable {

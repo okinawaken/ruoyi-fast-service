@@ -8,10 +8,9 @@ import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import lombok.extern.slf4j.Slf4j;
 import com.ruoyi.common.core.utils.SpringUtils;
 import com.ruoyi.common.redis.config.properties.RedissonProperties;
-import com.ruoyi.common.redis.handler.KeyPrefixHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.client.codec.StringCodec;
 import org.redisson.codec.CompositeCodec;
 import org.redisson.codec.TypedJsonJacksonCodec;
@@ -28,8 +27,6 @@ import java.util.TimeZone;
 
 /**
  * redis配置
- *
- * @author Lion Li
  */
 @Slf4j
 @AutoConfiguration
@@ -67,8 +64,6 @@ public class RedisConfig {
             if (ObjectUtil.isNotNull(singleServerConfig)) {
                 // 使用单机模式
                 config.useSingleServer()
-                    //设置redis key前缀
-                    .setNameMapper(new KeyPrefixHandler(redissonProperties.getKeyPrefix()))
                     .setTimeout(singleServerConfig.getTimeout())
                     .setClientName(singleServerConfig.getClientName())
                     .setIdleConnectionTimeout(singleServerConfig.getIdleConnectionTimeout())
@@ -80,8 +75,6 @@ public class RedisConfig {
             RedissonProperties.ClusterServersConfig clusterServersConfig = redissonProperties.getClusterServersConfig();
             if (ObjectUtil.isNotNull(clusterServersConfig)) {
                 config.useClusterServers()
-                    //设置redis key前缀
-                    .setNameMapper(new KeyPrefixHandler(redissonProperties.getKeyPrefix()))
                     .setTimeout(clusterServersConfig.getTimeout())
                     .setClientName(clusterServersConfig.getClientName())
                     .setIdleConnectionTimeout(clusterServersConfig.getIdleConnectionTimeout())
@@ -123,7 +116,7 @@ public class RedisConfig {
      *   # 集群配置
      *   clusterServersConfig:
      *     # 客户端名称
-     *     clientName: ${ruoyi.name}
+     *     clientName: ${spring.application.name}
      *     # master最小空闲连接数
      *     masterConnectionMinimumIdleSize: 32
      *     # master连接池大小

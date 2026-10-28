@@ -6,15 +6,18 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
+import java.util.Objects;
+
 /**
  * 基础异常
- *
- * @author ruoyi
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class BaseException extends RuntimeException {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -66,7 +69,7 @@ public class BaseException extends RuntimeException {
         if (!StringUtils.isEmpty(code)) {
             message = MessageUtils.message(code, args);
         }
-        if (message == null) {
+        if (Objects.isNull(message)) {
             message = defaultMessage;
         }
         return message;

@@ -3,18 +3,17 @@ package com.ruoyi.common.core.domain.vo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * 当前在线会话
- *
- * @author ruoyi
  */
-
 @Data
 @NoArgsConstructor
 public class UserOnlineVO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

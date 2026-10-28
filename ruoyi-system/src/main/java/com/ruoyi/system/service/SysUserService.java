@@ -1,51 +1,25 @@
 package com.ruoyi.system.service;
 
-import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ruoyi.common.core.constant.UserConstants;
-import com.ruoyi.common.core.constant.CacheNames;
-import com.ruoyi.common.core.exception.ServiceException;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.common.core.service.UserService;
-import com.ruoyi.common.core.utils.MapstructUtils;
-import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
-import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.common.satoken.utils.LoginHelper;
-import com.ruoyi.system.domain.bo.SysUserBo;
-import com.ruoyi.system.domain.entity.SysUser;
-import com.ruoyi.system.domain.vo.SysUserVo;
-import com.ruoyi.system.mapper.SysUserMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.ruoyi.system.domain.bo.SysUserBO;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
- * 用户 业务层处理
- *
- * @author Lion Li
+ * 用户 服务层
  */
-@Slf4j
-@RequiredArgsConstructor
-@Service
-public class SysUserService implements UserService {
+public interface SysUserService extends UserService {
 
-    private final SysUserMapper userMapper;
-
-    public TableDataInfo<SysUserVo> selectPageUserList(SysUserBo user, PageQuery pageQuery) {
-        Page<SysUserVo> page = userMapper.selectPageUserList(pageQuery.build(), this.buildQueryWrapper(user));
-        return TableDataInfo.build(page);
-    }
+    /**
+     * 分页查询用户列表
+     *
+     * @param user      用户信息
+     * @param pageQuery 分页参数
+     * @return 分页结果
+     */
+    IPage<SysUserBO> selectPageUserList(SysUserBO user, PageQuery pageQuery);
 
     /**
      * 根据条件分页查询用户列表
@@ -53,22 +27,7 @@ public class SysUserService implements UserService {
      * @param user 用户信息
      * @return 用户信息集合信息
      */
-    public List<SysUserVo> selectUserList(SysUserBo user) {
-        return userMapper.selectUserList(this.buildQueryWrapper(user));
-    }
-
-    private Wrapper<SysUser> buildQueryWrapper(SysUserBo user) {
-        Map<String, Object> params = user.getParams();
-        QueryWrapper<SysUser> wrapper = Wrappers.query();
-        wrapper.eq("u.del_flag", UserConstants.NOT_DELETED)
-            .eq(ObjectUtil.isNotNull(user.getUserId()), "u.user_id", user.getUserId())
-            .like(StringUtils.isNotBlank(user.getUserName()), "u.user_name", user.getUserName())
-            .eq(StringUtils.isNotBlank(user.getStatus()), "u.status", user.getStatus())
-            .like(StringUtils.isNotBlank(user.getPhonenumber()), "u.phonenumber", user.getPhonenumber())
-            .between(params.get("beginTime") != null && params.get("endTime") != null,
-                "u.create_time", params.get("beginTime"), params.get("endTime"));
-        return wrapper;
-    }
+    List<SysUserBO> selectUserList(SysUserBO user);
 
     /**
      * 通过用户名查询用户
@@ -76,9 +35,7 @@ public class SysUserService implements UserService {
      * @param userName 用户名
      * @return 用户对象信息
      */
-    public SysUserVo selectUserByUserName(String userName) {
-        return userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUserName, userName));
-    }
+    SysUserBO selectUserByUserName(String userName);
 
     /**
      * 通过用户ID查询用户
@@ -86,9 +43,7 @@ public class SysUserService implements UserService {
      * @param userId 用户ID
      * @return 用户对象信息
      */
-    public SysUserVo selectUserById(Long userId) {
-        return userMapper.selectVoById(userId);
-    }
+    SysUserBO selectUserById(Long userId);
 
     /**
      * 校验用户名称是否唯一
@@ -96,52 +51,29 @@ public class SysUserService implements UserService {
      * @param user 用户信息
      * @return 结果
      */
-    public boolean checkUserNameUnique(SysUserBo user) {
-        boolean exist = userMapper.exists(new LambdaQueryWrapper<SysUser>()
-            .eq(SysUser::getUserName, user.getUserName())
-            .ne(ObjectUtil.isNotNull(user.getUserId()), SysUser::getUserId, user.getUserId()));
-        return !exist;
-    }
+    boolean checkUserNameUnique(SysUserBO user);
 
     /**
      * 校验手机号码是否唯一
      *
      * @param user 用户信息
+     * @return 结果
      */
-    public boolean checkPhoneUnique(SysUserBo user) {
-        boolean exist = userMapper.exists(new LambdaQueryWrapper<SysUser>()
-            .eq(SysUser::getPhonenumber, user.getPhonenumber())
-            .ne(ObjectUtil.isNotNull(user.getUserId()), SysUser::getUserId, user.getUserId()));
-        return !exist;
-    }
+    boolean checkPhoneUnique(SysUserBO user);
 
     /**
      * 校验用户是否允许操作
      *
      * @param userId 用户ID
      */
-    public void checkUserAllowed(Long userId) {
-        if (ObjectUtil.isNotNull(userId) && LoginHelper.isAdmin(userId)) {
-            throw new ServiceException("不允许操作超级管理员用户");
-        }
-    }
+    void checkUserAllowed(Long userId);
 
     /**
      * 校验用户是否有数据权限
      *
      * @param userId 用户id
      */
-    public void checkUserDataScope(Long userId) {
-        if (ObjectUtil.isNull(userId)) {
-            return;
-        }
-        if (LoginHelper.isAdmin()) {
-            return;
-        }
-        if (userMapper.countUserById(userId) == 0) {
-            throw new ServiceException("没有权限访问用户数据！");
-        }
-    }
+    void checkUserDataScope(Long userId);
 
     /**
      * 新增保存用户信息
@@ -149,14 +81,7 @@ public class SysUserService implements UserService {
      * @param user 用户信息
      * @return 结果
      */
-    @Transactional(rollbackFor = Exception.class)
-    public int insertUser(SysUserBo user) {
-        SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
-        // 新增用户信息
-        int rows = userMapper.insert(sysUser);
-        user.setUserId(sysUser.getUserId());
-        return rows;
-    }
+    int insertUser(SysUserBO user);
 
     /**
      * 修改保存用户信息
@@ -164,11 +89,7 @@ public class SysUserService implements UserService {
      * @param user 用户信息
      * @return 结果
      */
-    @Transactional(rollbackFor = Exception.class)
-    public int updateUser(SysUserBo user) {
-        SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
-        return userMapper.updateById(sysUser);
-    }
+    int updateUser(SysUserBO user);
 
     /**
      * 修改用户状态
@@ -177,12 +98,7 @@ public class SysUserService implements UserService {
      * @param status 帐号状态
      * @return 结果
      */
-    public int updateUserStatus(Long userId, String status) {
-        return userMapper.update(null,
-            new LambdaUpdateWrapper<SysUser>()
-                .set(SysUser::getStatus, status)
-                .eq(SysUser::getUserId, userId));
-    }
+    int updateUserStatus(Long userId, String status);
 
     /**
      * 重置用户密码
@@ -191,12 +107,7 @@ public class SysUserService implements UserService {
      * @param password 密码
      * @return 结果
      */
-    public int resetUserPwd(Long userId, String password) {
-        return userMapper.update(null,
-            new LambdaUpdateWrapper<SysUser>()
-                .set(SysUser::getPassword, password)
-                .eq(SysUser::getUserId, userId));
-    }
+    int resetUserPwd(Long userId, String password);
 
     /**
      * 通过用户ID删除用户
@@ -204,10 +115,7 @@ public class SysUserService implements UserService {
      * @param userId 用户ID
      * @return 结果
      */
-    @Transactional(rollbackFor = Exception.class)
-    public int deleteUserById(Long userId) {
-        return userMapper.deleteById(userId);
-    }
+    int deleteUserById(Long userId);
 
     /**
      * 批量删除用户信息
@@ -215,20 +123,6 @@ public class SysUserService implements UserService {
      * @param userIds 需要删除的用户ID
      * @return 结果
      */
-    @Transactional(rollbackFor = Exception.class)
-    public int deleteUserByIds(Long[] userIds) {
-        for (Long userId : userIds) {
-            checkUserAllowed(userId);
-            checkUserDataScope(userId);
-        }
-        return userMapper.deleteBatchIds(Arrays.asList(userIds));
-    }
-
-    @Cacheable(cacheNames = CacheNames.SYS_USER_NAME, key = "#userId")
-    public String selectUserNameById(Long userId) {
-        SysUser sysUser = userMapper.selectOne(new LambdaQueryWrapper<SysUser>()
-            .select(SysUser::getUserName).eq(SysUser::getUserId, userId));
-        return ObjectUtil.isNull(sysUser) ? null : sysUser.getUserName();
-    }
+    int deleteUserByIds(Long[] userIds);
 
 }

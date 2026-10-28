@@ -4,11 +4,10 @@ import org.springframework.lang.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 请求方式
- *
- * @author ruoyi
  */
 public enum HttpMethod {
     GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
@@ -23,7 +22,7 @@ public enum HttpMethod {
 
     @Nullable
     public static HttpMethod resolve(@Nullable String method) {
-        return (method != null ? mappings.get(method) : null);
+        return (Objects.nonNull(method) ? mappings.get(method) : null);
     }
 
     public boolean matches(String method) {

@@ -6,10 +6,7 @@ import org.springframework.boot.context.metrics.buffering.BufferingApplicationSt
 
 /**
  * 启动程序
- *
- * @author ruoyi
  */
-
 @SpringBootApplication
 public class RuoYiApplication {
 
@@ -17,7 +14,6 @@ public class RuoYiApplication {
         SpringApplication application = new SpringApplication(RuoYiApplication.class);
         application.setApplicationStartup(new BufferingApplicationStartup(2048));
         application.run(args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  ruoyi-fast-service启动成功   ლ(´ڡ`ლ)ﾞ");
     }
 
 }

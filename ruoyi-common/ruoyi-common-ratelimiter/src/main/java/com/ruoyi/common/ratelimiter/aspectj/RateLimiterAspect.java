@@ -29,8 +29,6 @@ import java.lang.reflect.Method;
 
 /**
  * 限流处理
- *
- * @author Lion Li
  */
 @Slf4j
 @Aspect
@@ -53,7 +51,7 @@ public class RateLimiterAspect {
     /**
      * 在接口调用前获取限流令牌，超限时拒绝请求。
      *
-     * @param point 被拦截的方法调用
+     * @param point       被拦截的方法调用
      * @param rateLimiter 限流配置
      */
     @Before("@annotation(rateLimiter)")
@@ -61,7 +59,7 @@ public class RateLimiterAspect {
         int time = rateLimiter.time();
         int count = rateLimiter.count();
         try {
-            String combineKey = getCombineKey(rateLimiter, point);
+            String combineKey = this.getCombineKey(rateLimiter, point);
             RateType rateType = RateType.OVERALL;
             if (rateLimiter.limitType() == LimitType.CLUSTER) {
                 rateType = RateType.PER_CLIENT;
@@ -88,7 +86,7 @@ public class RateLimiterAspect {
      * 按请求路径、限流类型和表达式参数生成限流键。
      *
      * @param rateLimiter 限流配置
-     * @param point 被拦截的方法调用
+     * @param point       被拦截的方法调用
      * @return Redis 限流键
      */
     private String getCombineKey(RateLimiter rateLimiter, JoinPoint point) {

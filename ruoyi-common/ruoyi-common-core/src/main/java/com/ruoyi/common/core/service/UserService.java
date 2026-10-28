@@ -2,8 +2,6 @@ package com.ruoyi.common.core.service;
 
 /**
  * 通用 用户服务
- *
- * @author Lion Li
  */
 public interface UserService {
 

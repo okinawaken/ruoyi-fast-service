@@ -2,12 +2,14 @@ package com.ruoyi.common.excel.annotation;
 
 import com.ruoyi.common.core.utils.StringUtils;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * 字典格式化
- *
- * @author Lion Li
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

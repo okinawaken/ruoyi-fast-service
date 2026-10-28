@@ -1,17 +1,13 @@
 package com.ruoyi.common.core.domain.bo;
 
 import com.ruoyi.common.core.constant.UserConstants;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
-import jakarta.validation.constraints.NotBlank;
-
 /**
  * 用户登录对象
- *
- * @author Lion Li
  */
-
 @Data
 public class LoginBody {
 

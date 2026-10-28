@@ -1,6 +1,6 @@
 package com.ruoyi.common.excel.core;
 
-import cn.hutool.core.util.StrUtil;
+import com.ruoyi.common.core.utils.StringUtils;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -8,9 +8,6 @@ import java.util.List;
 
 /**
  * 默认excel返回对象
- *
- * @author Yjoioooo
- * @author Lion Li
  */
 public class DefaultExcelResult<T> implements ExcelResult<T> {
 
@@ -64,7 +61,7 @@ public class DefaultExcelResult<T> implements ExcelResult<T> {
             return "读取失败，未解析到数据";
         } else {
             if (errorCount == 0) {
-                return StrUtil.format("恭喜您，全部读取成功！共{}条", successCount);
+                return StringUtils.format("恭喜您，全部读取成功！共{}条", successCount);
             } else {
                 return "";
             }

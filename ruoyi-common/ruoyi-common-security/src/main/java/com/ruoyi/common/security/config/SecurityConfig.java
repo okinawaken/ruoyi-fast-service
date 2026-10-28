@@ -4,28 +4,24 @@ import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ruoyi.common.core.utils.SpringUtils;
-import com.ruoyi.common.security.config.properties.SecurityProperties;
 import com.ruoyi.common.security.handler.AllUrlHandler;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * 权限安全配置
- *
- * @author Lion Li
  */
 
 @Slf4j
 @AutoConfiguration
-@EnableConfigurationProperties(SecurityProperties.class)
-@RequiredArgsConstructor
 public class SecurityConfig implements WebMvcConfigurer {
 
-    private final SecurityProperties securityProperties;
+    /**
+     * 不需要登录校验的路径
+     */
+    private static final String[] EXCLUDES = {"/error"};
 
     /**
      * 注册sa-token的拦截器
@@ -46,7 +42,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                     });
             })).addPathPatterns("/**")
             // 排除不需要拦截的路径
-            .excludePathPatterns(securityProperties.getExcludes());
+            .excludePathPatterns(EXCLUDES);
     }
 
 }

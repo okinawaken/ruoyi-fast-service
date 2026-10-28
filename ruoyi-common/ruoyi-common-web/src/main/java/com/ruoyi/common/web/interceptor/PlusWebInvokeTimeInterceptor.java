@@ -2,26 +2,26 @@ package com.ruoyi.common.web.interceptor;
 
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.map.MapUtil;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.StopWatch;
 import com.ruoyi.common.core.utils.SpringUtils;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.json.utils.JsonUtils;
 import com.ruoyi.common.web.filter.RepeatedlyRequestWrapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.BufferedReader;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * web的调用时间统计拦截器
  * dev环境有效
  *
- * @author Lion Li
  * @since 3.3.0
  */
 @Slf4j
@@ -33,11 +33,11 @@ public class PlusWebInvokeTimeInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (!prodProfile.equals(SpringUtils.getActiveProfile())) {
+        if (!Objects.equals(prodProfile, SpringUtils.getActiveProfile())) {
             String url = request.getMethod() + " " + request.getRequestURI();
 
             // 打印请求参数
-            if (isJsonRequest(request)) {
+            if (this.isJsonRequest(request)) {
                 String jsonParam = "";
                 if (request instanceof RepeatedlyRequestWrapper) {
                     BufferedReader reader = request.getReader();
@@ -68,7 +68,7 @@ public class PlusWebInvokeTimeInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        if (!prodProfile.equals(SpringUtils.getActiveProfile())) {
+        if (!Objects.equals(prodProfile, SpringUtils.getActiveProfile())) {
             StopWatch stopWatch = KEY_CACHE.get();
             stopWatch.stop();
             log.info("[PLUS]结束请求 => URL[{}],耗时:[{}]毫秒", request.getMethod() + " " + request.getRequestURI(), stopWatch.getTime());
@@ -84,7 +84,7 @@ public class PlusWebInvokeTimeInterceptor implements HandlerInterceptor {
      */
     private boolean isJsonRequest(HttpServletRequest request) {
         String contentType = request.getContentType();
-        if (contentType != null) {
+        if (Objects.nonNull(contentType)) {
             return StringUtils.startsWithIgnoreCase(contentType, MediaType.APPLICATION_JSON_VALUE);
         }
         return false;

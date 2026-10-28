@@ -7,8 +7,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.core.utils.SpringUtils;
+import com.ruoyi.common.core.utils.StringUtils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -18,8 +18,6 @@ import java.util.List;
 
 /**
  * JSON 工具类
- *
- * @author 芋道源码
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JsonUtils {

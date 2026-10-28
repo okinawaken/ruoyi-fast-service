@@ -13,8 +13,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * 通用配置
- *
- * @author Lion Li
  */
 @AutoConfiguration
 public class ResourcesConfig implements WebMvcConfigurer {
@@ -23,10 +21,6 @@ public class ResourcesConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // 全局访问性能拦截
         registry.addInterceptor(new PlusWebInvokeTimeInterceptor());
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
     }
 
     /**

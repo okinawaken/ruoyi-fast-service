@@ -15,8 +15,6 @@ import java.util.Map;
 
 /**
  * Entity基类
- *
- * @author Lion Li
  */
 
 @Data
@@ -24,13 +22,6 @@ public class BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 搜索值
-     */
-    @JsonIgnore
-    @TableField(exist = false)
-    private String searchValue;
 
     /**
      * 创建者
@@ -57,6 +48,13 @@ public class BaseEntity implements Serializable {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
+
+    /**
+     * 搜索值
+     */
+    @JsonIgnore
+    @TableField(exist = false)
+    private String searchValue;
 
     /**
      * 请求参数

@@ -4,20 +4,20 @@ import com.ruoyi.common.core.domain.vo.RoleVO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
  * 登录用户身份权限
- *
- * @author Lion Li
  */
-
 @Data
 @NoArgsConstructor
 public class LoginUser implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -106,10 +106,10 @@ public class LoginUser implements Serializable {
      * @return 用户类型与用户编号组成的登录标识
      */
     public String getLoginId() {
-        if (userType == null) {
+        if (Objects.isNull(userType)) {
             throw new IllegalArgumentException("用户类型不能为空");
         }
-        if (userId == null) {
+        if (Objects.isNull(userId)) {
             throw new IllegalArgumentException("用户ID不能为空");
         }
         return userType + "_" + userId;

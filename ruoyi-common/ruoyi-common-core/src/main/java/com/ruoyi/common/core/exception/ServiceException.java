@@ -1,11 +1,13 @@
 package com.ruoyi.common.core.exception;
 
+import java.io.Serial;
+
 /**
  * 业务异常
- *
- * @author ruoyi
  */
 public final class ServiceException extends RuntimeException {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -20,8 +22,6 @@ public final class ServiceException extends RuntimeException {
 
     /**
      * 错误明细，内部调试错误
-     * <p>
-     * 和 {@link CommonResult#getDetailMessage()} 一致的设计
      */
     private String detailMessage;
 
@@ -40,7 +40,7 @@ public final class ServiceException extends RuntimeException {
         this.code = code;
     }
 
-    public ServiceException(String message, Integer code,String detailMessage) {
+    public ServiceException(String message, Integer code, String detailMessage) {
         this.message = message;
         this.code = code;
         this.detailMessage = detailMessage;

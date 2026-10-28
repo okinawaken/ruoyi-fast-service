@@ -1,12 +1,15 @@
 package com.ruoyi.common.idempotent.annotation;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
 /**
  * 自定义注解防止表单重复提交
- *
- * @author Lion Li
  */
 @Inherited
 @Target(ElementType.METHOD)

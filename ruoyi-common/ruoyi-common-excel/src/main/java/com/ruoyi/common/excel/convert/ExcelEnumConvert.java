@@ -19,8 +19,6 @@ import java.util.Map;
 
 /**
  * 枚举格式化转换处理
- *
- * @author Liang
  */
 @Slf4j
 public class ExcelEnumConvert implements Converter<Object> {
@@ -49,7 +47,7 @@ public class ExcelEnumConvert implements Converter<Object> {
         if (ObjectUtil.isNull(textValue)) {
             return null;
         }
-        Map<Object, String> enumCodeToTextMap = beforeConvert(contentProperty);
+        Map<Object, String> enumCodeToTextMap = this.beforeConvert(contentProperty);
         // 从Java输出至Excel是code转text
         // 因此从Excel转Java应该将text与code对调
         Map<Object, Object> enumTextToCodeMap = new HashMap<>();
@@ -64,13 +62,13 @@ public class ExcelEnumConvert implements Converter<Object> {
         if (ObjectUtil.isNull(object)) {
             return new WriteCellData<>("");
         }
-        Map<Object, String> enumValueMap = beforeConvert(contentProperty);
+        Map<Object, String> enumValueMap = this.beforeConvert(contentProperty);
         String value = Convert.toStr(enumValueMap.get(object), "");
         return new WriteCellData<>(value);
     }
 
     private Map<Object, String> beforeConvert(ExcelContentProperty contentProperty) {
-        ExcelEnumFormat anno = getAnnotation(contentProperty.getField());
+        ExcelEnumFormat anno = this.getAnnotation(contentProperty.getField());
         Map<Object, String> enumValueMap = new HashMap<>();
         Enum<?>[] enumConstants = anno.enumClass().getEnumConstants();
         for (Enum<?> enumConstant : enumConstants) {

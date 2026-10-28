@@ -2,18 +2,19 @@ package com.ruoyi.common.core.utils;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.extra.servlet.JakartaServletUtil;
-import cn.hutool.http.HttpStatus;
+import com.ruoyi.common.core.constant.HttpStatus;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -21,12 +22,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 客户端工具类
- *
- * @author ruoyi
  */
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServletUtils extends JakartaServletUtil {
 
@@ -131,12 +132,12 @@ public class ServletUtils extends JakartaServletUtil {
      */
     public static void renderString(HttpServletResponse response, String string) {
         try {
-            response.setStatus(HttpStatus.HTTP_OK);
+            response.setStatus(HttpStatus.SUCCESS);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
             response.getWriter().print(string);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("响应内容渲染失败", e);
         }
     }
 
@@ -148,12 +149,12 @@ public class ServletUtils extends JakartaServletUtil {
     public static boolean isAjaxRequest(HttpServletRequest request) {
 
         String accept = request.getHeader("accept");
-        if (accept != null && accept.contains(MediaType.APPLICATION_JSON_VALUE)) {
+        if (Objects.nonNull(accept) && StringUtils.contains(accept, MediaType.APPLICATION_JSON_VALUE)) {
             return true;
         }
 
         String xRequestedWith = request.getHeader("X-Requested-With");
-        if (xRequestedWith != null && xRequestedWith.contains("XMLHttpRequest")) {
+        if (Objects.nonNull(xRequestedWith) && StringUtils.contains(xRequestedWith, "XMLHttpRequest")) {
             return true;
         }
 

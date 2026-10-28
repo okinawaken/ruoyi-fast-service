@@ -7,12 +7,12 @@ import org.redisson.api.RMap;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
+import java.util.Objects;
 import java.util.Set;
 
 /**
  * 缓存操作工具类 {@link }
  *
- * @author Michelle.Chung
  * @date 2022/8/13
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -39,7 +39,7 @@ public class CacheUtils {
      */
     public static <T> T get(String cacheNames, Object key) {
         Cache.ValueWrapper wrapper = CACHE_MANAGER.getCache(cacheNames).get(key);
-        return wrapper != null ? (T) wrapper.get() : null;
+        return Objects.nonNull(wrapper) ? (T) wrapper.get() : null;
     }
 
     /**

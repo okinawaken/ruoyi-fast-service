@@ -8,6 +8,7 @@ import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.data.ReadCellData;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
+import com.ruoyi.common.core.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
@@ -15,8 +16,6 @@ import java.math.BigDecimal;
 /**
  * 大数值转换
  * Excel 数值长度位15位 大于15位的数值转换位字符串
- *
- * @author Lion Li
  */
 @Slf4j
 public class ExcelBigNumberConvert implements Converter<Long> {
@@ -40,7 +39,7 @@ public class ExcelBigNumberConvert implements Converter<Long> {
     public WriteCellData<Object> convertToExcelData(Long object, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         if (ObjectUtil.isNotNull(object)) {
             String str = Convert.toStr(object);
-            if (str.length() > 15) {
+            if (StringUtils.length(str) > 15) {
                 return new WriteCellData<>(str);
             }
         }

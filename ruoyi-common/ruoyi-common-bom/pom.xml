@@ -8,10 +8,7 @@
     <artifactId>ruoyi-common-bom</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
-
-    <description>
-        ruoyi-common-bom common依赖项
-    </description>
+    <description>ruoyi-common-bom common依赖项</description>
 
     <properties>
         <revision>5.2.0</revision>
@@ -33,70 +30,75 @@
                 <version>${revision}</version>
             </dependency>
 
-            <!-- excel -->
+            <!-- Excel -->
             <dependency>
                 <groupId>com.ruoyi</groupId>
                 <artifactId>ruoyi-common-excel</artifactId>
                 <version>${revision}</version>
             </dependency>
 
-            <!-- redis -->
+            <!-- Redis -->
             <dependency>
                 <groupId>com.ruoyi</groupId>
                 <artifactId>ruoyi-common-redis</artifactId>
                 <version>${revision}</version>
             </dependency>
 
-            <!-- satoken -->
+            <!-- Sa-Token -->
             <dependency>
                 <groupId>com.ruoyi</groupId>
                 <artifactId>ruoyi-common-satoken</artifactId>
                 <version>${revision}</version>
             </dependency>
 
+            <!-- Web -->
             <dependency>
                 <groupId>com.ruoyi</groupId>
                 <artifactId>ruoyi-common-web</artifactId>
                 <version>${revision}</version>
             </dependency>
 
+            <!-- 安全 -->
             <dependency>
                 <groupId>com.ruoyi</groupId>
                 <artifactId>ruoyi-common-security</artifactId>
                 <version>${revision}</version>
             </dependency>
 
+            <!-- 数据库 -->
             <dependency>
                 <groupId>com.ruoyi</groupId>
                 <artifactId>ruoyi-common-mybatis</artifactId>
                 <version>${revision}</version>
             </dependency>
 
+            <!-- 日志 -->
             <dependency>
                 <groupId>com.ruoyi</groupId>
                 <artifactId>ruoyi-common-log</artifactId>
                 <version>${revision}</version>
             </dependency>
 
+            <!-- 脱敏 -->
             <dependency>
                 <groupId>com.ruoyi</groupId>
                 <artifactId>ruoyi-common-sensitive</artifactId>
                 <version>${revision}</version>
             </dependency>
 
+            <!-- 限流 -->
             <dependency>
                 <groupId>com.ruoyi</groupId>
                 <artifactId>ruoyi-common-ratelimiter</artifactId>
                 <version>${revision}</version>
             </dependency>
 
+            <!-- 防重提交 -->
             <dependency>
                 <groupId>com.ruoyi</groupId>
                 <artifactId>ruoyi-common-idempotent</artifactId>
                 <version>${revision}</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
-
 </project>

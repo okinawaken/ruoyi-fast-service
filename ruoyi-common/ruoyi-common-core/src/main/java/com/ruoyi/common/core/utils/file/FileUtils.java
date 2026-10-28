@@ -1,18 +1,16 @@
 package com.ruoyi.common.core.utils.file;
 
 import cn.hutool.core.io.FileUtil;
+import com.ruoyi.common.core.utils.StringUtils;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 /**
  * 文件处理工具类
- *
- * @author Lion Li
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileUtils extends FileUtil {
@@ -25,7 +23,7 @@ public class FileUtils extends FileUtil {
      */
     public static void setAttachmentResponseHeader(HttpServletResponse response, String realFileName) {
         String percentEncodedFileName = percentEncode(realFileName);
-        String contentDispositionValue = "attachment; filename=%s;filename*=utf-8''%s".formatted(percentEncodedFileName, percentEncodedFileName);
+        String contentDispositionValue = StringUtils.format("attachment; filename={};filename*=utf-8''{}", percentEncodedFileName, percentEncodedFileName);
         response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
         response.setHeader("Content-disposition", contentDispositionValue);
         response.setHeader("download-filename", percentEncodedFileName);
@@ -38,7 +36,8 @@ public class FileUtils extends FileUtil {
      * @return 百分号编码后的字符串
      */
     public static String percentEncode(String s) {
-        String encode = URLEncoder.encode(s, StandardCharsets.UTF_8);
-        return encode.replaceAll("\\+", "%20");
+        String encoded = URLEncoder.encode(s, StandardCharsets.UTF_8);
+        // URLEncoder 会把空格编码成 "+"，而 Content-Disposition 要求 "%20"
+        return StringUtils.replace(encoded, "+", "%20");
     }
 }

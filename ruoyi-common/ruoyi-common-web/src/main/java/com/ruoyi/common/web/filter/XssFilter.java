@@ -1,19 +1,23 @@
 package com.ruoyi.common.web.filter;
 
 import com.ruoyi.common.core.utils.StringUtils;
-import org.springframework.http.HttpMethod;
-
-import jakarta.servlet.*;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpMethod;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 防止XSS攻击的过滤器
- *
- * @author ruoyi
  */
 public class XssFilter implements Filter {
     /**
@@ -25,8 +29,8 @@ public class XssFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         String tempExcludes = filterConfig.getInitParameter("excludes");
         if (StringUtils.isNotEmpty(tempExcludes)) {
-            String[] url = tempExcludes.split(StringUtils.SEPARATOR);
-            for (int i = 0; url != null && i < url.length; i++) {
+            String[] url = StringUtils.split(tempExcludes, StringUtils.SEPARATOR);
+            for (int i = 0; Objects.nonNull(url) && i < url.length; i++) {
                 excludes.add(url[i]);
             }
         }
@@ -37,7 +41,7 @@ public class XssFilter implements Filter {
         throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
-        if (handleExcludeURL(req, resp)) {
+        if (this.handleExcludeURL(req, resp)) {
             chain.doFilter(request, response);
             return;
         }
@@ -49,7 +53,7 @@ public class XssFilter implements Filter {
         String url = request.getServletPath();
         String method = request.getMethod();
         // GET DELETE 不过滤
-        if (method == null || HttpMethod.GET.matches(method) || HttpMethod.DELETE.matches(method)) {
+        if (Objects.isNull(method) || HttpMethod.GET.matches(method) || HttpMethod.DELETE.matches(method)) {
             return true;
         }
         return StringUtils.matches(url, excludes);

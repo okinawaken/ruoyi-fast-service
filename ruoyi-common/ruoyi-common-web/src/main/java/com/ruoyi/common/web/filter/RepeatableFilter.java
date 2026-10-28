@@ -1,16 +1,20 @@
 package com.ruoyi.common.web.filter;
 
 import com.ruoyi.common.core.utils.StringUtils;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Repeatable 过滤器
- *
- * @author ruoyi
  */
 public class RepeatableFilter implements Filter {
     @Override
@@ -26,7 +30,7 @@ public class RepeatableFilter implements Filter {
             && StringUtils.startsWithIgnoreCase(request.getContentType(), MediaType.APPLICATION_JSON_VALUE)) {
             requestWrapper = new RepeatedlyRequestWrapper((HttpServletRequest) request, response);
         }
-        if (null == requestWrapper) {
+        if (Objects.isNull(requestWrapper)) {
             chain.doFilter(request, response);
         } else {
             chain.doFilter(requestWrapper, response);

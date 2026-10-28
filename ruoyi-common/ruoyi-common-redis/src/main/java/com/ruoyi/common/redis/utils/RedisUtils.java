@@ -1,14 +1,29 @@
 package com.ruoyi.common.redis.utils;
 
+import com.ruoyi.common.core.utils.SpringUtils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import com.ruoyi.common.core.utils.SpringUtils;
-import org.redisson.api.*;
+import org.redisson.api.ObjectListener;
+import org.redisson.api.RAtomicLong;
+import org.redisson.api.RBatch;
+import org.redisson.api.RBucket;
+import org.redisson.api.RBucketAsync;
+import org.redisson.api.RKeys;
+import org.redisson.api.RList;
+import org.redisson.api.RMap;
+import org.redisson.api.RMapAsync;
+import org.redisson.api.RRateLimiter;
+import org.redisson.api.RSet;
+import org.redisson.api.RTopic;
+import org.redisson.api.RateIntervalUnit;
+import org.redisson.api.RateType;
+import org.redisson.api.RedissonClient;
 
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -17,7 +32,6 @@ import java.util.stream.Stream;
 /**
  * redis 工具类
  *
- * @author Lion Li
  * @version 3.1.0 新增
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -368,7 +382,7 @@ public class RedisUtils {
      * @param dataMap 缓存的数据
      */
     public static <T> void setCacheMap(final String key, final Map<String, T> dataMap) {
-        if (dataMap != null) {
+        if (Objects.nonNull(dataMap)) {
             RMap<String, T> rMap = CLIENT.getMap(key);
             rMap.putAll(dataMap);
         }

@@ -1,15 +1,14 @@
 package com.ruoyi.common.web.core;
 
-import org.springframework.web.servlet.LocaleResolver;
-
+import com.ruoyi.common.core.utils.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.servlet.LocaleResolver;
+
 import java.util.Locale;
 
 /**
  * 获取请求头国际化信息
- *
- * @author Lion Li
  */
 public class I18nLocaleResolver implements LocaleResolver {
 
@@ -17,8 +16,8 @@ public class I18nLocaleResolver implements LocaleResolver {
     public Locale resolveLocale(HttpServletRequest httpServletRequest) {
         String language = httpServletRequest.getHeader("content-language");
         Locale locale = Locale.getDefault();
-        if (language != null && language.length() > 0) {
-            String[] split = language.split("_");
+        if (StringUtils.isNotEmpty(language)) {
+            String[] split = StringUtils.split(language, "_");
             locale = new Locale(split[0], split[1]);
         }
         return locale;

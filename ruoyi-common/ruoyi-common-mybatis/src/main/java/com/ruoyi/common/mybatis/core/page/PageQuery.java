@@ -13,11 +13,10 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 分页查询实体类
- *
- * @author Lion Li
  */
 
 @Data
@@ -62,8 +61,11 @@ public class PageQuery implements Serializable {
         if (pageNum <= 0) {
             pageNum = DEFAULT_PAGE_NUM;
         }
+        if (pageSize <= 0) {
+            pageSize = DEFAULT_PAGE_SIZE;
+        }
         Page<T> page = new Page<>(pageNum, pageSize);
-        List<OrderItem> orderItems = buildOrderItem();
+        List<OrderItem> orderItems = this.buildOrderItem();
         if (CollUtil.isNotEmpty(orderItems)) {
             page.addOrder(orderItems);
         }
@@ -72,7 +74,7 @@ public class PageQuery implements Serializable {
 
     /**
      * 构建排序
-     *
+     * <p>
      * 支持的用法如下:
      * {isAsc:"asc",orderByColumn:"id"} order by id asc
      * {isAsc:"asc",orderByColumn:"id,createTime"} order by id asc,create_time asc
@@ -89,8 +91,8 @@ public class PageQuery implements Serializable {
         // 兼容前端排序类型
         isAsc = StringUtils.replaceEach(isAsc, new String[]{"ascending", "descending"}, new String[]{"asc", "desc"});
 
-        String[] orderByArr = orderBy.split(StringUtils.SEPARATOR);
-        String[] isAscArr = isAsc.split(StringUtils.SEPARATOR);
+        String[] orderByArr = StringUtils.split(orderBy, StringUtils.SEPARATOR);
+        String[] isAscArr = StringUtils.split(isAsc, StringUtils.SEPARATOR);
         if (isAscArr.length != 1 && isAscArr.length != orderByArr.length) {
             throw new ServiceException("排序参数有误");
         }
@@ -100,9 +102,9 @@ public class PageQuery implements Serializable {
         for (int i = 0; i < orderByArr.length; i++) {
             String orderByStr = orderByArr[i];
             String isAscStr = isAscArr.length == 1 ? isAscArr[0] : isAscArr[i];
-            if ("asc".equals(isAscStr)) {
+            if (Objects.equals("asc", isAscStr)) {
                 list.add(OrderItem.asc(orderByStr));
-            } else if ("desc".equals(isAscStr)) {
+            } else if (Objects.equals("desc", isAscStr)) {
                 list.add(OrderItem.desc(orderByStr));
             } else {
                 throw new ServiceException("排序参数有误");

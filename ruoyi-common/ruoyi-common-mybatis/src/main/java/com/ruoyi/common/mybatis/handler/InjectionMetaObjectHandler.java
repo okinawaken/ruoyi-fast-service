@@ -1,23 +1,19 @@
 package com.ruoyi.common.mybatis.handler;
 
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.http.HttpStatus;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.ruoyi.common.core.domain.bo.LoginUser;
-import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
-import com.ruoyi.common.mybatis.core.domain.BaseHistoryEntity;
 import com.ruoyi.common.satoken.utils.LoginHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * MP注入处理器
  *
- * @author Lion Li
  * @date 2021/4/25
  */
 @Slf4j
@@ -25,46 +21,36 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        try {
-            if (ObjectUtil.isNotNull(metaObject) && metaObject.getOriginalObject() instanceof BaseEntity baseEntity) {
-                LocalDateTime current = ObjectUtil.isNotNull(baseEntity.getCreateTime())
-                    ? baseEntity.getCreateTime() : LocalDateTime.now();;
-                baseEntity.setCreateTime(current);
-                baseEntity.setUpdateTime(current);
-                if (ObjectUtil.isNull(baseEntity.getCreateBy())) {
-                    String username = StringUtils.isNotBlank(baseEntity.getCreateBy())
-                        ? baseEntity.getCreateBy() : getLoginUsername();
-                    // 当前已登录 且 创建人为空 则填充
-                    baseEntity.setCreateBy(username);
-                    // 当前已登录 且 更新人为空 则填充
-                    baseEntity.setUpdateBy(username);
-                }
-            }
+        LocalDateTime nowTime = LocalDateTime.now();
+        String loginUsername = this.getLoginUsername();
 
-            if (ObjectUtil.isNotNull(metaObject) && metaObject.getOriginalObject() instanceof BaseHistoryEntity baseHistoryEntity) {
-                LocalDateTime current = ObjectUtil.isNotNull(baseHistoryEntity.getCreateTime())
-                    ? baseHistoryEntity.getCreateTime() : LocalDateTime.now();;
-                baseHistoryEntity.setCreateTime(current);
+        if (Objects.nonNull(metaObject) && metaObject.getOriginalObject() instanceof BaseEntity baseEntity) {
+            if (StringUtils.isEmpty(baseEntity.getCreateBy())) {
+                baseEntity.setCreateBy(loginUsername);
             }
-        } catch (Exception e) {
-            throw new ServiceException("自动注入异常 => " + e.getMessage(), HttpStatus.HTTP_UNAUTHORIZED);
+            if (StringUtils.isEmpty(baseEntity.getUpdateBy())) {
+                baseEntity.setUpdateBy(loginUsername);
+            }
+            if (Objects.isNull(baseEntity.getCreateTime())) {
+                baseEntity.setCreateTime(nowTime);
+            }
+            if (Objects.isNull(baseEntity.getUpdateTime())) {
+                baseEntity.setUpdateTime(nowTime);
+            }
         }
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        try {
-            if (ObjectUtil.isNotNull(metaObject) && metaObject.getOriginalObject() instanceof BaseEntity baseEntity) {
-                // 更新时间填充(不管为不为空)
-                baseEntity.setUpdateTime(LocalDateTime.now());
-                String username = getLoginUsername();
-                // 当前已登录 更新人填充(不管为不为空)
-                if (StringUtils.isNotBlank(username)) {
-                    baseEntity.setUpdateBy(username);
-                }
+        LocalDateTime nowTime = LocalDateTime.now();
+        String loginUsername = this.getLoginUsername();
+        if (Objects.nonNull(metaObject) && metaObject.getOriginalObject() instanceof BaseEntity baseEntity) {
+            if (StringUtils.isEmpty(baseEntity.getUpdateBy())) {
+                baseEntity.setUpdateBy(loginUsername);
             }
-        } catch (Exception e) {
-            throw new ServiceException("自动注入异常 => " + e.getMessage(), HttpStatus.HTTP_UNAUTHORIZED);
+            if (Objects.isNull(baseEntity.getUpdateTime())) {
+                baseEntity.setUpdateTime(nowTime);
+            }
         }
     }
 
@@ -72,14 +58,14 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
      * 获取登录用户名
      */
     private String getLoginUsername() {
-        LoginUser loginUser;
-        try {
-            loginUser = LoginHelper.getLoginUser();
-        } catch (Exception e) {
-            log.warn("自动注入警告 => 用户未登录");
-            return null;
+        if (LoginHelper.isLogin()) {
+            String username = LoginHelper.getUsername();
+            if (StringUtils.isEmpty(username)) {
+                return StrUtil.EMPTY;
+            }
+            return username;
         }
-        return ObjectUtil.isNotNull(loginUser) ? loginUser.getUsername() : null;
+        return StrUtil.EMPTY;
     }
 
 }

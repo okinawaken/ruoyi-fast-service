@@ -1,34 +1,40 @@
 package com.ruoyi.common.core.config;
 
 import cn.hutool.core.util.ArrayUtil;
-import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.SpringUtils;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.core.task.VirtualThreadTaskExecutor;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.Arrays;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * 异步配置
- *
- * @author Lion Li
  */
-@AutoConfiguration(before = TaskExecutionAutoConfiguration.class)
+@Slf4j
+@EnableAsync(proxyTargetClass = true)
+@RequiredArgsConstructor
+@AutoConfiguration(after = ThreadPoolConfig.class, before = TaskExecutionAutoConfiguration.class)
 public class AsyncConfig implements AsyncConfigurer {
+
+    private final ScheduledExecutorService scheduledExecutorService;
 
     /**
      * 自定义 @Async 注解使用系统线程池
      */
     @Override
     public Executor getAsyncExecutor() {
-        if(SpringUtils.isVirtual()) {
+        if (SpringUtils.isVirtual()) {
             return new VirtualThreadTaskExecutor("async-");
         }
-        return SpringUtils.getBean("scheduledExecutorService");
+        return scheduledExecutorService;
     }
 
     /**
@@ -36,16 +42,8 @@ public class AsyncConfig implements AsyncConfigurer {
      */
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return (throwable, method, objects) -> {
-            throwable.printStackTrace();
-            StringBuilder sb = new StringBuilder();
-            sb.append("Exception message - ").append(throwable.getMessage())
-                .append(", Method name - ").append(method.getName());
-            if (ArrayUtil.isNotEmpty(objects)) {
-                sb.append(", Parameter value - ").append(Arrays.toString(objects));
-            }
-            throw new ServiceException(sb.toString());
-        };
+        return (throwable, method, objects) -> log.error("异步任务执行异常, 方法: {}.{}, 参数: {}",
+            method.getDeclaringClass().getName(), method.getName(), ArrayUtil.isNotEmpty(objects) ? Arrays.toString(objects) : "无", throwable);
     }
 
 }

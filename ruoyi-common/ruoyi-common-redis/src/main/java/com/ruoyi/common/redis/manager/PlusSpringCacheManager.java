@@ -1,20 +1,6 @@
-/**
- * Copyright (c) 2013-2021 Nikita Koksharov
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.ruoyi.common.redis.manager;
 
+import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.redis.utils.RedisUtils;
 import org.redisson.api.RMap;
 import org.redisson.api.RMapCache;
@@ -24,11 +10,11 @@ import org.springframework.boot.convert.DurationStyle;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.transaction.TransactionAwareCacheDecorator;
-import org.springframework.util.StringUtils;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -38,8 +24,6 @@ import java.util.concurrent.ConcurrentMap;
  * <p>
  * 修改 RedissonSpringCacheManager 源码
  * 重写 cacheName 处理方法 支持多参数
- *
- * @author Nikita Koksharov
  *
  */
 @SuppressWarnings("unchecked")
@@ -93,7 +77,7 @@ public class PlusSpringCacheManager implements CacheManager {
      * @param names of caches
      */
     public void setCacheNames(Collection<String> names) {
-        if (names != null) {
+        if (Objects.nonNull(names)) {
             for (String name : names) {
                 getCache(name);
             }
@@ -119,11 +103,11 @@ public class PlusSpringCacheManager implements CacheManager {
     @Override
     public Cache getCache(String name) {
         // 重写 cacheName 支持多参数
-        String[] array = StringUtils.delimitedListToStringArray(name, "#");
+        String[] array = StringUtils.split(name, "#");
         name = array[0];
 
         Cache cache = instanceMap.get(name);
-        if (cache != null) {
+        if (Objects.nonNull(cache)) {
             return cache;
         }
         if (!dynamic) {
@@ -131,7 +115,7 @@ public class PlusSpringCacheManager implements CacheManager {
         }
 
         CacheConfig config = configMap.get(name);
-        if (config == null) {
+        if (Objects.isNull(config)) {
             config = createDefaultConfig();
             configMap.put(name, config);
         }
@@ -147,10 +131,10 @@ public class PlusSpringCacheManager implements CacheManager {
         }
 
         if (config.getMaxIdleTime() == 0 && config.getTTL() == 0 && config.getMaxSize() == 0) {
-            return createMap(name, config);
+            return this.createMap(name, config);
         }
 
-        return createMapCache(name, config);
+        return this.createMapCache(name, config);
     }
 
     private Cache createMap(String name, CacheConfig config) {
@@ -161,7 +145,7 @@ public class PlusSpringCacheManager implements CacheManager {
             cache = new TransactionAwareCacheDecorator(cache);
         }
         Cache oldCache = instanceMap.putIfAbsent(name, cache);
-        if (oldCache != null) {
+        if (Objects.nonNull(oldCache)) {
             cache = oldCache;
         }
         return cache;
@@ -175,7 +159,7 @@ public class PlusSpringCacheManager implements CacheManager {
             cache = new TransactionAwareCacheDecorator(cache);
         }
         Cache oldCache = instanceMap.putIfAbsent(name, cache);
-        if (oldCache != null) {
+        if (Objects.nonNull(oldCache)) {
             cache = oldCache;
         } else {
             map.setMaxSize(config.getMaxSize());

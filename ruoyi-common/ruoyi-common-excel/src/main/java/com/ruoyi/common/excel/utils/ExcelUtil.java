@@ -10,14 +10,18 @@ import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.metadata.fill.FillConfig;
 import com.alibaba.excel.write.metadata.fill.FillWrapper;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.core.utils.file.FileUtils;
 import com.ruoyi.common.excel.convert.ExcelBigNumberConvert;
-import com.ruoyi.common.excel.core.*;
+import com.ruoyi.common.excel.core.CellMergeStrategy;
+import com.ruoyi.common.excel.core.DefaultExcelListener;
+import com.ruoyi.common.excel.core.DropDownOptions;
+import com.ruoyi.common.excel.core.ExcelDownHandler;
+import com.ruoyi.common.excel.core.ExcelListener;
+import com.ruoyi.common.excel.core.ExcelResult;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,11 +30,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Excel相关处理
- *
- * @author Lion Li
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExcelUtil {
@@ -82,13 +85,7 @@ public class ExcelUtil {
      * @param response  响应体
      */
     public static <T> void exportExcel(List<T> list, String sheetName, Class<T> clazz, HttpServletResponse response) {
-        try {
-            resetResponse(sheetName, response);
-            ServletOutputStream os = response.getOutputStream();
-            exportExcel(list, sheetName, clazz, false, os, null);
-        } catch (IOException e) {
-            throw new RuntimeException("导出Excel异常");
-        }
+        writeToResponse(response, sheetName, os -> exportExcel(list, sheetName, clazz, false, os, null));
     }
 
     /**
@@ -101,13 +98,7 @@ public class ExcelUtil {
      * @param options   级联下拉选
      */
     public static <T> void exportExcel(List<T> list, String sheetName, Class<T> clazz, HttpServletResponse response, List<DropDownOptions> options) {
-        try {
-            resetResponse(sheetName, response);
-            ServletOutputStream os = response.getOutputStream();
-            exportExcel(list, sheetName, clazz, false, os, options);
-        } catch (IOException e) {
-            throw new RuntimeException("导出Excel异常");
-        }
+        writeToResponse(response, sheetName, os -> exportExcel(list, sheetName, clazz, false, os, options));
     }
 
     /**
@@ -120,13 +111,7 @@ public class ExcelUtil {
      * @param response  响应体
      */
     public static <T> void exportExcel(List<T> list, String sheetName, Class<T> clazz, boolean merge, HttpServletResponse response) {
-        try {
-            resetResponse(sheetName, response);
-            ServletOutputStream os = response.getOutputStream();
-            exportExcel(list, sheetName, clazz, merge, os, null);
-        } catch (IOException e) {
-            throw new RuntimeException("导出Excel异常");
-        }
+        writeToResponse(response, sheetName, os -> exportExcel(list, sheetName, clazz, merge, os, null));
     }
 
     /**
@@ -140,13 +125,7 @@ public class ExcelUtil {
      * @param options   级联下拉选
      */
     public static <T> void exportExcel(List<T> list, String sheetName, Class<T> clazz, boolean merge, HttpServletResponse response, List<DropDownOptions> options) {
-        try {
-            resetResponse(sheetName, response);
-            ServletOutputStream os = response.getOutputStream();
-            exportExcel(list, sheetName, clazz, merge, os, options);
-        } catch (IOException e) {
-            throw new RuntimeException("导出Excel异常");
-        }
+        writeToResponse(response, sheetName, os -> exportExcel(list, sheetName, clazz, merge, os, options));
     }
 
     /**
@@ -212,13 +191,7 @@ public class ExcelUtil {
      * @param response     响应体
      */
     public static void exportTemplate(List<Object> data, String filename, String templatePath, HttpServletResponse response) {
-        try {
-            resetResponse(filename, response);
-            ServletOutputStream os = response.getOutputStream();
-            exportTemplate(data, templatePath, os);
-        } catch (IOException e) {
-            throw new RuntimeException("导出Excel异常");
-        }
+        writeToResponse(response, filename, os -> exportTemplate(data, templatePath, os));
     }
 
     /**
@@ -260,13 +233,7 @@ public class ExcelUtil {
      * @param response     响应体
      */
     public static void exportTemplateMultiList(Map<String, Object> data, String filename, String templatePath, HttpServletResponse response) {
-        try {
-            resetResponse(filename, response);
-            ServletOutputStream os = response.getOutputStream();
-            exportTemplateMultiList(data, templatePath, os);
-        } catch (IOException e) {
-            throw new RuntimeException("导出Excel异常");
-        }
+        writeToResponse(response, filename, os -> exportTemplateMultiList(data, templatePath, os));
     }
 
     /**
@@ -280,13 +247,7 @@ public class ExcelUtil {
      * @param response     响应体
      */
     public static void exportTemplateMultiSheet(List<Map<String, Object>> data, String filename, String templatePath, HttpServletResponse response) {
-        try {
-            resetResponse(filename, response);
-            ServletOutputStream os = response.getOutputStream();
-            exportTemplateMultiSheet(data, templatePath, os);
-        } catch (IOException e) {
-            throw new RuntimeException("导出Excel异常");
-        }
+        writeToResponse(response, filename, os -> exportTemplateMultiSheet(data, templatePath, os));
     }
 
     /**
@@ -360,6 +321,31 @@ public class ExcelUtil {
     }
 
     /**
+     * 将导出结果写入响应流
+     *
+     * @param response 响应体
+     * @param filename 文件名
+     * @param exporter 具体的导出动作
+     * @throws IllegalStateException 写入响应流失败时抛出
+     */
+    private static void writeToResponse(HttpServletResponse response, String filename, ExcelExporter exporter) {
+        try {
+            resetResponse(filename, response);
+            exporter.export(response.getOutputStream());
+        } catch (IOException e) {
+            throw new IllegalStateException("导出Excel异常, 文件名: " + filename, e);
+        }
+    }
+
+    /**
+     * 向输出流写入 Excel 的导出动作
+     */
+    @FunctionalInterface
+    private interface ExcelExporter {
+        void export(OutputStream os) throws IOException;
+    }
+
+    /**
      * 重置响应体
      */
     private static void resetResponse(String sheetName, HttpServletResponse response) throws UnsupportedEncodingException {
@@ -378,18 +364,18 @@ public class ExcelUtil {
      */
     public static String convertByExp(String propertyValue, String converterExp, String separator) {
         StringBuilder propertyString = new StringBuilder();
-        String[] convertSource = converterExp.split(StringUtils.SEPARATOR);
+        String[] convertSource = StringUtils.split(converterExp, StringUtils.SEPARATOR);
         for (String item : convertSource) {
-            String[] itemArray = item.split("=");
+            String[] itemArray = StringUtils.split(item, "=");
             if (StringUtils.containsAny(propertyValue, separator)) {
-                for (String value : propertyValue.split(separator)) {
-                    if (itemArray[0].equals(value)) {
-                        propertyString.append(itemArray[1] + separator);
+                for (String value : StringUtils.split(propertyValue, separator)) {
+                    if (Objects.equals(itemArray[0], value)) {
+                        propertyString.append(itemArray[1]).append(separator);
                         break;
                     }
                 }
             } else {
-                if (itemArray[0].equals(propertyValue)) {
+                if (Objects.equals(itemArray[0], propertyValue)) {
                     return itemArray[1];
                 }
             }
@@ -407,18 +393,18 @@ public class ExcelUtil {
      */
     public static String reverseByExp(String propertyValue, String converterExp, String separator) {
         StringBuilder propertyString = new StringBuilder();
-        String[] convertSource = converterExp.split(StringUtils.SEPARATOR);
+        String[] convertSource = StringUtils.split(converterExp, StringUtils.SEPARATOR);
         for (String item : convertSource) {
-            String[] itemArray = item.split("=");
+            String[] itemArray = StringUtils.split(item, "=");
             if (StringUtils.containsAny(propertyValue, separator)) {
-                for (String value : propertyValue.split(separator)) {
-                    if (itemArray[1].equals(value)) {
-                        propertyString.append(itemArray[0] + separator);
+                for (String value : StringUtils.split(propertyValue, separator)) {
+                    if (Objects.equals(itemArray[1], value)) {
+                        propertyString.append(itemArray[0]).append(separator);
                         break;
                     }
                 }
             } else {
-                if (itemArray[1].equals(propertyValue)) {
+                if (Objects.equals(itemArray[1], propertyValue)) {
                     return itemArray[0];
                 }
             }

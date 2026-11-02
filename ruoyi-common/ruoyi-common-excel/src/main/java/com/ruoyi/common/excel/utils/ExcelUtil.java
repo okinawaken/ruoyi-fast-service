@@ -85,7 +85,7 @@ public class ExcelUtil {
      * @param response  响应体
      */
     public static <T> void exportExcel(List<T> list, String sheetName, Class<T> clazz, HttpServletResponse response) {
-        writeToResponse(response, sheetName, os -> exportExcel(list, sheetName, clazz, false, os, null));
+        ExcelUtil.writeToResponse(response, sheetName, os -> exportExcel(list, sheetName, clazz, false, os, null));
     }
 
     /**
@@ -98,7 +98,7 @@ public class ExcelUtil {
      * @param options   级联下拉选
      */
     public static <T> void exportExcel(List<T> list, String sheetName, Class<T> clazz, HttpServletResponse response, List<DropDownOptions> options) {
-        writeToResponse(response, sheetName, os -> exportExcel(list, sheetName, clazz, false, os, options));
+        ExcelUtil.writeToResponse(response, sheetName, os -> exportExcel(list, sheetName, clazz, false, os, options));
     }
 
     /**
@@ -111,7 +111,7 @@ public class ExcelUtil {
      * @param response  响应体
      */
     public static <T> void exportExcel(List<T> list, String sheetName, Class<T> clazz, boolean merge, HttpServletResponse response) {
-        writeToResponse(response, sheetName, os -> exportExcel(list, sheetName, clazz, merge, os, null));
+        ExcelUtil.writeToResponse(response, sheetName, os -> exportExcel(list, sheetName, clazz, merge, os, null));
     }
 
     /**
@@ -125,7 +125,7 @@ public class ExcelUtil {
      * @param options   级联下拉选
      */
     public static <T> void exportExcel(List<T> list, String sheetName, Class<T> clazz, boolean merge, HttpServletResponse response, List<DropDownOptions> options) {
-        writeToResponse(response, sheetName, os -> exportExcel(list, sheetName, clazz, merge, os, options));
+        ExcelUtil.writeToResponse(response, sheetName, os -> exportExcel(list, sheetName, clazz, merge, os, options));
     }
 
     /**
@@ -191,7 +191,7 @@ public class ExcelUtil {
      * @param response     响应体
      */
     public static void exportTemplate(List<Object> data, String filename, String templatePath, HttpServletResponse response) {
-        writeToResponse(response, filename, os -> exportTemplate(data, templatePath, os));
+        ExcelUtil.writeToResponse(response, filename, os -> exportTemplate(data, templatePath, os));
     }
 
     /**
@@ -233,7 +233,7 @@ public class ExcelUtil {
      * @param response     响应体
      */
     public static void exportTemplateMultiList(Map<String, Object> data, String filename, String templatePath, HttpServletResponse response) {
-        writeToResponse(response, filename, os -> exportTemplateMultiList(data, templatePath, os));
+        ExcelUtil.writeToResponse(response, filename, os -> exportTemplateMultiList(data, templatePath, os));
     }
 
     /**
@@ -247,7 +247,7 @@ public class ExcelUtil {
      * @param response     响应体
      */
     public static void exportTemplateMultiSheet(List<Map<String, Object>> data, String filename, String templatePath, HttpServletResponse response) {
-        writeToResponse(response, filename, os -> exportTemplateMultiSheet(data, templatePath, os));
+        ExcelUtil.writeToResponse(response, filename, os -> exportTemplateMultiSheet(data, templatePath, os));
     }
 
     /**
@@ -321,40 +321,6 @@ public class ExcelUtil {
     }
 
     /**
-     * 将导出结果写入响应流
-     *
-     * @param response 响应体
-     * @param filename 文件名
-     * @param exporter 具体的导出动作
-     * @throws IllegalStateException 写入响应流失败时抛出
-     */
-    private static void writeToResponse(HttpServletResponse response, String filename, ExcelExporter exporter) {
-        try {
-            resetResponse(filename, response);
-            exporter.export(response.getOutputStream());
-        } catch (IOException e) {
-            throw new IllegalStateException("导出Excel异常, 文件名: " + filename, e);
-        }
-    }
-
-    /**
-     * 向输出流写入 Excel 的导出动作
-     */
-    @FunctionalInterface
-    private interface ExcelExporter {
-        void export(OutputStream os) throws IOException;
-    }
-
-    /**
-     * 重置响应体
-     */
-    private static void resetResponse(String sheetName, HttpServletResponse response) throws UnsupportedEncodingException {
-        String filename = encodingFilename(sheetName);
-        FileUtils.setAttachmentResponseHeader(response, filename);
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8");
-    }
-
-    /**
      * 解析导出值 0=男,1=女,2=未知
      *
      * @param propertyValue 参数值
@@ -417,6 +383,40 @@ public class ExcelUtil {
      */
     public static String encodingFilename(String filename) {
         return IdUtil.fastSimpleUUID() + "_" + filename + ".xlsx";
+    }
+
+    /**
+     * 将导出结果写入响应流
+     *
+     * @param response 响应体
+     * @param filename 文件名
+     * @param exporter 具体的导出动作
+     * @throws IllegalStateException 写入响应流失败时抛出
+     */
+    private static void writeToResponse(HttpServletResponse response, String filename, ExcelExporter exporter) {
+        try {
+            ExcelUtil.resetResponse(filename, response);
+            exporter.export(response.getOutputStream());
+        } catch (IOException e) {
+            throw new IllegalStateException("导出Excel异常, 文件名: " + filename, e);
+        }
+    }
+
+    /**
+     * 重置响应体
+     */
+    private static void resetResponse(String sheetName, HttpServletResponse response) throws UnsupportedEncodingException {
+        String filename = encodingFilename(sheetName);
+        FileUtils.setAttachmentResponseHeader(response, filename);
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8");
+    }
+
+    /**
+     * 向输出流写入 Excel 的导出动作
+     */
+    @FunctionalInterface
+    private interface ExcelExporter {
+        void export(OutputStream os) throws IOException;
     }
 
 }

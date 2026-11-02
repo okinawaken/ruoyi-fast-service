@@ -4,7 +4,7 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
-import com.ruoyi.system.domain.bo.SysDictDataBO;
+import com.ruoyi.system.domain.dto.SysDictDataDTO;
 import com.ruoyi.system.domain.entity.SysDictDataPO;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -20,9 +20,9 @@ import java.time.LocalDateTime;
  */
 @Data
 @ExcelIgnoreUnannotated
-@AutoMappers({
+@AutoMappers(value = {
     @AutoMapper(target = SysDictDataPO.class),
-    @AutoMapper(target = SysDictDataBO.class)
+    @AutoMapper(target = SysDictDataDTO.class)
 })
 public class SysDictDataVO implements Serializable {
 

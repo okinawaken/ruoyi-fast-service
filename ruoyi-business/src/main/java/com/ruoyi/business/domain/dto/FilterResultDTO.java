@@ -3,6 +3,11 @@ package com.ruoyi.business.domain.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+/**
+ * 过滤器执行结果，包含成功标识、数据和失败原因。
+ *
+ * @author Amadeus
+ */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FilterResultDTO<T> {

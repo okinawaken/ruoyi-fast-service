@@ -83,6 +83,14 @@ public class R<T> implements Serializable {
         return R.restResult(data, HttpStatus.WARN, msg);
     }
 
+    public static <T> Boolean isError(R<T> ret) {
+        return !isSuccess(ret);
+    }
+
+    public static <T> Boolean isSuccess(R<T> ret) {
+        return R.SUCCESS == ret.getCode();
+    }
+
     private static <T> R<T> restResult(T data, int code, String msg) {
         R<T> r = new R<>();
         r.setCode(code);
@@ -98,13 +106,5 @@ public class R<T> implements Serializable {
         r.setMsg(msg);
         r.setDetailMessage(detailMessage);
         return r;
-    }
-
-    public static <T> Boolean isError(R<T> ret) {
-        return !isSuccess(ret);
-    }
-
-    public static <T> Boolean isSuccess(R<T> ret) {
-        return R.SUCCESS == ret.getCode();
     }
 }

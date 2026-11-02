@@ -21,6 +21,7 @@ import com.ruoyi.business.study.domain.dto.StudyRoomSettlementRespDTO;
 import com.ruoyi.business.study.domain.dto.StudyRoomSignAnotherCheckRespDTO;
 import com.ruoyi.business.study.domain.dto.StudyRoomSignOutReqDTO;
 import com.ruoyi.business.study.domain.dto.StudyRoomSignOutRespDTO;
+import com.ruoyi.business.study.domain.dto.StudyRoomSignSeatListRespDTO;
 import com.ruoyi.business.study.domain.dto.StudyRoomSignSeatMapRespDTO;
 import com.ruoyi.business.study.domain.dto.StudyRoomSignSeatQueryReqDTO;
 import com.ruoyi.business.study.domain.dto.StudyRoomUserPackageConfirmReqDTO;
@@ -30,10 +31,6 @@ import java.util.List;
 
 /**
  * 签到域：签到、换座、签退、排行榜
- * <p>
- * 到店签到与在座管理：签到首页、签到选座、换座、结算套餐、签退、学习排行榜。
- * <p>
- * 公共请求配置（baseURL / appid / token 拦截器 / 超时）见 {@link StudyRoomBaseClient}。
  *
  * @author Amadeus
  */
@@ -43,15 +40,19 @@ public interface StudyRoomSignClient extends StudyRoomBaseClient {
      * 签到首页：当前签到信息、附近门店、可选套餐
      */
     @Get(url = "/mp/study/index")
-    StudyRoomApiResultDTO<StudyRoomIndexRespDTO> studyIndex(@Query("currentLng") Double currentLng,
-                                                            @Query("currentLat") Double currentLat, @Query("venueId") Integer venueId, @Query("bssid") String bssid,
-                                                            @Query("ssid") String ssid);
+    StudyRoomApiResultDTO<StudyRoomIndexRespDTO> studyIndex(@Query(value = "currentLng") Double currentLng,
+                                                            @Query(value = "currentLat") Double currentLat, @Query(value = "venueId") Integer venueId, @Query(value = "bssid") String bssid,
+                                                            @Query(value = "ssid") String ssid);
 
     /**
-     * 签到选座座位图
+     * 签到选座
+     * <p>
+     * 该接口有两种响应：普通用户返回座位图（{@code code=200}）；存在待签到预约的用户由上游直接完成签到，
+     * 返回 {@code code=SV0001} + 「预约座位XXX签到成功！」文案（{@code data=1}）。
+     * 两种形态由 {@link StudyRoomSignSeatListRespDTO} 统一承接。
      */
     @Post(url = "/mp/study/seat/list")
-    StudyRoomApiResultDTO<StudyRoomSignSeatMapRespDTO> studySeatList(@JSONBody StudyRoomSignSeatQueryReqDTO form);
+    StudyRoomApiResultDTO<StudyRoomSignSeatListRespDTO> studySeatList(@JSONBody StudyRoomSignSeatQueryReqDTO form);
 
     /**
      * 换座座位图
@@ -69,7 +70,7 @@ public interface StudyRoomSignClient extends StudyRoomBaseClient {
      * 是否可再签一个座位
      */
     @Get(url = "/mp/study/signAnother/check")
-    StudyRoomApiResultDTO<StudyRoomSignAnotherCheckRespDTO> studySignAnotherCheck(@Query("venueId") Integer venueId);
+    StudyRoomApiResultDTO<StudyRoomSignAnotherCheckRespDTO> studySignAnotherCheck(@Query(value = "venueId") Integer venueId);
 
     /**
      * 签退（扫码签退），返回结算结果

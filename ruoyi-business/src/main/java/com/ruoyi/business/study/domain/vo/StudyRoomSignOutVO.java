@@ -60,4 +60,9 @@ public class StudyRoomSignOutVO implements Serializable {
      * 实际签退时间
      */
     private String signOutTimeStr;
+
+    /**
+     * 签退提示文案（部分门店/套餐会返回自定义提示）
+     */
+    private String studyTipText;
 }

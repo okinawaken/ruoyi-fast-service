@@ -24,7 +24,7 @@ public class StudyRoomWxPayParamVO implements Serializable {
     /**
      * 微信支付 package 参数（上游字段名为 package，Java 关键字故重命名）
      */
-    @JsonProperty("package")
+    @JsonProperty(value = "package")
     private String packageValue;
 
     /**

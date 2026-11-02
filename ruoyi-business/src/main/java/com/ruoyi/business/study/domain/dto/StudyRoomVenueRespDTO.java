@@ -83,7 +83,7 @@ public class StudyRoomVenueRespDTO {
     /**
      * 是否限制最长学习时长
      */
-    @JsonProperty("timeLimit")
+    @JsonProperty(value = "timeLimit")
     private Boolean timeLimitFlag;
 
     /**

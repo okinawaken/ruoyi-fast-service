@@ -18,5 +18,5 @@ public class StudyRoomDouYinVerifyReqDTO {
     /**
      * 券码（必填）
      */
-    private String code;
+    private String receiptCode;
 }

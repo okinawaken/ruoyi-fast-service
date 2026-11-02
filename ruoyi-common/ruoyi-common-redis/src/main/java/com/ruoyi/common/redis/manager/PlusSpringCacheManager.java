@@ -137,6 +137,11 @@ public class PlusSpringCacheManager implements CacheManager {
         return this.createMapCache(name, config);
     }
 
+    @Override
+    public Collection<String> getCacheNames() {
+        return Collections.unmodifiableSet(configMap.keySet());
+    }
+
     private Cache createMap(String name, CacheConfig config) {
         RMap<Object, Object> map = RedisUtils.getClient().getMap(name);
 
@@ -166,11 +171,5 @@ public class PlusSpringCacheManager implements CacheManager {
         }
         return cache;
     }
-
-    @Override
-    public Collection<String> getCacheNames() {
-        return Collections.unmodifiableSet(configMap.keySet());
-    }
-
 
 }

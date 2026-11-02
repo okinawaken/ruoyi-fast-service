@@ -24,14 +24,6 @@ import java.io.File;
 
 /**
  * 用户域：登录、token、资料、头像（显式用户上下文）
- * <p>
- * 小程序用户相关接口：登录换 token、授权手机号、刷新 sessionKey、资料查询与修改、头像、注销。
- * <p>
- * 与 {@link StudyRoomUserClient} 的接口一致，但每个方法都显式传入系统用户 ID，
- * {@code StudyRoomAuthInterceptor} 会优先用它去取小程序 token，
- * 因此本客户端可以在定时任务等没有登录上下文的线程里调用。
- * <p>
- * 公共请求配置（baseURL / appid / token 拦截器 / 超时）见 {@link StudyRoomBaseClient}。
  *
  * @author Amadeus
  */
@@ -45,7 +37,7 @@ public interface StudyRoomUserV2Client extends StudyRoomBaseClient {
     @Deprecated
     @Post(url = "/mp/user/login")
     StudyRoomApiResultDTO<StudyRoomLoginRespDTO> login(
-        @JSONBody StudyRoomLoginReqDTO form, @Var(StudyRoomApiConstants.Variable.USER_ID) Long userId);
+        @JSONBody StudyRoomLoginReqDTO form, @Var(value = StudyRoomApiConstants.Variable.USER_ID) Long userId);
 
     /**
      * 授权手机号登录（拿 token）
@@ -55,7 +47,7 @@ public interface StudyRoomUserV2Client extends StudyRoomBaseClient {
     @Deprecated
     @Post(url = "/mp/user/authorize/bindMobile")
     StudyRoomApiResultDTO<StudyRoomLoginRespDTO> bindMobile(
-        @JSONBody StudyRoomBindMobileReqDTO form, @Var(StudyRoomApiConstants.Variable.USER_ID) Long userId);
+        @JSONBody StudyRoomBindMobileReqDTO form, @Var(value = StudyRoomApiConstants.Variable.USER_ID) Long userId);
 
     /**
      * 刷新 sessionKey
@@ -65,28 +57,28 @@ public interface StudyRoomUserV2Client extends StudyRoomBaseClient {
     @Deprecated
     @Post(url = "/mp/user/refresh/sessionKey")
     StudyRoomApiResultDTO<Void> refreshSessionKey(
-        @JSONBody StudyRoomRefreshSessionReqDTO form, @Var(StudyRoomApiConstants.Variable.USER_ID) Long userId);
+        @JSONBody StudyRoomRefreshSessionReqDTO form, @Var(value = StudyRoomApiConstants.Variable.USER_ID) Long userId);
 
     /**
      * 用户概览：头像、手机号、累计签到次数、累计学习时长
      */
     @Get(url = "/mp/user/index")
     StudyRoomApiResultDTO<StudyRoomUserIndexRespDTO> userIndex(
-        @Var(StudyRoomApiConstants.Variable.USER_ID) Long userId);
+        @Var(value = StudyRoomApiConstants.Variable.USER_ID) Long userId);
 
     /**
      * 用户详情
      */
     @Get(url = "/mp/user/detailInfo")
     StudyRoomApiResultDTO<StudyRoomUserDetailRespDTO> userDetail(
-        @Var(StudyRoomApiConstants.Variable.USER_ID) Long userId);
+        @Var(value = StudyRoomApiConstants.Variable.USER_ID) Long userId);
 
     /**
      * 欠费 / 当前签到状态
      */
     @Get(url = "/mp/user/info/fee")
     StudyRoomApiResultDTO<StudyRoomUserFeeRespDTO> userFee(
-        @Var(StudyRoomApiConstants.Variable.USER_ID) Long userId);
+        @Var(value = StudyRoomApiConstants.Variable.USER_ID) Long userId);
 
     /**
      * 修改资料
@@ -95,7 +87,7 @@ public interface StudyRoomUserV2Client extends StudyRoomBaseClient {
      */
     @Post(url = "/mp/user/updateInfo")
     StudyRoomApiResultDTO<Integer> updateUserInfo(
-        @JSONBody StudyRoomUpdateUserInfoReqDTO form, @Var(StudyRoomApiConstants.Variable.USER_ID) Long userId);
+        @JSONBody StudyRoomUpdateUserInfoReqDTO form, @Var(value = StudyRoomApiConstants.Variable.USER_ID) Long userId);
 
     /**
      * 更新授权头像（URL 形式）
@@ -104,20 +96,20 @@ public interface StudyRoomUserV2Client extends StudyRoomBaseClient {
      */
     @Post(url = "/mp/user/authorize/headImg")
     StudyRoomApiResultDTO<Void> authorizeHeadImg(
-        @JSONBody StudyRoomAuthorizeHeadImgReqDTO form, @Var(StudyRoomApiConstants.Variable.USER_ID) Long userId);
+        @JSONBody StudyRoomAuthorizeHeadImgReqDTO form, @Var(value = StudyRoomApiConstants.Variable.USER_ID) Long userId);
 
     /**
      * 上传授权头像（文件形式，multipart 字段名 {@code files}）
      */
     @Post(url = "/mp/user/authorize/headImg/upload", contentType = "multipart/form-data")
     StudyRoomApiResultDTO<StudyRoomFileRespDTO> uploadAuthorizeHeadImg(
-        @DataFile("files") File file, @Var(StudyRoomApiConstants.Variable.USER_ID) Long userId);
+        @DataFile(value = "files") File file, @Var(value = StudyRoomApiConstants.Variable.USER_ID) Long userId);
 
     /**
      * 解除授权（退出登录）
      */
     @Post(url = "/mp/user/authorize/cancel")
-    StudyRoomApiResultDTO<Void> cancelAuthorize(@Var(StudyRoomApiConstants.Variable.USER_ID) Long userId);
+    StudyRoomApiResultDTO<Void> cancelAuthorize(@Var(value = StudyRoomApiConstants.Variable.USER_ID) Long userId);
 
     /**
      * 签到记录列表（最近 N 条）
@@ -126,13 +118,13 @@ public interface StudyRoomUserV2Client extends StudyRoomBaseClient {
      */
     @Get(url = "/mp/user/userSign/list")
     StudyRoomApiResultDTO<StudyRoomUserSignListRespDTO> userSignList(
-        @Query("id") Long id, @Var(StudyRoomApiConstants.Variable.USER_ID) Long userId);
+        @Query(value = "id") Long id, @Var(value = StudyRoomApiConstants.Variable.USER_ID) Long userId);
 
     /**
      * 更早的签到记录（分页续拉，无入参）
      */
     @Get(url = "/mp/user/userSign/list/more")
     StudyRoomApiResultDTO<StudyRoomUserSignListRespDTO> userSignListMore(
-        @Var(StudyRoomApiConstants.Variable.USER_ID) Long userId);
+        @Var(value = StudyRoomApiConstants.Variable.USER_ID) Long userId);
 
 }

@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Amadeus
  */
 @Validated
-@RequiredArgsConstructor
 @RestController
-@RequestMapping("/business/study/auto-reserve/task/record")
+@RequiredArgsConstructor
+@RequestMapping(value = "/business/study/auto-reserve/task/record")
 public class StudyRoomAutoReserveTaskRecordController extends BaseController {
 
     private final StudyRoomAutoReserveTaskRecordService recordService;
@@ -31,8 +31,8 @@ public class StudyRoomAutoReserveTaskRecordController extends BaseController {
     /**
      * 执行历史分页
      */
-    @GetMapping("/{taskId}")
-    public TableDataInfo<StudyRoomAutoReserveTaskRecordVO> record(@PathVariable("taskId") Long taskId, PageQuery pageQuery) {
+    @GetMapping(value = "/{taskId}")
+    public TableDataInfo<StudyRoomAutoReserveTaskRecordVO> record(@PathVariable(value = "taskId") Long taskId, PageQuery pageQuery) {
         IPage<StudyRoomAutoReserveTaskRecordRespDTO> dtoPage = recordService.pageByTaskId(taskId, pageQuery);
         IPage<StudyRoomAutoReserveTaskRecordVO> voPage = dtoPage.convert(dto -> MapstructUtils.convert(dto, StudyRoomAutoReserveTaskRecordVO.class));
         return TableDataInfo.build(voPage);

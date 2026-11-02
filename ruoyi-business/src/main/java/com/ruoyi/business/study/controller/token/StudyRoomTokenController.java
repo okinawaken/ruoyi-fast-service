@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/business/study/token")
+@RequestMapping(value = "/business/study/token")
 public class StudyRoomTokenController extends BaseController {
 
     private final StudyRoomTokenService tokenService;

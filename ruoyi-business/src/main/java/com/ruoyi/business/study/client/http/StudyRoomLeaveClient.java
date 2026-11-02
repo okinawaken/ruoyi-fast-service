@@ -12,10 +12,6 @@ import com.ruoyi.business.study.domain.dto.StudyRoomUserLeaveEnterRespDTO;
 
 /**
  * 请假域：套餐请假
- * <p>
- * 用户套餐请假：进入请假页校验、确认请假、取消请假。
- * <p>
- * 公共请求配置（baseURL / appid / token 拦截器 / 超时）见 {@link StudyRoomBaseClient}。
  *
  * @author Amadeus
  */
@@ -25,7 +21,7 @@ public interface StudyRoomLeaveClient extends StudyRoomBaseClient {
      * 进入请假页（校验可请假套餐）
      */
     @Get(url = "/mp/user/userLeave/enterLeave")
-    StudyRoomApiResultDTO<StudyRoomUserLeaveEnterRespDTO> userLeaveEnter(@Query("userPackageId") Long userPackageId);
+    StudyRoomApiResultDTO<StudyRoomUserLeaveEnterRespDTO> userLeaveEnter(@Query(value = "userPackageId") Long userPackageId);
 
     /**
      * 确认请假

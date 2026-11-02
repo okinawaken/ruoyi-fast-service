@@ -5,6 +5,7 @@ import com.ruoyi.business.study.domain.bo.StudyRoomAutoReserveTaskConfigBO;
 import com.ruoyi.business.study.enums.StudyRoomAutoReserveTaskEnableStatusEnum;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
@@ -16,7 +17,8 @@ import java.time.LocalDate;
  * @author Amadeus
  */
 @Data
-@TableName("study_room_auto_reserve_task")
+@EqualsAndHashCode(callSuper = true)
+@TableName(value = "study_room_auto_reserve_task")
 public class StudyRoomAutoReserveTaskPO extends BaseEntity {
 
     /**

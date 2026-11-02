@@ -35,7 +35,8 @@ public class StudyRoomResponseInterceptor implements ForestInterceptor {
         }
         if (resultData instanceof StudyRoomApiResultDTO<?> result) {
             String code = result.getCode();
-            if (!Objects.equals(code, StudyRoomApiConstants.ApiCode.SUCCESS_CODE)) {
+            if (!Objects.equals(code, StudyRoomApiConstants.ApiCode.SUCCESS_CODE)
+                && !Objects.equals(code, StudyRoomApiConstants.ApiCode.BUSINESS_CODE)) {
                 throw new ServiceException(this.resolveErrorMessage(result), this.resolveErrorCode(code).getCode());
             }
         }
@@ -45,8 +46,7 @@ public class StudyRoomResponseInterceptor implements ForestInterceptor {
      * 根据上游业务码映射本地错误码
      */
     private StudyRoomApiErrorCodeEnum resolveErrorCode(String code) {
-        if (Objects.equals(StudyRoomApiConstants.ApiCode.CODE_UNAUTHORIZED, code)
-            || Objects.equals(StudyRoomApiConstants.ApiCode.CODE_NOT_LOGIN, code)) {
+        if (Objects.equals(StudyRoomApiConstants.ApiCode.CODE_UNAUTHORIZED, code)) {
             return StudyRoomApiErrorCodeEnum.TOKEN_INVALID;
         }
         if (Objects.equals(StudyRoomApiConstants.ApiCode.CODE_BLACK_USER, code)) {

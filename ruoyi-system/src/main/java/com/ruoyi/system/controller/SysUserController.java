@@ -1,19 +1,16 @@
 package com.ruoyi.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.dev33.satoken.secure.BCrypt;
-import cn.hutool.core.util.ArrayUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.utils.MapstructUtils;
-import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.log.annotation.Log;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.satoken.utils.LoginHelper;
 import com.ruoyi.common.web.core.BaseController;
-import com.ruoyi.system.domain.bo.SysUserBO;
+import com.ruoyi.system.domain.dto.SysUserDTO;
 import com.ruoyi.system.domain.vo.SysUserInfoVO;
 import com.ruoyi.system.domain.vo.SysUserVO;
 import com.ruoyi.system.service.SysUserService;
@@ -28,15 +25,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
  * 用户信息
  */
-@Validated
-@RequiredArgsConstructor
 @RestController
-@RequestMapping("/system/user")
+@RequiredArgsConstructor
+@RequestMapping(value = "/system/user")
 public class SysUserController extends BaseController {
 
     private final SysUserService userService;
@@ -44,101 +41,99 @@ public class SysUserController extends BaseController {
     /**
      * 获取用户列表
      */
-    @SaCheckPermission("system:user:list")
-    @GetMapping("/list")
-    public TableDataInfo<SysUserVO> list(SysUserBO user, PageQuery pageQuery) {
-        IPage<SysUserBO> page = userService.selectPageUserList(user, pageQuery);
-        IPage<SysUserVO> voPage = page.convert(bo -> MapstructUtils.convert(bo, SysUserVO.class));
+    @SaCheckPermission(value = "system:user:list")
+    @GetMapping(value = "/list")
+    public TableDataInfo<SysUserVO> list(SysUserDTO user, PageQuery pageQuery) {
+        IPage<SysUserDTO> sysUserDTOIPage = userService.selectPageUserList(user, pageQuery);
+        IPage<SysUserVO> voPage = sysUserDTOIPage.convert(dto -> MapstructUtils.convert(dto, SysUserVO.class));
         return TableDataInfo.build(voPage);
     }
 
     /**
      * 根据用户编号获取详细信息
-     *
-     * @param userId 用户ID
      */
-    @SaCheckPermission("system:user:query")
+    @SaCheckPermission(value = "system:user:query")
     @GetMapping(value = {"/", "/{userId}"})
     public R<SysUserInfoVO> getInfo(@PathVariable(value = "userId", required = false) Long userId) {
-        SysUserBO user = Objects.isNull(userId) ? new SysUserBO() : userService.selectUserById(userId);
-        SysUserVO userVo = MapstructUtils.convert(user, SysUserVO.class);
-        SysUserInfoVO vo = new SysUserInfoVO();
-        vo.setUser(userVo);
+        SysUserDTO sysUserDTO = new SysUserDTO();
+        if (Objects.nonNull(userId)) {
+            sysUserDTO = userService.selectUserById(userId);
+        }
+        SysUserVO sysUserVO = MapstructUtils.convert(sysUserDTO, SysUserVO.class);
+        SysUserInfoVO vo = new SysUserInfoVO(sysUserVO);
         return R.ok(vo);
     }
 
     /**
      * 新增用户
      */
-    @SaCheckPermission("system:user:add")
+    @SaCheckPermission(value = "system:user:add")
     @Log(title = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public R<Void> add(@Validated @RequestBody SysUserBO user) {
-        if (!userService.checkUserNameUnique(user)) {
+    public R<Void> add(@Validated @RequestBody SysUserDTO user) {
+        boolean checkUserNameUnique = userService.checkUserNameUnique(user);
+        if (!checkUserNameUnique) {
             return R.fail("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
-        } else if (StringUtils.isNotEmpty(user.getPhoneNumber()) && !userService.checkPhoneUnique(user)) {
-            return R.fail("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
         }
-        user.setPassword(BCrypt.hashpw(user.getPassword()));
-        return this.toAjax(userService.insertUser(user));
+        int result = userService.insertUser(user);
+        return this.toAjax(result);
     }
 
     /**
      * 修改用户
      */
-    @SaCheckPermission("system:user:edit")
+    @SaCheckPermission(value = "system:user:edit")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public R<Void> edit(@Validated @RequestBody SysUserBO user) {
-        userService.checkUserAllowed(user.getId());
-        userService.checkUserDataScope(user.getId());
-        if (!userService.checkUserNameUnique(user)) {
-            return R.fail("修改用户'" + user.getUserName() + "'失败，登录账号已存在");
-        } else if (StringUtils.isNotEmpty(user.getPhoneNumber()) && !userService.checkPhoneUnique(user)) {
-            return R.fail("修改用户'" + user.getUserName() + "'失败，手机号码已存在");
+    public R<Void> edit(@Validated @RequestBody SysUserDTO user) {
+        if (Objects.isNull(user.getId())) {
+            return R.fail("用户ID不能为空");
         }
-        return this.toAjax(userService.updateUser(user));
+        userService.checkUserAllowed(user.getId());
+        boolean checkUserNameUnique = userService.checkUserNameUnique(user);
+        if (!checkUserNameUnique) {
+            return R.fail("修改用户'" + user.getUserName() + "'失败，登录账号已存在");
+        }
+        int result = userService.updateUser(user);
+        return this.toAjax(result);
     }
 
     /**
      * 删除用户
-     *
-     * @param userIds 用户ID串
      */
-    @SaCheckPermission("system:user:remove")
+    @SaCheckPermission(value = "system:user:remove")
     @Log(title = "用户管理", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{userIds}")
-    public R<Void> remove(@PathVariable Long[] userIds) {
-        if (ArrayUtil.contains(userIds, LoginHelper.getUserId())) {
+    @DeleteMapping(value = "/{userIds}")
+    public R<Void> remove(@PathVariable List<Long> userIds) {
+        if (userIds.contains(LoginHelper.getUserId())) {
             return R.fail("当前用户不能删除");
         }
-        return this.toAjax(userService.deleteUserByIds(userIds));
+        int result = userService.deleteUserByIds(userIds);
+        return this.toAjax(result);
     }
 
     /**
      * 重置密码
      */
-    @SaCheckPermission("system:user:resetPwd")
+    @SaCheckPermission(value = "system:user:resetPwd")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
-    @PutMapping("/resetPwd")
-    public R<Void> resetPwd(@RequestBody SysUserBO user) {
+    @PutMapping(value = "/resetPwd")
+    public R<Void> resetPwd(@RequestBody SysUserDTO user) {
         userService.checkUserAllowed(user.getId());
-        userService.checkUserDataScope(user.getId());
-        String hashedPassword = BCrypt.hashpw(user.getPassword());
-        user.setPassword(hashedPassword);
-        return this.toAjax(userService.resetUserPwd(user.getId(), user.getPassword()));
+        int result = userService.resetUserPwd(user.getId(), user.getPassword());
+        return this.toAjax(result);
     }
 
     /**
      * 状态修改
      */
-    @SaCheckPermission("system:user:edit")
+    @SaCheckPermission(value = "system:user:edit")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
-    @PutMapping("/changeStatus")
-    public R<Void> changeStatus(@RequestBody SysUserBO user) {
+    @PutMapping(value = "/changeStatus")
+    public R<Void> changeStatus(@RequestBody SysUserDTO user) {
         userService.checkUserAllowed(user.getId());
-        userService.checkUserDataScope(user.getId());
-        return this.toAjax(userService.updateUserStatus(user.getId(), user.getStatus()));
+        int result = userService.updateUserStatus(user.getId(), user.getStatus());
+        return this.toAjax(result);
     }
 
 }

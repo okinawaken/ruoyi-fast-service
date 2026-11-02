@@ -3,6 +3,7 @@ package com.ruoyi.business.study.domain.bo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ruoyi.business.study.domain.dto.StudyRoomAutoReserveSettingReqDTO;
+import com.ruoyi.business.study.enums.StudyRoomAutoSignInEnableEnum;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
@@ -26,4 +27,11 @@ public class StudyRoomAutoReserveUserConfigBO {
      */
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime releaseTime;
+
+    /**
+     * 是否启用自动签到，见 {@link StudyRoomAutoSignInEnableEnum}
+     * <p>
+     * 默认关闭，避免老用户被动开启。
+     */
+    private Integer signInEnable;
 }

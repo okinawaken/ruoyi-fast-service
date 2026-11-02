@@ -11,7 +11,7 @@ import com.ruoyi.common.core.utils.SpringUtils;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.redis.utils.CacheUtils;
-import com.ruoyi.system.domain.bo.SysConfigBO;
+import com.ruoyi.system.domain.dto.SysConfigDTO;
 import com.ruoyi.system.domain.entity.SysConfigPO;
 import com.ruoyi.system.mapper.SysConfigMapper;
 import com.ruoyi.system.service.SysConfigService;
@@ -21,7 +21,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,102 +35,95 @@ public class SysConfigServiceImpl implements SysConfigService {
     private final SysConfigMapper configMapper;
 
     @Override
-    public IPage<SysConfigBO> selectPageConfigList(SysConfigBO config, PageQuery pageQuery) {
+    public IPage<SysConfigDTO> selectPageConfigList(SysConfigDTO config, PageQuery pageQuery) {
         LambdaQueryWrapper<SysConfigPO> lqw = this.buildQueryWrapper(config);
-        return configMapper.selectVoPage(pageQuery.build(), lqw, SysConfigBO.class);
+        IPage<SysConfigPO> poPage = configMapper.selectPage(pageQuery.build(), lqw);
+        return poPage.convert(po -> MapstructUtils.convert(po, SysConfigDTO.class));
     }
 
     @Override
-    public SysConfigBO selectConfigById(Long configId) {
-        return configMapper.selectVoById(configId, SysConfigBO.class);
+    public SysConfigDTO selectConfigById(Long configId) {
+        SysConfigPO config = configMapper.selectById(configId);
+        return MapstructUtils.convert(config, SysConfigDTO.class);
     }
 
     @Override
     @Cacheable(cacheNames = CacheNames.SYS_CONFIG, key = "#configKey")
     public String selectConfigByKey(String configKey) {
-        SysConfigPO retConfig = configMapper.selectOne(new LambdaQueryWrapper<SysConfigPO>()
-            .eq(SysConfigPO::getConfigKey, configKey));
-        if (Objects.nonNull(retConfig)) {
-            return retConfig.getConfigValue();
+        LambdaQueryWrapper<SysConfigPO> lqw = Wrappers.lambdaQuery();
+        lqw.eq(SysConfigPO::getConfigKey, configKey);
+        SysConfigPO sysConfigPO = configMapper.selectOne(lqw);
+        if (Objects.nonNull(sysConfigPO)) {
+            return sysConfigPO.getConfigValue();
         }
         return StringUtils.EMPTY;
     }
 
     @Override
-    public List<SysConfigBO> selectConfigList(SysConfigBO config) {
+    public List<SysConfigDTO> selectConfigList(SysConfigDTO config) {
         LambdaQueryWrapper<SysConfigPO> lqw = this.buildQueryWrapper(config);
-        return configMapper.selectVoList(lqw, SysConfigBO.class);
-    }
-
-    private LambdaQueryWrapper<SysConfigPO> buildQueryWrapper(SysConfigBO bo) {
-        Map<String, Object> params = bo.getParams();
-        LambdaQueryWrapper<SysConfigPO> lqw = Wrappers.lambdaQuery();
-        lqw.like(StringUtils.isNotBlank(bo.getConfigName()), SysConfigPO::getConfigName, bo.getConfigName());
-        lqw.eq(Objects.nonNull(bo.getConfigType()), SysConfigPO::getConfigType, bo.getConfigType());
-        lqw.like(StringUtils.isNotBlank(bo.getConfigKey()), SysConfigPO::getConfigKey, bo.getConfigKey());
-        lqw.between(Objects.nonNull(params.get("beginTime")) && Objects.nonNull(params.get("endTime")),
-            SysConfigPO::getCreateTime, params.get("beginTime"), params.get("endTime"));
-        lqw.orderByAsc(SysConfigPO::getId);
-        return lqw;
+        List<SysConfigPO> poList = configMapper.selectList(lqw);
+        return MapstructUtils.convert(poList, SysConfigDTO.class);
     }
 
     @Override
-    @CachePut(cacheNames = CacheNames.SYS_CONFIG, key = "#bo.configKey")
+    @CachePut(cacheNames = CacheNames.SYS_CONFIG, key = "#dto.configKey")
     @Transactional(rollbackFor = Exception.class)
-    public String insertConfig(SysConfigBO bo) {
-        SysConfigPO config = MapstructUtils.convert(bo, SysConfigPO.class);
-        int row = configMapper.insert(config);
-        if (row > 0) {
-            return config.getConfigValue();
+    public String insertConfig(SysConfigDTO dto) {
+        SysConfigPO config = MapstructUtils.convert(dto, SysConfigPO.class);
+        if (configMapper.insert(config) <= 0) {
+            throw new ServiceException("操作失败");
         }
-        throw new ServiceException("操作失败");
+        return config.getConfigValue();
     }
 
     @Override
-    @CachePut(cacheNames = CacheNames.SYS_CONFIG, key = "#bo.configKey")
+    @CachePut(cacheNames = CacheNames.SYS_CONFIG, key = "#dto.configKey")
     @Transactional(rollbackFor = Exception.class)
-    public String updateConfig(SysConfigBO bo) {
-        int row = 0;
-        SysConfigPO config = MapstructUtils.convert(bo, SysConfigPO.class);
+    public String updateConfig(SysConfigDTO dto) {
+        SysConfigPO config = MapstructUtils.convert(dto, SysConfigPO.class);
+        int row;
         if (Objects.nonNull(config.getId())) {
             SysConfigPO oldConfig = configMapper.selectById(config.getId());
+            if (Objects.isNull(oldConfig)) {
+                throw new ServiceException("参数配置不存在");
+            }
             if (!Objects.equals(oldConfig.getConfigKey(), config.getConfigKey())) {
                 CacheUtils.evict(CacheNames.SYS_CONFIG, oldConfig.getConfigKey());
             }
             row = configMapper.updateById(config);
         } else {
-            row = configMapper.update(config, new LambdaQueryWrapper<SysConfigPO>()
-                .eq(SysConfigPO::getConfigKey, config.getConfigKey()));
+            LambdaQueryWrapper<SysConfigPO> lqw = Wrappers.lambdaQuery();
+            lqw.eq(SysConfigPO::getConfigKey, config.getConfigKey());
+            row = configMapper.update(config, lqw);
         }
-        if (row > 0) {
-            return config.getConfigValue();
+        if (row <= 0) {
+            throw new ServiceException("操作失败");
         }
-        throw new ServiceException("操作失败");
+        return config.getConfigValue();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteConfigByIds(Long[] configIds) {
-        for (Long configId : configIds) {
-            SysConfigPO config = configMapper.selectById(configId);
-            if (Objects.equals(UserConstants.YES, config.getConfigType())) {
+    public void deleteConfigByIds(List<Long> configIds) {
+        if (configIds.isEmpty()) {
+            return;
+        }
+        List<SysConfigPO> configs = configMapper.selectByIds(configIds);
+        for (SysConfigPO config : configs) {
+            if (Objects.equals(UserConstants.YES, config.getIsSystem())) {
                 throw new ServiceException(StringUtils.format("内置参数【{}】不能删除 ", config.getConfigKey()));
             }
-            CacheUtils.evict(CacheNames.SYS_CONFIG, config.getConfigKey());
         }
-        configMapper.deleteBatchIds(Arrays.asList(configIds));
+        configs.forEach(config -> CacheUtils.evict(CacheNames.SYS_CONFIG, config.getConfigKey()));
+        configMapper.deleteByIds(configIds);
     }
 
     @Override
     public void loadConfigCache() {
-        List<SysConfigBO> configsList = this.selectConfigList(new SysConfigBO());
+        List<SysConfigDTO> configsList = this.selectConfigList(new SysConfigDTO());
         configsList.forEach(config ->
             CacheUtils.put(CacheNames.SYS_CONFIG, config.getConfigKey(), config.getConfigValue()));
-    }
-
-    @Override
-    public void clearConfigCache() {
-        CacheUtils.clear(CacheNames.SYS_CONFIG);
     }
 
     @Override
@@ -141,18 +133,32 @@ public class SysConfigServiceImpl implements SysConfigService {
     }
 
     @Override
-    public boolean checkConfigKeyUnique(SysConfigBO config) {
-        long configId = Objects.isNull(config.getId()) ? -1L : config.getId();
-        SysConfigPO info = configMapper.selectOne(new LambdaQueryWrapper<SysConfigPO>().eq(SysConfigPO::getConfigKey, config.getConfigKey()));
-        if (Objects.nonNull(info) && !Objects.equals(info.getId(), configId)) {
-            return false;
-        }
-        return true;
+    public boolean checkConfigKeyUnique(SysConfigDTO config) {
+        LambdaQueryWrapper<SysConfigPO> lqw = Wrappers.lambdaQuery();
+        lqw.eq(SysConfigPO::getConfigKey, config.getConfigKey())
+            .ne(Objects.nonNull(config.getId()), SysConfigPO::getId, config.getId());
+        return !configMapper.exists(lqw);
     }
 
     @Override
     public String getConfigValue(String configKey) {
         return SpringUtils.getAopProxy(this).selectConfigByKey(configKey);
+    }
+
+    private LambdaQueryWrapper<SysConfigPO> buildQueryWrapper(SysConfigDTO dto) {
+        Map<String, Object> params = dto.getParams();
+        LambdaQueryWrapper<SysConfigPO> lqw = Wrappers.lambdaQuery();
+        lqw.like(StringUtils.isNotBlank(dto.getConfigName()), SysConfigPO::getConfigName, dto.getConfigName());
+        lqw.eq(Objects.nonNull(dto.getIsSystem()), SysConfigPO::getIsSystem, dto.getIsSystem());
+        lqw.like(StringUtils.isNotBlank(dto.getConfigKey()), SysConfigPO::getConfigKey, dto.getConfigKey());
+        lqw.between(Objects.nonNull(params.get("beginTime")) && Objects.nonNull(params.get("endTime")),
+            SysConfigPO::getCreateTime, params.get("beginTime"), params.get("endTime"));
+        lqw.orderByAsc(SysConfigPO::getId);
+        return lqw;
+    }
+
+    private void clearConfigCache() {
+        CacheUtils.clear(CacheNames.SYS_CONFIG);
     }
 
 }

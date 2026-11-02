@@ -2,13 +2,13 @@ package com.ruoyi.common.core.utils;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.ObjectUtil;
 import io.github.linpeilie.Converter;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Mapstruct 工具类
@@ -26,10 +26,10 @@ public class MapstructUtils {
      * @return desc
      */
     public static <T, V> V convert(T source, Class<V> desc) {
-        if (ObjectUtil.isNull(source)) {
+        if (Objects.isNull(source)) {
             return null;
         }
-        if (ObjectUtil.isNull(desc)) {
+        if (Objects.isNull(desc)) {
             return null;
         }
         return CONVERTER.convert(source, desc);
@@ -43,10 +43,10 @@ public class MapstructUtils {
      * @return desc
      */
     public static <T, V> V convert(T source, V desc) {
-        if (ObjectUtil.isNull(source)) {
+        if (Objects.isNull(source)) {
             return null;
         }
-        if (ObjectUtil.isNull(desc)) {
+        if (Objects.isNull(desc)) {
             return null;
         }
         return CONVERTER.convert(source, desc);
@@ -60,7 +60,7 @@ public class MapstructUtils {
      * @return desc
      */
     public static <T, V> List<V> convert(List<T> sourceList, Class<V> desc) {
-        if (ObjectUtil.isNull(sourceList)) {
+        if (Objects.isNull(sourceList)) {
             return null;
         }
         if (CollUtil.isEmpty(sourceList)) {
@@ -80,11 +80,10 @@ public class MapstructUtils {
         if (MapUtil.isEmpty(map)) {
             return null;
         }
-        if (ObjectUtil.isNull(beanClass)) {
+        if (Objects.isNull(beanClass)) {
             return null;
         }
         return CONVERTER.convert(map, beanClass);
     }
 
 }
-

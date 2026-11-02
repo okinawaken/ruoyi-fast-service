@@ -68,7 +68,7 @@ public class StudyRoomConfigRespDTO {
     /**
      * 储物柜入口开关
      */
-    @JsonProperty("cabinetPlusShow")
+    @JsonProperty(value = "cabinetPlusShow")
     private Boolean cabinetPlusShowFlag;
 
     /**

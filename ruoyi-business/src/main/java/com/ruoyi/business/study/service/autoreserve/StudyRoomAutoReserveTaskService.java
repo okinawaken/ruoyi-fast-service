@@ -63,5 +63,5 @@ public interface StudyRoomAutoReserveTaskService {
     /**
      * 条件推进放号基线日期
      */
-    boolean advanceLastMaxReserveDate(Long taskId, LocalDate targetDate);
+    void advanceLastMaxReserveDate(Long taskId, LocalDate targetDate);
 }

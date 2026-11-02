@@ -185,7 +185,7 @@ public class StudyRoomIndexRespDTO {
     /**
      * 是否展示最长学习时长
      */
-    @JsonProperty("showMaxStudyTime")
+    @JsonProperty(value = "showMaxStudyTime")
     private Boolean showMaxStudyTimeFlag;
 
     /**

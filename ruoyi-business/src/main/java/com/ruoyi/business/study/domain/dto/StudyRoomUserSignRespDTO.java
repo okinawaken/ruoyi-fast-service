@@ -41,6 +41,11 @@ public class StudyRoomUserSignRespDTO {
     private StudyRoomVenueSimpleRespDTO venue;
 
     /**
+     * 门店ID（部分接口直接返回，未返回时可由 venue.id 派生）
+     */
+    private Integer venueId;
+
+    /**
      * 签到时间；在座信息里是 yyyy-MM-dd HH:mm:ss，历史记录列表里是 HH:mm
      */
     private String signInTimeStr;

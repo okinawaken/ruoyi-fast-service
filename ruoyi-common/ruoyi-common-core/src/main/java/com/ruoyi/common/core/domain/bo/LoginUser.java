@@ -26,24 +26,9 @@ public class LoginUser implements Serializable {
     private Long userId;
 
     /**
-     * 部门ID
-     */
-    private Long deptId;
-
-    /**
-     * 部门名
-     */
-    private String deptName;
-
-    /**
      * 用户唯一标识
      */
     private String token;
-
-    /**
-     * 用户类型
-     */
-    private String userType;
 
     /**
      * 登录时间
@@ -103,16 +88,13 @@ public class LoginUser implements Serializable {
     /**
      * 获取登录id
      *
-     * @return 用户类型与用户编号组成的登录标识
+     * @return 用户编号组成的登录标识
      */
     public String getLoginId() {
-        if (Objects.isNull(userType)) {
-            throw new IllegalArgumentException("用户类型不能为空");
-        }
         if (Objects.isNull(userId)) {
             throw new IllegalArgumentException("用户ID不能为空");
         }
-        return userType + "_" + userId;
+        return userId.toString();
     }
 
 }

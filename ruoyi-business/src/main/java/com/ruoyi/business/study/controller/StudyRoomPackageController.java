@@ -46,7 +46,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/business/study/package")
+@RequestMapping(value = "/business/study/package")
 public class StudyRoomPackageController extends BaseController {
 
     private final StudyRoomPackageClient packageClient;
@@ -54,7 +54,7 @@ public class StudyRoomPackageController extends BaseController {
     /**
      * 套餐列表（旧版，按区域分组）
      */
-    @GetMapping("/list")
+    @GetMapping(value = "/list")
     public R<StudyRoomBuyPackageListVO> buyPackageList() {
         StudyRoomBuyPackageListRespDTO dto = packageClient.buyPackageList().getData();
         StudyRoomBuyPackageListVO vo = MapstructUtils.convert(dto, StudyRoomBuyPackageListVO.class);
@@ -64,7 +64,7 @@ public class StudyRoomPackageController extends BaseController {
     /**
      * 套餐列表（v2，按门店/区域/类型筛选）
      */
-    @PostMapping("/v2/list")
+    @PostMapping(value = "/v2/list")
     public R<StudyRoomBuyV2PackageListVO> buyV2PackageList(@RequestBody StudyRoomBuyV2PackageListReqDTO form) {
         StudyRoomBuyV2PackageListRespDTO dto = packageClient.buyV2PackageList(form).getData();
         StudyRoomBuyV2PackageListVO vo = MapstructUtils.convert(dto, StudyRoomBuyV2PackageListVO.class);
@@ -74,7 +74,7 @@ public class StudyRoomPackageController extends BaseController {
     /**
      * 套餐筛选项（门店、类型、标签）
      */
-    @GetMapping("/v2/opt-list")
+    @GetMapping(value = "/v2/opt-list")
     public R<StudyRoomBuyV2PackageOptVO> buyV2PackageOptList(
         @RequestParam(name = "currentLng", required = false) Double currentLng,
         @RequestParam(name = "currentLat", required = false) Double currentLat) {
@@ -86,8 +86,8 @@ public class StudyRoomPackageController extends BaseController {
     /**
      * 套餐标签 / 座位区域筛选项
      */
-    @GetMapping("/v2/label/select-list")
-    public R<StudyRoomBuyV2PackageLabelVO> buyV2PackageLabelList(@RequestParam("venueId") Integer venueId) {
+    @GetMapping(value = "/v2/label/select-list")
+    public R<StudyRoomBuyV2PackageLabelVO> buyV2PackageLabelList(@RequestParam(value = "venueId") Integer venueId) {
         StudyRoomBuyV2PackageLabelRespDTO dto = packageClient.buyV2PackageLabelList(venueId).getData();
         StudyRoomBuyV2PackageLabelVO vo = MapstructUtils.convert(dto, StudyRoomBuyV2PackageLabelVO.class);
         return R.ok(vo);
@@ -96,8 +96,8 @@ public class StudyRoomPackageController extends BaseController {
     /**
      * 套餐详情（v2）
      */
-    @GetMapping("/v2/detail/{packageId}")
-    public R<StudyRoomBuyV2PackageDetailVO> buyV2PackageDetail(@PathVariable("packageId") Long packageId) {
+    @GetMapping(value = "/v2/detail/{packageId}")
+    public R<StudyRoomBuyV2PackageDetailVO> buyV2PackageDetail(@PathVariable(value = "packageId") Long packageId) {
         StudyRoomBuyV2PackageDetailRespDTO dto = packageClient.buyV2PackageDetail(packageId).getData();
         StudyRoomBuyV2PackageDetailVO vo = MapstructUtils.convert(dto, StudyRoomBuyV2PackageDetailVO.class);
         return R.ok(vo);
@@ -106,7 +106,7 @@ public class StudyRoomPackageController extends BaseController {
     /**
      * 确认下单（旧版）
      */
-    @PostMapping("/confirm")
+    @PostMapping(value = "/confirm")
     public R<StudyRoomBuyOrderVO> buyPackageConfirm(@RequestBody StudyRoomBuyPackageConfirmReqDTO form) {
         StudyRoomBuyOrderRespDTO dto = packageClient.buyPackageConfirm(form).getData();
         StudyRoomBuyOrderVO vo = MapstructUtils.convert(dto, StudyRoomBuyOrderVO.class);
@@ -116,7 +116,7 @@ public class StudyRoomPackageController extends BaseController {
     /**
      * 确认下单（v2）
      */
-    @PostMapping("/v2/confirm")
+    @PostMapping(value = "/v2/confirm")
     public R<StudyRoomBuyOrderVO> buyV2PackageConfirm(@RequestBody StudyRoomBuyV2PackageConfirmReqDTO form) {
         StudyRoomBuyOrderRespDTO dto = packageClient.buyV2PackageConfirm(form).getData();
         StudyRoomBuyOrderVO vo = MapstructUtils.convert(dto, StudyRoomBuyOrderVO.class);
@@ -126,7 +126,7 @@ public class StudyRoomPackageController extends BaseController {
     /**
      * 微信支付下单（返回小程序 wx.requestPayment 所需参数）
      */
-    @PostMapping("/pay-order")
+    @PostMapping(value = "/pay-order")
     public R<StudyRoomWxPayParamVO> buyPackagePayOrder(@RequestBody StudyRoomBuyPayOrderReqDTO form) {
         StudyRoomWxPayParamRespDTO dto = packageClient.buyPackagePayOrder(form).getData();
         StudyRoomWxPayParamVO vo = MapstructUtils.convert(dto, StudyRoomWxPayParamVO.class);
@@ -136,7 +136,7 @@ public class StudyRoomPackageController extends BaseController {
     /**
      * 我的订单
      */
-    @GetMapping("/user/order/list")
+    @GetMapping(value = "/user/order/list")
     public R<StudyRoomUserOrderListVO> userOrderList() {
         StudyRoomUserOrderListRespDTO dto = packageClient.userOrderList().getData();
         StudyRoomUserOrderListVO vo = MapstructUtils.convert(dto, StudyRoomUserOrderListVO.class);
@@ -146,7 +146,7 @@ public class StudyRoomPackageController extends BaseController {
     /**
      * 我的套餐
      */
-    @GetMapping("/user/package/list")
+    @GetMapping(value = "/user/package/list")
     public R<StudyRoomUserPackageListVO> userPackageList() {
         StudyRoomUserPackageListRespDTO dto = packageClient.userPackageList().getData();
         StudyRoomUserPackageListVO vo = MapstructUtils.convert(dto, StudyRoomUserPackageListVO.class);
@@ -156,8 +156,8 @@ public class StudyRoomPackageController extends BaseController {
     /**
      * 微信支付状态查询（按支付单 ID）
      */
-    @PostMapping("/wx/query/status/{payId}")
-    public R<StudyRoomWxPayQueryVO> wxPayQueryStatus(@PathVariable("payId") Long payId) {
+    @PostMapping(value = "/wx/query/status/{payId}")
+    public R<StudyRoomWxPayQueryVO> wxPayQueryStatus(@PathVariable(value = "payId") Long payId) {
         StudyRoomWxPayQueryRespDTO dto = packageClient.wxPayQueryStatus(payId).getData();
         StudyRoomWxPayQueryVO vo = MapstructUtils.convert(dto, StudyRoomWxPayQueryVO.class);
         return R.ok(vo);

@@ -16,16 +16,6 @@ public interface UserConstants {
     String ROLE_DISABLE = "0";
 
     /**
-     * 部门正常状态
-     */
-    String DEPT_NORMAL = "1";
-
-    /**
-     * 部门停用状态
-     */
-    String DEPT_DISABLE = "0";
-
-    /**
      * 岗位正常状态
      */
     String POST_NORMAL = "1";

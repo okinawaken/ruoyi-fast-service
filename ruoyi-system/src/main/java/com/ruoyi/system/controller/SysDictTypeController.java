@@ -10,7 +10,7 @@ import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.web.core.BaseController;
-import com.ruoyi.system.domain.bo.SysDictTypeBO;
+import com.ruoyi.system.domain.dto.SysDictTypeDTO;
 import com.ruoyi.system.domain.vo.SysDictTypeVO;
 import com.ruoyi.system.service.SysDictTypeService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,10 +30,9 @@ import java.util.List;
 /**
  * 数据字典信息
  */
-@Validated
-@RequiredArgsConstructor
 @RestController
-@RequestMapping("/system/dict/type")
+@RequiredArgsConstructor
+@RequestMapping(value = "/system/dict/type")
 public class SysDictTypeController extends BaseController {
 
     private final SysDictTypeService dictTypeService;
@@ -41,11 +40,11 @@ public class SysDictTypeController extends BaseController {
     /**
      * 查询字典类型列表
      */
-    @SaCheckPermission("system:dict:list")
-    @GetMapping("/list")
-    public TableDataInfo<SysDictTypeVO> list(SysDictTypeBO dictType, PageQuery pageQuery) {
-        IPage<SysDictTypeBO> page = dictTypeService.selectPageDictTypeList(dictType, pageQuery);
-        IPage<SysDictTypeVO> voPage = page.convert(bo -> MapstructUtils.convert(bo, SysDictTypeVO.class));
+    @SaCheckPermission(value = "system:dict:list")
+    @GetMapping(value = "/list")
+    public TableDataInfo<SysDictTypeVO> list(SysDictTypeDTO dictType, PageQuery pageQuery) {
+        IPage<SysDictTypeDTO> page = dictTypeService.selectPageDictTypeList(dictType, pageQuery);
+        IPage<SysDictTypeVO> voPage = page.convert(dto -> MapstructUtils.convert(dto, SysDictTypeVO.class));
         return TableDataInfo.build(voPage);
     }
 
@@ -53,11 +52,11 @@ public class SysDictTypeController extends BaseController {
      * 导出字典类型列表
      */
     @Log(title = "字典类型", businessType = BusinessType.EXPORT)
-    @SaCheckPermission("system:dict:export")
-    @PostMapping("/export")
-    public void export(SysDictTypeBO dictType, HttpServletResponse response) {
-        List<SysDictTypeBO> list = dictTypeService.selectDictTypeList(dictType);
-        List<SysDictTypeVO> voList = MapstructUtils.convert(list, SysDictTypeVO.class);
+    @SaCheckPermission(value = "system:dict:export")
+    @PostMapping(value = "/export")
+    public void export(SysDictTypeDTO dictType, HttpServletResponse response) {
+        List<SysDictTypeDTO> dtoList = dictTypeService.selectDictTypeList(dictType);
+        List<SysDictTypeVO> voList = MapstructUtils.convert(dtoList, SysDictTypeVO.class);
         ExcelUtil.exportExcel(voList, "字典类型", SysDictTypeVO.class, response);
     }
 
@@ -66,21 +65,23 @@ public class SysDictTypeController extends BaseController {
      *
      * @param dictId 字典ID
      */
-    @SaCheckPermission("system:dict:query")
+    @SaCheckPermission(value = "system:dict:query")
     @GetMapping(value = "/{dictId}")
     public R<SysDictTypeVO> getInfo(@PathVariable Long dictId) {
-        SysDictTypeVO vo = MapstructUtils.convert(dictTypeService.selectDictTypeById(dictId), SysDictTypeVO.class);
+        SysDictTypeDTO dto = dictTypeService.selectDictTypeById(dictId);
+        SysDictTypeVO vo = MapstructUtils.convert(dto, SysDictTypeVO.class);
         return R.ok(vo);
     }
 
     /**
      * 新增字典类型
      */
-    @SaCheckPermission("system:dict:add")
+    @SaCheckPermission(value = "system:dict:add")
     @Log(title = "字典类型", businessType = BusinessType.INSERT)
     @PostMapping
-    public R<Void> add(@Validated @RequestBody SysDictTypeBO dictType) {
-        if (!dictTypeService.checkDictTypeUnique(dictType)) {
+    public R<Void> add(@Validated @RequestBody SysDictTypeDTO dictType) {
+        boolean checkDictTypeUnique = dictTypeService.checkDictTypeUnique(dictType);
+        if (!checkDictTypeUnique) {
             return R.fail("新增字典'" + dictType.getDictName() + "'失败，字典类型已存在");
         }
         dictTypeService.insertDictType(dictType);
@@ -90,11 +91,12 @@ public class SysDictTypeController extends BaseController {
     /**
      * 修改字典类型
      */
-    @SaCheckPermission("system:dict:edit")
+    @SaCheckPermission(value = "system:dict:edit")
     @Log(title = "字典类型", businessType = BusinessType.UPDATE)
     @PutMapping
-    public R<Void> edit(@Validated @RequestBody SysDictTypeBO dictType) {
-        if (!dictTypeService.checkDictTypeUnique(dictType)) {
+    public R<Void> edit(@Validated @RequestBody SysDictTypeDTO dictType) {
+        boolean checkDictTypeUnique = dictTypeService.checkDictTypeUnique(dictType);
+        if (!checkDictTypeUnique) {
             return R.fail("修改字典'" + dictType.getDictName() + "'失败，字典类型已存在");
         }
         dictTypeService.updateDictType(dictType);
@@ -106,9 +108,9 @@ public class SysDictTypeController extends BaseController {
      *
      * @param dictIds 字典ID串
      */
-    @SaCheckPermission("system:dict:remove")
+    @SaCheckPermission(value = "system:dict:remove")
     @Log(title = "字典类型", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{dictIds}")
+    @DeleteMapping(value = "/{dictIds}")
     public R<Void> remove(@PathVariable Long[] dictIds) {
         dictTypeService.deleteDictTypeByIds(dictIds);
         return R.ok();
@@ -117,9 +119,9 @@ public class SysDictTypeController extends BaseController {
     /**
      * 刷新字典缓存
      */
-    @SaCheckPermission("system:dict:remove")
+    @SaCheckPermission(value = "system:dict:remove")
     @Log(title = "字典类型", businessType = BusinessType.CLEAN)
-    @DeleteMapping("/refreshCache")
+    @DeleteMapping(value = "/refreshCache")
     public R<Void> refreshCache() {
         dictTypeService.resetDictCache();
         return R.ok();
@@ -128,10 +130,10 @@ public class SysDictTypeController extends BaseController {
     /**
      * 获取字典选择框列表
      */
-    @GetMapping("/optionselect")
+    @GetMapping(value = "/optionselect")
     public R<List<SysDictTypeVO>> optionSelect() {
-        List<SysDictTypeBO> dictTypes = dictTypeService.selectAllDictType();
-        List<SysDictTypeVO> voList = MapstructUtils.convert(dictTypes, SysDictTypeVO.class);
+        List<SysDictTypeDTO> dtoList = dictTypeService.selectAllDictType();
+        List<SysDictTypeVO> voList = MapstructUtils.convert(dtoList, SysDictTypeVO.class);
         return R.ok(voList);
     }
 }

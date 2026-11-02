@@ -1,7 +1,6 @@
 package com.ruoyi.common.mybatis.core.page;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.exception.ServiceException;
@@ -56,8 +55,8 @@ public class PageQuery implements Serializable {
     public static final int DEFAULT_PAGE_SIZE = Integer.MAX_VALUE;
 
     public <T> Page<T> build() {
-        Integer pageNum = ObjectUtil.defaultIfNull(getPageNum(), DEFAULT_PAGE_NUM);
-        Integer pageSize = ObjectUtil.defaultIfNull(getPageSize(), DEFAULT_PAGE_SIZE);
+        Integer pageNum = Objects.requireNonNullElse(getPageNum(), DEFAULT_PAGE_NUM);
+        Integer pageSize = Objects.requireNonNullElse(getPageSize(), DEFAULT_PAGE_SIZE);
         if (pageNum <= 0) {
             pageNum = DEFAULT_PAGE_NUM;
         }
@@ -70,6 +69,10 @@ public class PageQuery implements Serializable {
             page.addOrder(orderItems);
         }
         return page;
+    }
+
+    public Integer getFirstNum() {
+        return (pageNum - 1) * pageSize;
     }
 
     /**
@@ -112,9 +115,4 @@ public class PageQuery implements Serializable {
         }
         return list;
     }
-
-    public Integer getFirstNum() {
-        return (pageNum - 1) * pageSize;
-    }
-
 }

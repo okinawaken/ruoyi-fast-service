@@ -4,7 +4,7 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
-import com.ruoyi.monitor.domain.bo.SysOperLogDTO;
+import com.ruoyi.monitor.domain.dto.SysOperLogDTO;
 import com.ruoyi.monitor.domain.entity.SysOperLogPO;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -13,6 +13,7 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 /**
@@ -22,7 +23,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @ExcelIgnoreUnannotated
-@AutoMappers({
+@AutoMappers(value = {
     @AutoMapper(target = SysOperLogPO.class),
     @AutoMapper(target = SysOperLogDTO.class)
 })
@@ -51,9 +52,9 @@ public class SysOperLogVO implements Serializable {
     private Integer businessType;
 
     /**
-     * 业务类型数组
+     * 业务类型列表
      */
-    private Integer[] businessTypes;
+    private List<Integer> businessTypes;
 
     /**
      * 方法名称
@@ -79,12 +80,6 @@ public class SysOperLogVO implements Serializable {
      */
     @ExcelProperty(value = "操作人员")
     private String operName;
-
-    /**
-     * 部门名称
-     */
-    @ExcelProperty(value = "部门名称")
-    private String deptName;
 
     /**
      * 请求URL
@@ -130,8 +125,8 @@ public class SysOperLogVO implements Serializable {
     private String errorMsg;
 
     /**
-     * 操作时间
+     * 创建时间
      */
     @ExcelProperty(value = "操作时间")
-    private LocalDateTime operTime;
+    private LocalDateTime createTime;
 }

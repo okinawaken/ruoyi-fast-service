@@ -15,12 +15,6 @@
     <description>web服务入口</description>
 
     <dependencies>
-        <!-- MySQL 驱动 -->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-        </dependency>
-
         <!-- 系统模块 -->
         <dependency>
             <groupId>com.ruoyi</groupId>

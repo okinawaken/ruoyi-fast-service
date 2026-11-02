@@ -3,7 +3,6 @@ package com.ruoyi.common.log.aspect;
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.ruoyi.common.core.domain.bo.LoginUser;
 import com.ruoyi.common.core.utils.ArgsUtils;
 import com.ruoyi.common.core.utils.ServletUtils;
@@ -73,7 +72,7 @@ public class LogAspect {
      */
     @AfterReturning(pointcut = "@annotation(controllerLog)", returning = "jsonResult")
     public void doAfterReturning(JoinPoint joinPoint, Log controllerLog, Object jsonResult) {
-        handleLog(joinPoint, controllerLog, null, jsonResult);
+        this.handleLog(joinPoint, controllerLog, null, jsonResult);
     }
 
     /**
@@ -84,7 +83,7 @@ public class LogAspect {
      */
     @AfterThrowing(value = "@annotation(controllerLog)", throwing = "e")
     public void doAfterThrowing(JoinPoint joinPoint, Log controllerLog, Exception e) {
-        handleLog(joinPoint, controllerLog, e, null);
+        this.handleLog(joinPoint, controllerLog, e, null);
     }
 
     protected void handleLog(final JoinPoint joinPoint, Log controllerLog, final Exception e, Object jsonResult) {
@@ -96,7 +95,6 @@ public class LogAspect {
             operLog.setOperUrl(StringUtils.substring(ServletUtils.getRequest().getRequestURI(), 0, MAX_URL_LENGTH));
             LoginUser loginUser = LoginHelper.getLoginUser();
             operLog.setOperName(loginUser.getUsername());
-            operLog.setDeptName(loginUser.getDeptName());
 
             if (Objects.nonNull(e)) {
                 operLog.setStatus(BusinessStatus.FAIL.ordinal());
@@ -109,9 +107,9 @@ public class LogAspect {
             // 设置请求方式
             operLog.setRequestMethod(ServletUtils.getRequest().getMethod());
             // 处理设置注解上的参数
-            fillAnnotationInfo(joinPoint, controllerLog, operLog, jsonResult);
+            this.fillAnnotationInfo(joinPoint, controllerLog, operLog, jsonResult);
             // 设置消耗时间
-            fillCostTime(operLog);
+            this.fillCostTime(operLog);
             // 发布事件保存数据库
             SpringUtils.context().publishEvent(operLog);
         } catch (Exception exp) {
@@ -136,10 +134,10 @@ public class LogAspect {
         operLog.setOperatorType(logAnnotation.operatorType().ordinal());
         // 是否需要保存request，参数和值
         if (logAnnotation.isSaveRequestData()) {
-            fillRequestParam(joinPoint, operLog, logAnnotation.excludeParamNames());
+            this.fillRequestParam(joinPoint, operLog, logAnnotation.excludeParamNames());
         }
         // 是否需要保存response，参数和值
-        if (logAnnotation.isSaveResponseData() && ObjectUtil.isNotNull(jsonResult)) {
+        if (logAnnotation.isSaveResponseData() && Objects.nonNull(jsonResult)) {
             operLog.setJsonResult(StringUtils.substring(JsonUtils.toJsonString(jsonResult), 0, MAX_CONTENT_LENGTH));
         }
     }
@@ -172,7 +170,7 @@ public class LogAspect {
         boolean isBodyRequest = Objects.equals(HttpMethod.PUT.name(), requestMethod)
             || Objects.equals(HttpMethod.POST.name(), requestMethod);
         if (MapUtil.isEmpty(paramsMap) && isBodyRequest) {
-            String params = argsArrayToString(joinPoint.getArgs(), excludeParamNames);
+            String params = this.argsArrayToString(joinPoint.getArgs(), excludeParamNames);
             operLog.setOperParam(StringUtils.substring(params, 0, MAX_CONTENT_LENGTH));
             return;
         }

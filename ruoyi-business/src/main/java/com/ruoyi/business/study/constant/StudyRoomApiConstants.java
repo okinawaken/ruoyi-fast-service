@@ -73,9 +73,9 @@ public final class StudyRoomApiConstants {
         public static final String CODE_UNAUTHORIZED = "401";
 
         /**
-         * 未登录 / token 失效（小程序内的业务码）
+         * 小程序内的业务码
          */
-        public static final String CODE_NOT_LOGIN = "SV0001";
+        public static final String BUSINESS_CODE = "SV0001";
 
         /**
          * 账号异常（黑名单用户）

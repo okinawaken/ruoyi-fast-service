@@ -36,13 +36,4 @@ public enum StudyRoomReserveStatusEnum {
     public static boolean isCanReserve(Integer value) {
         return Objects.equals(CAN.getValue(), value);
     }
-
-    public static StudyRoomReserveStatusEnum fromValue(Integer value) {
-        for (StudyRoomReserveStatusEnum item : StudyRoomReserveStatusEnum.values()) {
-            if (Objects.equals(item.value, value)) {
-                return item;
-            }
-        }
-        throw new IllegalArgumentException("无效的预约状态");
-    }
 }

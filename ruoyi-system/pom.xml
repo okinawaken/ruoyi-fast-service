@@ -11,7 +11,6 @@
     </parent>
 
     <artifactId>ruoyi-system</artifactId>
-
     <description>system 系统模块</description>
 
     <dependencies>
@@ -51,10 +50,10 @@
             <artifactId>ruoyi-common-web</artifactId>
         </dependency>
 
-        <!-- 防重提交 -->
+        <!-- 认证 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
-            <artifactId>ruoyi-common-idempotent</artifactId>
+            <artifactId>ruoyi-common-satoken</artifactId>
         </dependency>
 
         <!-- 安全 -->

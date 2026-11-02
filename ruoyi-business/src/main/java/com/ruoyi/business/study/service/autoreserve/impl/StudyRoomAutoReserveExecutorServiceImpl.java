@@ -12,10 +12,11 @@ import com.ruoyi.business.study.domain.dto.StudyRoomReserveConfirmRespDTO;
 import com.ruoyi.business.study.domain.dto.StudyRoomSeatRespDTO;
 import com.ruoyi.business.study.domain.dto.StudyRoomVenueRespDTO;
 import com.ruoyi.business.study.enums.StudyRoomAutoReserveTaskRecordStatusEnum;
-import com.ruoyi.business.study.filter.StudyRoomAutoReserveFilterChain;
+import com.ruoyi.business.study.filter.autoreserve.StudyRoomAutoReserveFilterChain;
 import com.ruoyi.business.study.service.autoreserve.StudyRoomAutoReserveExecutorService;
 import com.ruoyi.business.study.service.autoreserve.StudyRoomAutoReserveTaskRecordService;
 import com.ruoyi.business.study.service.autoreserve.StudyRoomAutoReserveTaskService;
+import com.ruoyi.common.json.utils.JsonUtils;
 import com.ruoyi.common.redis.utils.RedisUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +50,7 @@ public class StudyRoomAutoReserveExecutorServiceImpl implements StudyRoomAutoRes
         String lockKey = StudyRoomCacheConstants.AUTO_RESERVE_EXECUTE_LOCK + taskId;
         RLock lock = RedisUtils.getClient().getLock(lockKey);
         if (!lock.tryLock()) {
-            log.info("自动预约任务正在执行中，忽略：taskId={}", taskId);
+            log.error("自动预约任务正在执行中，加锁失败，忽略，taskId={}，triggerType={}", taskId, triggerType);
             return;
         }
 
@@ -82,7 +83,7 @@ public class StudyRoomAutoReserveExecutorServiceImpl implements StudyRoomAutoRes
             recordService.saveRecord(taskRecordRespDTO);
             taskService.advanceLastMaxReserveDate(taskId, context.getTargetDate());
         } catch (Exception e) {
-            log.error("自动预约任务执行失败，taskId={}", taskId, e);
+            log.error("自动预约任务执行失败，taskId={}，triggerType={}, context={}", taskId, triggerType, JsonUtils.toJsonString(context), e);
             StudyRoomAutoReserveTaskRecordRespDTO taskRecordRespDTO = this.buildTaskRecordRespDTO(context, StudyRoomAutoReserveTaskRecordStatusEnum.FAILED, e.getMessage());
             recordService.saveRecord(taskRecordRespDTO);
         } finally {

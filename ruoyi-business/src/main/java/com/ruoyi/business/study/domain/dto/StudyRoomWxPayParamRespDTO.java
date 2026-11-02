@@ -16,7 +16,7 @@ public class StudyRoomWxPayParamRespDTO {
     /**
      * 微信支付 package 参数（上游字段名为 packageValue）
      */
-    @JsonProperty("packageValue")
+    @JsonProperty(value = "packageValue")
     private String packageValue;
 
     /**

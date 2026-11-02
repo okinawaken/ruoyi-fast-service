@@ -29,7 +29,6 @@
         <easyexcel.version>3.3.4</easyexcel.version>
         <satoken.version>1.46.0</satoken.version>
         <hutool.version>5.8.27</hutool.version>
-        <jackson2.version>2.20.1</jackson2.version>
         <redisson.version>4.7.0</redisson.version>
         <mapstruct-plus.version>1.5.3</mapstruct-plus.version>
         <mapstruct-plus.lombok.version>0.2.0</mapstruct-plus.lombok.version>
@@ -59,15 +58,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- Jackson 依赖配置 -->
-            <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
-                <version>${jackson2.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

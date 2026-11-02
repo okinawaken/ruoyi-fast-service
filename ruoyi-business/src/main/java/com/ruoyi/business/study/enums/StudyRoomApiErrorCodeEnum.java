@@ -3,8 +3,6 @@ package com.ruoyi.business.study.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Objects;
-
 /**
  * 自习室小程序上游错误码
  * <p>
@@ -17,7 +15,7 @@ import java.util.Objects;
 public enum StudyRoomApiErrorCodeEnum {
 
     /**
-     * 绑定的小程序 token 已失效（上游返回 401 / SV0001）
+     * 绑定的小程序 token 已失效（上游返回 401）
      */
     TOKEN_INVALID(40102, "自习室小程序 token 已失效，请重新绑定"),
 
@@ -45,13 +43,4 @@ public enum StudyRoomApiErrorCodeEnum {
      * 错误提示
      */
     private final String msg;
-
-    public static StudyRoomApiErrorCodeEnum fromCode(Integer code) {
-        for (StudyRoomApiErrorCodeEnum errorCode : StudyRoomApiErrorCodeEnum.values()) {
-            if (Objects.equals(errorCode.getCode(), code)) {
-                return errorCode;
-            }
-        }
-        throw new IllegalArgumentException("无效的自习室小程序上游错误码");
-    }
 }

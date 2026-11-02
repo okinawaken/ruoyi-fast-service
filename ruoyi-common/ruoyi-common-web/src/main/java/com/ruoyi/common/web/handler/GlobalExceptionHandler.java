@@ -22,6 +22,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import java.util.Objects;
+
 /**
  * 全局异常处理器
  */
@@ -137,7 +139,7 @@ public class GlobalExceptionHandler {
     public R<Void> handleServiceException(ServiceException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',发生业务异常: {}", requestURI, e.getMessage(), e);
-        return R.fail(e.getMessage());
+        return Objects.nonNull(e.getCode()) ? R.fail(e.getCode(), e.getMessage(), e.getDetailMessage()) : R.fail(e.getMessage());
     }
 
     /**

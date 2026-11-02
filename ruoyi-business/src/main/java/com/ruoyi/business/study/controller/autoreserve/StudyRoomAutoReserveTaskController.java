@@ -29,9 +29,9 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Amadeus
  */
 @Validated
-@RequiredArgsConstructor
 @RestController
-@RequestMapping("/business/study/auto-reserve/task")
+@RequiredArgsConstructor
+@RequestMapping(value = "/business/study/auto-reserve/task")
 public class StudyRoomAutoReserveTaskController extends BaseController {
 
     private final StudyRoomAutoReserveTaskService taskService;
@@ -39,7 +39,7 @@ public class StudyRoomAutoReserveTaskController extends BaseController {
     /**
      * 任务分页列表
      */
-    @GetMapping("/list")
+    @GetMapping(value = "/list")
     public TableDataInfo<StudyRoomAutoReserveTaskVO> list(PageQuery pageQuery) {
         IPage<StudyRoomAutoReserveTaskRespDTO> dtoPage = taskService.pageList(LoginHelper.getUserId(), pageQuery);
         IPage<StudyRoomAutoReserveTaskVO> voPage = dtoPage.convert(dto -> MapstructUtils.convert(dto, StudyRoomAutoReserveTaskVO.class));
@@ -49,8 +49,8 @@ public class StudyRoomAutoReserveTaskController extends BaseController {
     /**
      * 任务详情
      */
-    @GetMapping("/{id}")
-    public R<StudyRoomAutoReserveTaskVO> detail(@PathVariable("id") Long id) {
+    @GetMapping(value = "/{id}")
+    public R<StudyRoomAutoReserveTaskVO> detail(@PathVariable(value = "id") Long id) {
         StudyRoomAutoReserveTaskRespDTO dto = taskService.getTask(id);
         StudyRoomAutoReserveTaskVO vo = MapstructUtils.convert(dto, StudyRoomAutoReserveTaskVO.class);
         return R.ok(vo);
@@ -68,8 +68,8 @@ public class StudyRoomAutoReserveTaskController extends BaseController {
     /**
      * 修改任务
      */
-    @PutMapping("/{id}")
-    public R<Void> update(@PathVariable("id") Long id,
+    @PutMapping(value = "/{id}")
+    public R<Void> update(@PathVariable(value = "id") Long id,
                           @Valid @RequestBody StudyRoomAutoReserveTaskReqDTO dto) {
         taskService.updateTask(id, dto);
         return R.ok();
@@ -78,8 +78,8 @@ public class StudyRoomAutoReserveTaskController extends BaseController {
     /**
      * 删除任务，执行历史一并删除
      */
-    @DeleteMapping("/{id}")
-    public R<Void> remove(@PathVariable("id") Long id) {
+    @DeleteMapping(value = "/{id}")
+    public R<Void> remove(@PathVariable(value = "id") Long id) {
         taskService.deleteTask(id);
         return R.ok();
     }
@@ -87,8 +87,8 @@ public class StudyRoomAutoReserveTaskController extends BaseController {
     /**
      * 暂停任务
      */
-    @PostMapping("/{id}/pause")
-    public R<Void> pause(@PathVariable("id") Long id) {
+    @PostMapping(value = "/{id}/pause")
+    public R<Void> pause(@PathVariable(value = "id") Long id) {
         taskService.pauseTask(id, "用户手动暂停");
         return R.ok();
     }
@@ -96,8 +96,8 @@ public class StudyRoomAutoReserveTaskController extends BaseController {
     /**
      * 恢复任务
      */
-    @PostMapping("/{id}/resume")
-    public R<Void> resume(@PathVariable("id") Long id) {
+    @PostMapping(value = "/{id}/resume")
+    public R<Void> resume(@PathVariable(value = "id") Long id) {
         taskService.resumeTask(id);
         return R.ok();
     }
@@ -105,8 +105,8 @@ public class StudyRoomAutoReserveTaskController extends BaseController {
     /**
      * 立即执行一次
      */
-    @PostMapping("/{id}/execute")
-    public R<Void> execute(@PathVariable("id") Long id) {
+    @PostMapping(value = "/{id}/execute")
+    public R<Void> execute(@PathVariable(value = "id") Long id) {
         taskService.executeTask(id);
         return R.ok();
     }

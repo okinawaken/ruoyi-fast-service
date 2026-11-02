@@ -1,7 +1,6 @@
 package com.ruoyi.common.excel.convert;
 
 import cn.hutool.core.convert.Convert;
-import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.excel.converters.Converter;
 import com.alibaba.excel.enums.CellDataTypeEnum;
 import com.alibaba.excel.metadata.GlobalConfiguration;
@@ -12,6 +11,7 @@ import com.ruoyi.common.core.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * 大数值转换
@@ -37,7 +37,7 @@ public class ExcelBigNumberConvert implements Converter<Long> {
 
     @Override
     public WriteCellData<Object> convertToExcelData(Long object, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (ObjectUtil.isNotNull(object)) {
+        if (Objects.nonNull(object)) {
             String str = Convert.toStr(object);
             if (StringUtils.length(str) > 15) {
                 return new WriteCellData<>(str);

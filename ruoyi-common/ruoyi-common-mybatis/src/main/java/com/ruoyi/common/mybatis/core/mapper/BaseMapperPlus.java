@@ -1,7 +1,6 @@
 package com.ruoyi.common.mybatis.core.mapper;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -92,7 +91,7 @@ public interface BaseMapperPlus<T, V> extends BaseMapper<T> {
      */
     default <C> C selectVoById(Serializable id, Class<C> voClass) {
         T obj = this.selectById(id);
-        if (ObjectUtil.isNull(obj)) {
+        if (Objects.isNull(obj)) {
             return null;
         }
         return MapstructUtils.convert(obj, voClass);
@@ -148,7 +147,7 @@ public interface BaseMapperPlus<T, V> extends BaseMapper<T> {
      */
     default <C> C selectVoOne(Wrapper<T> wrapper, Class<C> voClass, boolean throwEx) {
         T obj = this.selectOne(wrapper, throwEx);
-        if (ObjectUtil.isNull(obj)) {
+        if (Objects.isNull(obj)) {
             return null;
         }
         return MapstructUtils.convert(obj, voClass);

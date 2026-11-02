@@ -20,6 +20,12 @@
             <artifactId>spring-webmvc</artifactId>
         </dependency>
 
+        <!-- 核心工具 -->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-common-core</artifactId>
+        </dependency>
+
         <!-- 权限认证 -->
         <dependency>
             <groupId>com.ruoyi</groupId>

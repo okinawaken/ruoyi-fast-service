@@ -43,7 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/business/study/misc")
+@RequestMapping(value = "/business/study/misc")
 public class StudyRoomMiscController extends BaseController {
 
     private final StudyRoomMiscClient miscClient;
@@ -51,7 +51,7 @@ public class StudyRoomMiscController extends BaseController {
     /**
      * 储物柜租赁订单（无业务参数）
      */
-    @PostMapping("/cabinet/lease/order/list")
+    @PostMapping(value = "/cabinet/lease/order/list")
     public R<StudyRoomCabinetLeaseOrderListVO> cabinetLeaseOrderList() {
         StudyRoomCabinetLeaseOrderListRespDTO dto = miscClient.cabinetLeaseOrderList().getData();
         StudyRoomCabinetLeaseOrderListVO vo = MapstructUtils.convert(dto, StudyRoomCabinetLeaseOrderListVO.class);
@@ -61,9 +61,9 @@ public class StudyRoomMiscController extends BaseController {
     /**
      * 储物柜租赁支付（参数走 query，leaseId 必须是整数）
      */
-    @PostMapping("/cabinet/lease/pay")
-    public R<StudyRoomWxPayParamVO> cabinetLeasePay(@RequestParam("leaseId") Integer leaseId,
-                                                    @RequestParam("userId") Long userId) {
+    @PostMapping(value = "/cabinet/lease/pay")
+    public R<StudyRoomWxPayParamVO> cabinetLeasePay(@RequestParam(value = "leaseId") Integer leaseId,
+                                                    @RequestParam(value = "userId") Long userId) {
         StudyRoomWxPayParamRespDTO dto = miscClient.cabinetLeasePay(leaseId, userId).getData();
         StudyRoomWxPayParamVO vo = MapstructUtils.convert(dto, StudyRoomWxPayParamVO.class);
         return R.ok(vo);
@@ -72,7 +72,7 @@ public class StudyRoomMiscController extends BaseController {
     /**
      * 储物柜下单，返回租约 ID
      */
-    @PostMapping("/cabinet/lease/commit")
+    @PostMapping(value = "/cabinet/lease/commit")
     public R<StudyRoomCabinetLeaseCommitVO> cabinetLeaseCommit(@RequestBody StudyRoomCabinetLeaseCommitReqDTO form) {
         StudyRoomCabinetLeaseCommitRespDTO dto = miscClient.cabinetLeaseCommit(form).getData();
         StudyRoomCabinetLeaseCommitVO vo = MapstructUtils.convert(dto, StudyRoomCabinetLeaseCommitVO.class);
@@ -82,9 +82,9 @@ public class StudyRoomMiscController extends BaseController {
     /**
      * 储物柜逾期支付（参数走 query）
      */
-    @PostMapping("/cabinet/lease/overdue/pay")
-    public R<StudyRoomCabinetLeaseOverduePayVO> cabinetLeaseOverduePay(@RequestParam("leaseId") Long leaseId,
-                                                                       @RequestParam("userCode") String userCode) {
+    @PostMapping(value = "/cabinet/lease/overdue/pay")
+    public R<StudyRoomCabinetLeaseOverduePayVO> cabinetLeaseOverduePay(@RequestParam(value = "leaseId") Long leaseId,
+                                                                       @RequestParam(value = "userCode") String userCode) {
         StudyRoomCabinetLeaseOverduePayRespDTO dto = miscClient.cabinetLeaseOverduePay(leaseId, userCode).getData();
         StudyRoomCabinetLeaseOverduePayVO vo = MapstructUtils.convert(dto, StudyRoomCabinetLeaseOverduePayVO.class);
         return R.ok(vo);
@@ -93,8 +93,8 @@ public class StudyRoomMiscController extends BaseController {
     /**
      * 储物柜自动退租（按最近一次租约）
      */
-    @GetMapping("/cabinet/lease/auto-checkout")
-    public R<Void> cabinetLeaseAutoCheckout(@RequestParam("lastLeaseId") Long lastLeaseId) {
+    @GetMapping(value = "/cabinet/lease/auto-checkout")
+    public R<Void> cabinetLeaseAutoCheckout(@RequestParam(value = "lastLeaseId") Long lastLeaseId) {
         miscClient.cabinetLeaseAutoCheckout(lastLeaseId);
         return R.ok();
     }
@@ -102,7 +102,7 @@ public class StudyRoomMiscController extends BaseController {
     /**
      * 储物柜开锁（WiFi 开锁，按柜格）
      */
-    @PostMapping("/cabinet/wifi/open")
+    @PostMapping(value = "/cabinet/wifi/open")
     public R<Void> cabinetWifiOpen(@RequestBody StudyRoomCabinetWifiOpenReqDTO form) {
         miscClient.cabinetWifiOpen(form);
         return R.ok();
@@ -111,8 +111,8 @@ public class StudyRoomMiscController extends BaseController {
     /**
      * 门店的储物柜列表
      */
-    @GetMapping("/cabinet/venue/list")
-    public R<StudyRoomCabinetVenueListVO> cabinetVenueList(@RequestParam("venueId") Integer venueId) {
+    @GetMapping(value = "/cabinet/venue/list")
+    public R<StudyRoomCabinetVenueListVO> cabinetVenueList(@RequestParam(value = "venueId") Integer venueId) {
         StudyRoomCabinetVenueListRespDTO dto = miscClient.cabinetVenueList(venueId).getData();
         StudyRoomCabinetVenueListVO vo = MapstructUtils.convert(dto, StudyRoomCabinetVenueListVO.class);
         return R.ok(vo);
@@ -121,8 +121,8 @@ public class StudyRoomMiscController extends BaseController {
     /**
      * 柜体的格口列表
      */
-    @GetMapping("/cabinet/grid/list")
-    public R<StudyRoomCabinetGridListVO> cabinetGridList(@RequestParam("cabinetId") Integer cabinetId) {
+    @GetMapping(value = "/cabinet/grid/list")
+    public R<StudyRoomCabinetGridListVO> cabinetGridList(@RequestParam(value = "cabinetId") Integer cabinetId) {
         StudyRoomCabinetGridListRespDTO dto = miscClient.cabinetGridList(cabinetId).getData();
         StudyRoomCabinetGridListVO vo = MapstructUtils.convert(dto, StudyRoomCabinetGridListVO.class);
         return R.ok(vo);
@@ -131,8 +131,8 @@ public class StudyRoomMiscController extends BaseController {
     /**
      * 我当前已租的柜格列表
      */
-    @GetMapping("/cabinet/user/grid/list")
-    public R<StudyRoomCabinetUserGridListVO> cabinetUserGridList(@RequestParam("venueId") Integer venueId) {
+    @GetMapping(value = "/cabinet/user/grid/list")
+    public R<StudyRoomCabinetUserGridListVO> cabinetUserGridList(@RequestParam(value = "venueId") Integer venueId) {
         StudyRoomCabinetUserGridListRespDTO dto = miscClient.cabinetUserGridList(venueId).getData();
         StudyRoomCabinetUserGridListVO vo = MapstructUtils.convert(dto, StudyRoomCabinetUserGridListVO.class);
         return R.ok(vo);
@@ -141,8 +141,8 @@ public class StudyRoomMiscController extends BaseController {
     /**
      * 柜格定价
      */
-    @GetMapping("/cabinet/grid/price")
-    public R<StudyRoomCabinetGridPriceVO> cabinetGridPrice(@RequestParam("gridId") Integer gridId) {
+    @GetMapping(value = "/cabinet/grid/price")
+    public R<StudyRoomCabinetGridPriceVO> cabinetGridPrice(@RequestParam(value = "gridId") Integer gridId) {
         StudyRoomCabinetGridPriceRespDTO dto = miscClient.cabinetGridPrice(gridId).getData();
         StudyRoomCabinetGridPriceVO vo = MapstructUtils.convert(dto, StudyRoomCabinetGridPriceVO.class);
         return R.ok(vo);
@@ -151,7 +151,7 @@ public class StudyRoomMiscController extends BaseController {
     /**
      * 美团团购券核销
      */
-    @PostMapping("/receipt/consume")
+    @PostMapping(value = "/receipt/consume")
     public R<StudyRoomConsumeResultVO> receiptConsume(@RequestBody StudyRoomReceiptConsumeReqDTO form) {
         StudyRoomConsumeResultRespDTO dto = miscClient.receiptConsume(form).getData();
         StudyRoomConsumeResultVO vo = MapstructUtils.convert(dto, StudyRoomConsumeResultVO.class);
@@ -161,7 +161,7 @@ public class StudyRoomMiscController extends BaseController {
     /**
      * 抖音券核销
      */
-    @PostMapping("/douyin/verify")
+    @PostMapping(value = "/douyin/verify")
     public R<StudyRoomConsumeResultVO> douYinVerify(@RequestBody StudyRoomDouYinVerifyReqDTO form) {
         StudyRoomConsumeResultRespDTO dto = miscClient.douYinVerify(form).getData();
         StudyRoomConsumeResultVO vo = MapstructUtils.convert(dto, StudyRoomConsumeResultVO.class);
@@ -171,7 +171,7 @@ public class StudyRoomMiscController extends BaseController {
     /**
      * 图片上传（当前不支持）
      */
-    @PostMapping("/image/upload")
+    @PostMapping(value = "/image/upload")
     public R<Void> uploadImage() {
         return R.fail("暂不支持文件上传");
     }

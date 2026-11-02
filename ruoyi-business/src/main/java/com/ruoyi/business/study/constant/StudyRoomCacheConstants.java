@@ -14,4 +14,9 @@ public class StudyRoomCacheConstants {
      */
     public static final String AUTO_RESERVE_EXECUTE_LOCK = "study:auto_reserve:execute:";
 
+    /**
+     * 自动签到执行锁前缀，完整 key：前缀 + userId
+     */
+    public static final String AUTO_SIGN_EXECUTE_LOCK = "study:auto_sign:execute:";
+
 }

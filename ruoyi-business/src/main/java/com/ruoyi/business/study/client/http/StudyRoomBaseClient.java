@@ -7,8 +7,6 @@ import com.ruoyi.business.study.constant.StudyRoomApiConstants;
 
 /**
  * 自习室小程序接口的公共请求配置
- * <p>
- * 本接口不声明任何方法，只承载注解。
  *
  * @author Amadeus
  */

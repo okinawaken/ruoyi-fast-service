@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * StudyRoomUserSignRespDTO 视图对象
@@ -40,6 +41,11 @@ public class StudyRoomUserSignVO implements Serializable {
      * 门店（仅历史记录列表返回）
      */
     private StudyRoomVenueSimpleVO venue;
+
+    /**
+     * 门店ID（上游未直接返回时从 venue.id 派生）
+     */
+    private Integer venueId;
 
     /**
      * 签到时间；在座信息里是 yyyy-MM-dd HH:mm:ss，历史记录列表里是 HH:mm
@@ -100,6 +106,16 @@ public class StudyRoomUserSignVO implements Serializable {
      * 座位信息（仅当前在座信息返回）
      */
     private SeatInfo seatInfo;
+
+    public Integer getVenueId() {
+        if (Objects.nonNull(venueId)) {
+            return venueId;
+        }
+        if (Objects.nonNull(venue)) {
+            return venue.getId();
+        }
+        return null;
+    }
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)

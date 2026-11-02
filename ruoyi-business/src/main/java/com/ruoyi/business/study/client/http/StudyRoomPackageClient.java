@@ -23,10 +23,6 @@ import com.ruoyi.business.study.domain.dto.StudyRoomWxPayQueryRespDTO;
 
 /**
  * 套餐域：套餐浏览、下单、支付、我的订单与套餐
- * <p>
- * 套餐购买链路：套餐列表/详情/筛选项 → 确认下单 → 微信支付 → 我的订单、我的套餐。
- * <p>
- * 公共请求配置（baseURL / appid / token 拦截器 / 超时）见 {@link StudyRoomBaseClient}。
  *
  * @author Amadeus
  */
@@ -35,7 +31,7 @@ public interface StudyRoomPackageClient extends StudyRoomBaseClient {
     /**
      * 套餐列表（旧版，按区域分组）
      */
-    @Get(url = "/mp/buy/package/list")
+    @Get(url = "/mp/buy/package/list", timeout = 15000, readTimeout = 15000)
     StudyRoomApiResultDTO<StudyRoomBuyPackageListRespDTO> buyPackageList();
 
     /**
@@ -50,20 +46,20 @@ public interface StudyRoomPackageClient extends StudyRoomBaseClient {
      * 套餐筛选项（门店、类型、标签）
      */
     @Get(url = "/mp/buy/v2/package/optList")
-    StudyRoomApiResultDTO<StudyRoomBuyV2PackageOptRespDTO> buyV2PackageOptList(@Query("currentLng") Double currentLng,
-                                                                               @Query("currentLat") Double currentLat);
+    StudyRoomApiResultDTO<StudyRoomBuyV2PackageOptRespDTO> buyV2PackageOptList(@Query(value = "currentLng") Double currentLng,
+                                                                               @Query(value = "currentLat") Double currentLat);
 
     /**
      * 套餐标签 / 座位区域筛选项
      */
     @Get(url = "/mp/buy/v2/package/label/selectList")
-    StudyRoomApiResultDTO<StudyRoomBuyV2PackageLabelRespDTO> buyV2PackageLabelList(@Query("venueId") Integer venueId);
+    StudyRoomApiResultDTO<StudyRoomBuyV2PackageLabelRespDTO> buyV2PackageLabelList(@Query(value = "venueId") Integer venueId);
 
     /**
      * 套餐详情（v2）
      */
     @Get(url = "/mp/buy/v2/package/detail/${packageId}")
-    StudyRoomApiResultDTO<StudyRoomBuyV2PackageDetailRespDTO> buyV2PackageDetail(@Var("packageId") Long packageId);
+    StudyRoomApiResultDTO<StudyRoomBuyV2PackageDetailRespDTO> buyV2PackageDetail(@Var(value = "packageId") Long packageId);
 
     /**
      * 确认下单（旧版）
@@ -101,6 +97,6 @@ public interface StudyRoomPackageClient extends StudyRoomBaseClient {
      * 支付完成后轮询该接口确认是否到账；{@code status=-10} 表示查不到该支付单。
      */
     @Post(url = "/mp/wx/payment/v2/wx/query/status/{payId}")
-    StudyRoomApiResultDTO<StudyRoomWxPayQueryRespDTO> wxPayQueryStatus(@Var("payId") Long payId);
+    StudyRoomApiResultDTO<StudyRoomWxPayQueryRespDTO> wxPayQueryStatus(@Var(value = "payId") Long payId);
 
 }

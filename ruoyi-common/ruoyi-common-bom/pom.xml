@@ -30,6 +30,13 @@
                 <version>${revision}</version>
             </dependency>
 
+            <!-- HTTP 客户端 -->
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>ruoyi-common-http</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
             <!-- Excel -->
             <dependency>
                 <groupId>com.ruoyi</groupId>

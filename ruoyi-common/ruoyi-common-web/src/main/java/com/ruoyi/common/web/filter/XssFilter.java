@@ -8,7 +8,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpMethod;
 
 import java.io.IOException;
@@ -40,8 +39,7 @@ public class XssFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse resp = (HttpServletResponse) response;
-        if (this.handleExcludeURL(req, resp)) {
+        if (this.handleExcludeURL(req)) {
             chain.doFilter(request, response);
             return;
         }
@@ -49,7 +47,12 @@ public class XssFilter implements Filter {
         chain.doFilter(xssRequest, response);
     }
 
-    private boolean handleExcludeURL(HttpServletRequest request, HttpServletResponse response) {
+    @Override
+    public void destroy() {
+
+    }
+
+    private boolean handleExcludeURL(HttpServletRequest request) {
         String url = request.getServletPath();
         String method = request.getMethod();
         // GET DELETE 不过滤
@@ -57,10 +60,5 @@ public class XssFilter implements Filter {
             return true;
         }
         return StringUtils.matches(url, excludes);
-    }
-
-    @Override
-    public void destroy() {
-
     }
 }

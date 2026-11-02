@@ -15,7 +15,7 @@ import lombok.ToString;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("study_room_user_token")
+@TableName(value = "study_room_user_token")
 public class StudyRoomUserTokenPO extends BaseEntity {
 
     /**

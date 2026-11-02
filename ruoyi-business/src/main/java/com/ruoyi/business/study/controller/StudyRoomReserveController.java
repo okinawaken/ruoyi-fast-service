@@ -40,7 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/business/study/reserve")
+@RequestMapping(value = "/business/study/reserve")
 public class StudyRoomReserveController extends BaseController {
 
     private final StudyRoomReserveClient reserveClient;
@@ -48,7 +48,7 @@ public class StudyRoomReserveController extends BaseController {
     /**
      * 预约资格校验（是否有可预约套餐）
      */
-    @GetMapping("/check")
+    @GetMapping(value = "/check")
     public R<StudyRoomReserveCheckVO> reserveCheck() {
         StudyRoomReserveCheckRespDTO dto = reserveClient.reserveCheck().getData();
         StudyRoomReserveCheckVO vo = MapstructUtils.convert(dto, StudyRoomReserveCheckVO.class);
@@ -57,11 +57,9 @@ public class StudyRoomReserveController extends BaseController {
 
     /**
      * 可预约日期列表
-     *
-     * @param venueId 门店 ID
      */
-    @GetMapping("/v2/date/select")
-    public R<StudyRoomReserveDateVO> reserveDateList(@RequestParam("venueId") Integer venueId) {
+    @GetMapping(value = "/v2/date/select")
+    public R<StudyRoomReserveDateVO> reserveDateList(@RequestParam(value = "venueId") Integer venueId) {
         StudyRoomReserveDateRespDTO dto = reserveClient.reserveDateList(venueId).getData();
         StudyRoomReserveDateVO vo = MapstructUtils.convert(dto, StudyRoomReserveDateVO.class);
         return R.ok(vo);
@@ -70,7 +68,7 @@ public class StudyRoomReserveController extends BaseController {
     /**
      * 座位图（v2，推荐）
      */
-    @PostMapping("/v2/seat/list")
+    @PostMapping(value = "/v2/seat/list")
     public R<StudyRoomSeatMapVO> reserveV2SeatList(@RequestBody StudyRoomSeatQueryReqDTO form) {
         StudyRoomSeatMapRespDTO dto = reserveClient.reserveV2SeatList(form).getData();
         StudyRoomSeatMapVO vo = MapstructUtils.convert(dto, StudyRoomSeatMapVO.class);
@@ -80,7 +78,7 @@ public class StudyRoomReserveController extends BaseController {
     /**
      * 提交预约（v2，推荐）
      */
-    @PostMapping("/v2/seat/confirm")
+    @PostMapping(value = "/v2/seat/confirm")
     public R<StudyRoomReserveConfirmVO> reserveV2SeatConfirm(@RequestBody StudyRoomReserveConfirmReqDTO form) {
         StudyRoomReserveConfirmRespDTO dto = reserveClient.reserveV2SeatConfirm(form).getData();
         StudyRoomReserveConfirmVO vo = MapstructUtils.convert(dto, StudyRoomReserveConfirmVO.class);
@@ -90,7 +88,7 @@ public class StudyRoomReserveController extends BaseController {
     /**
      * 座位图（v1，旧版，时间格式 {@code yyyy-MM-dd HH:mm}）
      */
-    @PostMapping("/seat/list")
+    @PostMapping(value = "/seat/list")
     public R<StudyRoomSeatMapVO> reserveSeatList(@RequestBody StudyRoomSeatQueryV1ReqDTO form) {
         StudyRoomSeatMapRespDTO dto = reserveClient.reserveSeatList(form).getData();
         StudyRoomSeatMapVO vo = MapstructUtils.convert(dto, StudyRoomSeatMapVO.class);
@@ -100,7 +98,7 @@ public class StudyRoomReserveController extends BaseController {
     /**
      * 提交预约（v1，旧版，时间格式 {@code yyyy-MM-dd HH:mm}）
      */
-    @PostMapping("/seat/confirm")
+    @PostMapping(value = "/seat/confirm")
     public R<StudyRoomReserveConfirmVO> reserveSeatConfirm(@RequestBody StudyRoomReserveConfirmV1ReqDTO form) {
         StudyRoomReserveConfirmRespDTO dto = reserveClient.reserveSeatConfirm(form).getData();
         StudyRoomReserveConfirmVO vo = MapstructUtils.convert(dto, StudyRoomReserveConfirmVO.class);
@@ -110,8 +108,8 @@ public class StudyRoomReserveController extends BaseController {
     /**
      * 是否还能再预约一个座位
      */
-    @GetMapping("/another/check")
-    public R<StudyRoomReserveAnotherCheckVO> reserveAnotherCheck(@RequestParam("userReserveId") Long userReserveId) {
+    @GetMapping(value = "/another/check")
+    public R<StudyRoomReserveAnotherCheckVO> reserveAnotherCheck(@RequestParam(value = "userReserveId") Long userReserveId) {
         StudyRoomReserveAnotherCheckRespDTO dto = reserveClient.reserveAnotherCheck(userReserveId).getData();
         StudyRoomReserveAnotherCheckVO vo = MapstructUtils.convert(dto, StudyRoomReserveAnotherCheckVO.class);
         return R.ok(vo);
@@ -120,7 +118,7 @@ public class StudyRoomReserveController extends BaseController {
     /**
      * 我的预约列表（一次性返回全部，无分页）
      */
-    @GetMapping("/user/list")
+    @GetMapping(value = "/user/list")
     public R<StudyRoomUserReserveListVO> userReserveList() {
         StudyRoomUserReserveListRespDTO dto = reserveClient.userReserveList().getData();
         StudyRoomUserReserveListVO vo = MapstructUtils.convert(dto, StudyRoomUserReserveListVO.class);
@@ -130,8 +128,8 @@ public class StudyRoomReserveController extends BaseController {
     /**
      * 取消预约前的提示
      */
-    @GetMapping("/user/cancel/tip")
-    public R<StudyRoomUserReserveCancelTipVO> userReserveCancelTip(@RequestParam("userReserveId") Long userReserveId) {
+    @GetMapping(value = "/user/cancel/tip")
+    public R<StudyRoomUserReserveCancelTipVO> userReserveCancelTip(@RequestParam(value = "userReserveId") Long userReserveId) {
         StudyRoomUserReserveCancelTipRespDTO dto = reserveClient.userReserveCancelTip(userReserveId).getData();
         StudyRoomUserReserveCancelTipVO vo = MapstructUtils.convert(dto, StudyRoomUserReserveCancelTipVO.class);
         return R.ok(vo);
@@ -140,7 +138,7 @@ public class StudyRoomReserveController extends BaseController {
     /**
      * 取消预约
      */
-    @PostMapping("/user/cancel")
+    @PostMapping(value = "/user/cancel")
     public R<Integer> userReserveCancel(@RequestBody StudyRoomUserReserveCancelReqDTO form) {
         Integer data = reserveClient.userReserveCancel(form).getData();
         return R.ok(data);

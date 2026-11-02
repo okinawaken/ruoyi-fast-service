@@ -36,4 +36,11 @@ public class StudyRoomSignSeatMapVO extends StudyRoomSeatMapVO implements Serial
      * 是否再签一个座位：1 是
      */
     private Integer signAnotherFlag;
+
+    /**
+     * 预约座位签到成功标志：1 已用预约座位直接完成签到
+     * <p>
+     * 仅签到选座接口（/sign/seat/list）可能返回，正常座位图为 null。
+     */
+    private Integer signInFlag;
 }

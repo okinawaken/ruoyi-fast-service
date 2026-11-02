@@ -34,6 +34,11 @@ public class StudyRoomSeatVO implements Serializable {
     private Integer venueId;
 
     /**
+     * 灯控绑定状态：0 未绑定灯控（/mp/study/index 的 seatCurrent 返回，前端据此显示灯控入口）
+     */
+    private Integer lightBindStatus;
+
+    /**
      * 座位号，如 独处位P10·有帘
      */
     private String seatNumber;

@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/business/study/config")
+@RequestMapping(value = "/business/study/config")
 public class StudyRoomConfigController extends BaseController {
 
     private final StudyRoomConfigClient configClient;
@@ -31,7 +31,7 @@ public class StudyRoomConfigController extends BaseController {
     /**
      * 小程序全局配置（含可提前预约天数、保留时长等）
      */
-    @GetMapping("/sys")
+    @GetMapping(value = "/sys")
     public R<StudyRoomConfigVO> sysConfig() {
         StudyRoomConfigRespDTO dto = configClient.sysConfig().getData();
         StudyRoomConfigVO vo = MapstructUtils.convert(dto, StudyRoomConfigVO.class);
@@ -40,11 +40,9 @@ public class StudyRoomConfigController extends BaseController {
 
     /**
      * 公告栏
-     *
-     * @param venueId 门店 ID，传 0 表示不区分门店
      */
-    @GetMapping("/notice")
-    public R<StudyRoomNoticeVO> noticeBoard(@RequestParam("venueId") Integer venueId) {
+    @GetMapping(value = "/notice")
+    public R<StudyRoomNoticeVO> noticeBoard(@RequestParam(value = "venueId") Integer venueId) {
         StudyRoomNoticeRespDTO dto = configClient.noticeBoard(venueId).getData();
         StudyRoomNoticeVO vo = MapstructUtils.convert(dto, StudyRoomNoticeVO.class);
         return R.ok(vo);

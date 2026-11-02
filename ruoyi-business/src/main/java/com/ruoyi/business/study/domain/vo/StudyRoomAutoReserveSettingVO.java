@@ -21,4 +21,9 @@ public class StudyRoomAutoReserveSettingVO {
      */
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime releaseTime;
+
+    /**
+     * 是否启用自动签到：0 关闭，1 开启
+     */
+    private Integer signInEnable;
 }

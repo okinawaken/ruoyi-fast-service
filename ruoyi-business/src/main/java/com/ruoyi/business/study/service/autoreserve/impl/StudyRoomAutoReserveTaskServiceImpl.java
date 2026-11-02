@@ -161,12 +161,12 @@ public class StudyRoomAutoReserveTaskServiceImpl implements StudyRoomAutoReserve
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean advanceLastMaxReserveDate(Long taskId, LocalDate targetDate) {
+    public void advanceLastMaxReserveDate(Long taskId, LocalDate targetDate) {
         LambdaUpdateWrapper<StudyRoomAutoReserveTaskPO> luw = Wrappers.lambdaUpdate();
         luw.eq(StudyRoomAutoReserveTaskPO::getId, taskId)
             .lt(StudyRoomAutoReserveTaskPO::getLastMaxReserveDate, targetDate)
             .set(StudyRoomAutoReserveTaskPO::getLastMaxReserveDate, targetDate);
-        return taskMapper.update(luw) > 0;
+        taskMapper.update(luw);
     }
 
     private StudyRoomAutoReserveTaskRespDTO toDto(StudyRoomAutoReserveTaskPO task) {

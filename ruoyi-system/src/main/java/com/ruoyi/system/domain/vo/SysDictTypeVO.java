@@ -4,7 +4,7 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
-import com.ruoyi.system.domain.bo.SysDictTypeBO;
+import com.ruoyi.system.domain.dto.SysDictTypeDTO;
 import com.ruoyi.system.domain.entity.SysDictTypePO;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -20,9 +20,9 @@ import java.time.LocalDateTime;
  */
 @Data
 @ExcelIgnoreUnannotated
-@AutoMappers({
+@AutoMappers(value = {
     @AutoMapper(target = SysDictTypePO.class),
-    @AutoMapper(target = SysDictTypeBO.class)
+    @AutoMapper(target = SysDictTypeDTO.class)
 })
 public class SysDictTypeVO implements Serializable {
 
@@ -59,7 +59,6 @@ public class SysDictTypeVO implements Serializable {
     @ExcelProperty(value = "状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_normal_disable")
     private Integer status;
-
 
     /**
      * 创建时间

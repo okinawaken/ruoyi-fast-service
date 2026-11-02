@@ -4,14 +4,18 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ruoyi.business.study.domain.bo.StudyRoomAutoReserveUserConfigBO;
 import com.ruoyi.business.study.domain.entity.StudyRoomAutoReserveSettingPO;
+import com.ruoyi.business.study.enums.StudyRoomAutoSignInEnableEnum;
 import com.ruoyi.business.study.mapper.StudyRoomAutoReserveSettingMapper;
 import com.ruoyi.business.study.service.autoreserve.StudyRoomAutoReserveSettingService;
+import com.ruoyi.common.core.utils.StreamUtils;
 import com.ruoyi.common.json.utils.JsonUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -41,6 +45,20 @@ public class StudyRoomAutoReserveSettingServiceImpl implements StudyRoomAutoRese
     }
 
     @Override
+    public Map<Long, StudyRoomAutoReserveUserConfigBO> listAllConfigs() {
+        LambdaQueryWrapper<StudyRoomAutoReserveSettingPO> lqw = Wrappers.lambdaQuery();
+        List<StudyRoomAutoReserveSettingPO> poList = settingMapper.selectList(lqw);
+        return StreamUtils.toMap(poList, StudyRoomAutoReserveSettingPO::getUserId,
+            po -> {
+                StudyRoomAutoReserveUserConfigBO bo = JsonUtils.parseObject(po.getConfigJson(), StudyRoomAutoReserveUserConfigBO.class);
+                if (Objects.isNull(bo)) {
+                    return this.defaultConfig();
+                }
+                return bo;
+            });
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateConfig(Long userId, StudyRoomAutoReserveUserConfigBO config) {
         LambdaQueryWrapper<StudyRoomAutoReserveSettingPO> lqw = Wrappers.lambdaQuery();
@@ -60,6 +78,7 @@ public class StudyRoomAutoReserveSettingServiceImpl implements StudyRoomAutoRese
     private StudyRoomAutoReserveUserConfigBO defaultConfig() {
         StudyRoomAutoReserveUserConfigBO studyRoomAutoReserveUserConfigBO = new StudyRoomAutoReserveUserConfigBO();
         studyRoomAutoReserveUserConfigBO.setReleaseTime(LocalTime.of(20, 0, 0));
+        studyRoomAutoReserveUserConfigBO.setSignInEnable(StudyRoomAutoSignInEnableEnum.DISABLED.getValue());
         return studyRoomAutoReserveUserConfigBO;
     }
 }

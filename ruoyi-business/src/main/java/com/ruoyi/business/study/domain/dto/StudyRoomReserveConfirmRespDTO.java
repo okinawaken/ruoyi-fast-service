@@ -68,6 +68,6 @@ public class StudyRoomReserveConfirmRespDTO {
     /**
      * 是否展示「再约一个」按钮
      */
-    @JsonProperty("reserveAnotherBtn")
+    @JsonProperty(value = "reserveAnotherBtn")
     private Boolean reserveAnotherBtnFlag;
 }

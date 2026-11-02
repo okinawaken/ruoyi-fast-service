@@ -16,7 +16,7 @@ public class StudyRoomCabinetVenueRespDTO {
     /**
      * 柜子ID（上游字段名为 cabinetId）
      */
-    @JsonProperty("cabinetId")
+    @JsonProperty(value = "cabinetId")
     private Integer cabinetId;
 
     /**

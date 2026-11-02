@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/business/study/repair")
+@RequestMapping(value = "/business/study/repair")
 public class StudyRoomRepairController extends BaseController {
 
     private final StudyRoomRepairClient repairClient;
@@ -34,7 +34,7 @@ public class StudyRoomRepairController extends BaseController {
     /**
      * 提交报修
      */
-    @PostMapping("/submit")
+    @PostMapping(value = "/submit")
     public R<Void> submitRepair(@RequestBody StudyRoomRepairSubmitReqDTO form) {
         repairClient.submitRepair(form);
         return R.ok();
@@ -43,7 +43,7 @@ public class StudyRoomRepairController extends BaseController {
     /**
      * 报修列表
      */
-    @GetMapping("/list")
+    @GetMapping(value = "/list")
     public R<StudyRoomRepairListVO> repairList() {
         StudyRoomRepairListRespDTO dto = repairClient.repairList().getData();
         StudyRoomRepairListVO vo = MapstructUtils.convert(dto, StudyRoomRepairListVO.class);
@@ -52,11 +52,9 @@ public class StudyRoomRepairController extends BaseController {
 
     /**
      * 报修详情
-     *
-     * @param id 报修单 ID
      */
-    @GetMapping("/detail/{id}")
-    public R<StudyRoomRepairVO> repairDetail(@PathVariable("id") Long id) {
+    @GetMapping(value = "/detail/{id}")
+    public R<StudyRoomRepairVO> repairDetail(@PathVariable(value = "id") Long id) {
         StudyRoomRepairRespDTO dto = repairClient.repairDetail(id).getData();
         StudyRoomRepairVO vo = MapstructUtils.convert(dto, StudyRoomRepairVO.class);
         return R.ok(vo);

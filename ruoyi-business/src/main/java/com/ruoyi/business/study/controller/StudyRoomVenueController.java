@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/business/study/venue")
+@RequestMapping(value = "/business/study/venue")
 public class StudyRoomVenueController extends BaseController {
 
     private final StudyRoomVenueClient venueClient;
@@ -37,9 +37,9 @@ public class StudyRoomVenueController extends BaseController {
     /**
      * 按定位查询附近门店（签到首页、报修页用）
      */
-    @GetMapping("/select")
-    public R<StudyRoomVenueSelectVO> venueSelect(@RequestParam("currentLng") Double currentLng,
-                                                 @RequestParam("currentLat") Double currentLat) {
+    @GetMapping(value = "/select")
+    public R<StudyRoomVenueSelectVO> venueSelect(@RequestParam(value = "currentLng") Double currentLng,
+                                                 @RequestParam(value = "currentLat") Double currentLat) {
         StudyRoomVenueSelectRespDTO dto = venueClient.venueSelect(currentLng, currentLat).getData();
         StudyRoomVenueSelectVO vo = MapstructUtils.convert(dto, StudyRoomVenueSelectVO.class);
         return R.ok(vo);
@@ -48,7 +48,7 @@ public class StudyRoomVenueController extends BaseController {
     /**
      * 预约可选门店列表（无定位参数）
      */
-    @GetMapping("/reserve/select")
+    @GetMapping(value = "/reserve/select")
     public R<StudyRoomVenueSelectVO> reserveVenueSelect() {
         StudyRoomVenueSelectRespDTO dto = venueClient.reserveVenueSelect().getData();
         StudyRoomVenueSelectVO vo = MapstructUtils.convert(dto, StudyRoomVenueSelectVO.class);
@@ -57,11 +57,9 @@ public class StudyRoomVenueController extends BaseController {
 
     /**
      * 门店详情
-     *
-     * @param venueId 门店 ID
      */
-    @GetMapping("/reserve/detail")
-    public R<StudyRoomVenueVO> reserveVenueDetail(@RequestParam("venueId") Integer venueId) {
+    @GetMapping(value = "/reserve/detail")
+    public R<StudyRoomVenueVO> reserveVenueDetail(@RequestParam(value = "venueId") Integer venueId) {
         StudyRoomVenueRespDTO dto = venueClient.reserveVenueDetail(venueId).getData();
         StudyRoomVenueVO vo = MapstructUtils.convert(dto, StudyRoomVenueVO.class);
         return R.ok(vo);
@@ -70,7 +68,7 @@ public class StudyRoomVenueController extends BaseController {
     /**
      * 预约首页（banner + 门店列表 + 区域筛选）
      */
-    @GetMapping("/reserve/index")
+    @GetMapping(value = "/reserve/index")
     public R<StudyRoomReserveIndexVO> reserveIndex(
         @RequestParam(name = "currentLng", required = false) Double currentLng,
         @RequestParam(name = "currentLat", required = false) Double currentLat,
@@ -85,7 +83,7 @@ public class StudyRoomVenueController extends BaseController {
     /**
      * 区域列表（预约首页筛选）
      */
-    @GetMapping("/reserve/area/select")
+    @GetMapping(value = "/reserve/area/select")
     public R<StudyRoomAreaSelectVO> reserveAreaSelect() {
         StudyRoomAreaSelectRespDTO dto = venueClient.reserveAreaSelect().getData();
         StudyRoomAreaSelectVO vo = MapstructUtils.convert(dto, StudyRoomAreaSelectVO.class);
@@ -95,9 +93,9 @@ public class StudyRoomVenueController extends BaseController {
     /**
      * 收银台门店列表（美团团购核销）
      */
-    @GetMapping("/receipt/select")
-    public R<StudyRoomVenueSelectVO> receiptVenueSelect(@RequestParam("currentLng") Double currentLng,
-                                                        @RequestParam("currentLat") Double currentLat) {
+    @GetMapping(value = "/receipt/select")
+    public R<StudyRoomVenueSelectVO> receiptVenueSelect(@RequestParam(value = "currentLng") Double currentLng,
+                                                        @RequestParam(value = "currentLat") Double currentLat) {
         StudyRoomVenueSelectRespDTO dto = venueClient.receiptVenueSelect(currentLng, currentLat).getData();
         StudyRoomVenueSelectVO vo = MapstructUtils.convert(dto, StudyRoomVenueSelectVO.class);
         return R.ok(vo);
@@ -106,9 +104,9 @@ public class StudyRoomVenueController extends BaseController {
     /**
      * 抖音门店列表（比普通门店多 poiId / poiName）
      */
-    @GetMapping("/douyin/select")
-    public R<StudyRoomDouYinVenueSelectVO> douYinVenueSelect(@RequestParam("currentLng") Double currentLng,
-                                                             @RequestParam("currentLat") Double currentLat) {
+    @GetMapping(value = "/douyin/select")
+    public R<StudyRoomDouYinVenueSelectVO> douYinVenueSelect(@RequestParam(value = "currentLng") Double currentLng,
+                                                             @RequestParam(value = "currentLat") Double currentLat) {
         StudyRoomDouYinVenueSelectRespDTO dto = venueClient.douYinVenueSelect(currentLng, currentLat).getData();
         StudyRoomDouYinVenueSelectVO vo = MapstructUtils.convert(dto, StudyRoomDouYinVenueSelectVO.class);
         return R.ok(vo);

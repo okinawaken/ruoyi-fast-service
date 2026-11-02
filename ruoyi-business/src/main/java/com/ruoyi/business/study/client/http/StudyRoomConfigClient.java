@@ -8,10 +8,6 @@ import com.ruoyi.business.study.domain.dto.StudyRoomNoticeRespDTO;
 
 /**
  * 配置域：全局配置、公告
- * <p>
- * 小程序全局配置（预约天数、保留时长、开关）与公告栏。
- * <p>
- * 公共请求配置（baseURL / appid / token 拦截器 / 超时）见 {@link StudyRoomBaseClient}。
  *
  * @author Amadeus
  */
@@ -29,6 +25,6 @@ public interface StudyRoomConfigClient extends StudyRoomBaseClient {
      * 小程序传 {@code venueId=0} 表示不区分门店
      */
     @Get(url = "/mp/notice/board/info")
-    StudyRoomApiResultDTO<StudyRoomNoticeRespDTO> noticeBoard(@Query("venueId") Integer venueId);
+    StudyRoomApiResultDTO<StudyRoomNoticeRespDTO> noticeBoard(@Query(value = "venueId") Integer venueId);
 
 }

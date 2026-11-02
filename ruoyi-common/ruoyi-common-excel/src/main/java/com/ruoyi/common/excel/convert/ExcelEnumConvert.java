@@ -2,7 +2,6 @@ package com.ruoyi.common.excel.convert;
 
 import cn.hutool.core.annotation.AnnotationUtil;
 import cn.hutool.core.convert.Convert;
-import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.excel.converters.Converter;
 import com.alibaba.excel.enums.CellDataTypeEnum;
 import com.alibaba.excel.metadata.GlobalConfiguration;
@@ -16,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 枚举格式化转换处理
@@ -44,7 +44,7 @@ public class ExcelEnumConvert implements Converter<Object> {
             default -> throw new IllegalArgumentException("单元格类型异常!");
         };
         // 如果是空值
-        if (ObjectUtil.isNull(textValue)) {
+        if (Objects.isNull(textValue)) {
             return null;
         }
         Map<Object, String> enumCodeToTextMap = this.beforeConvert(contentProperty);
@@ -59,7 +59,7 @@ public class ExcelEnumConvert implements Converter<Object> {
 
     @Override
     public WriteCellData<String> convertToExcelData(Object object, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (ObjectUtil.isNull(object)) {
+        if (Objects.isNull(object)) {
             return new WriteCellData<>("");
         }
         Map<Object, String> enumValueMap = this.beforeConvert(contentProperty);

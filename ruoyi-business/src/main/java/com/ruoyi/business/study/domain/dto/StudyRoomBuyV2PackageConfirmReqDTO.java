@@ -37,4 +37,14 @@ public class StudyRoomBuyV2PackageConfirmReqDTO {
      */
     private Integer purchaseNum;
 
+    /**
+     * 座位区域ID（可选，取自套餐标签接口的 seatAreaList）
+     */
+    private Long seatAreaId;
+
+    /**
+     * 套餐类型（可选，取自套餐详情的 packageType）
+     */
+    private Integer packageType;
+
 }

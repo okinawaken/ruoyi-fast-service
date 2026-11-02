@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Amadeus
  */
 @Validated
-@RequiredArgsConstructor
 @RestController
-@RequestMapping("/business/study/auto-reserve/setting")
+@RequiredArgsConstructor
+@RequestMapping(value = "/business/study/auto-reserve/setting")
 public class StudyRoomAutoReserveSettingController extends BaseController {
 
     private final StudyRoomAutoReserveSettingService settingService;
@@ -33,7 +33,7 @@ public class StudyRoomAutoReserveSettingController extends BaseController {
     /**
      * 读取放号时刻，未设置时返回默认值
      */
-    @GetMapping("/")
+    @GetMapping(value = "/")
     public R<StudyRoomAutoReserveSettingVO> getSetting() {
         StudyRoomAutoReserveUserConfigBO config = settingService.getConfig(LoginHelper.getUserId());
         StudyRoomAutoReserveSettingVO vo = MapstructUtils.convert(config, StudyRoomAutoReserveSettingVO.class);
@@ -43,7 +43,7 @@ public class StudyRoomAutoReserveSettingController extends BaseController {
     /**
      * 覆盖写放号时刻
      */
-    @PutMapping("/")
+    @PutMapping(value = "/")
     public R<Void> updateSetting(@Valid @RequestBody StudyRoomAutoReserveSettingReqDTO dto) {
         StudyRoomAutoReserveUserConfigBO config = MapstructUtils.convert(dto, StudyRoomAutoReserveUserConfigBO.class);
         settingService.updateConfig(LoginHelper.getUserId(), config);

@@ -23,11 +23,6 @@ spring:
       port: ${REDIS_PORT:30001}
       database: 0
       password: ${REDIS_PASSWORD:wang13587}
-  mvc:
-    format:
-      date-time: yyyy-MM-dd HH:mm:ss
-  jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
 
 # 日志配置
 logging:
@@ -37,9 +32,3 @@ logging:
 sa-token:
   token-name: Authorization
   jwt-secret-key: abcdefghijklmnopqrstuvwxyz
-
-# 用户配置
-user:
-  password:
-    maxRetryCount: 5
-    lockTime: 120

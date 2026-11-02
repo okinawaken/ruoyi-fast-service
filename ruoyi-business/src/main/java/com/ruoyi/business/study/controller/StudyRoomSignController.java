@@ -17,6 +17,7 @@ import com.ruoyi.business.study.domain.dto.StudyRoomSettlementRespDTO;
 import com.ruoyi.business.study.domain.dto.StudyRoomSignAnotherCheckRespDTO;
 import com.ruoyi.business.study.domain.dto.StudyRoomSignOutReqDTO;
 import com.ruoyi.business.study.domain.dto.StudyRoomSignOutRespDTO;
+import com.ruoyi.business.study.domain.dto.StudyRoomSignSeatListRespDTO;
 import com.ruoyi.business.study.domain.dto.StudyRoomSignSeatMapRespDTO;
 import com.ruoyi.business.study.domain.dto.StudyRoomSignSeatQueryReqDTO;
 import com.ruoyi.business.study.domain.dto.StudyRoomUserPackageConfirmReqDTO;
@@ -34,6 +35,7 @@ import com.ruoyi.business.study.domain.vo.StudyRoomUserPackageConfirmVO;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.web.core.BaseController;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,7 +55,7 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/business/study/sign")
+@RequestMapping(value = "/business/study/sign")
 public class StudyRoomSignController extends BaseController {
 
     private final StudyRoomSignClient signClient;
@@ -61,7 +63,7 @@ public class StudyRoomSignController extends BaseController {
     /**
      * 签到首页：当前签到信息、附近门店、可选套餐
      */
-    @GetMapping("/index")
+    @GetMapping(value = "/index")
     public R<StudyRoomIndexVO> studyIndex(
         @RequestParam(name = "currentLng", required = false) Double currentLng,
         @RequestParam(name = "currentLat", required = false) Double currentLat,
@@ -76,9 +78,9 @@ public class StudyRoomSignController extends BaseController {
     /**
      * 签到选座座位图
      */
-    @PostMapping("/seat/list")
+    @PostMapping(value = "/seat/list")
     public R<StudyRoomSignSeatMapVO> studySeatList(@RequestBody StudyRoomSignSeatQueryReqDTO form) {
-        StudyRoomSignSeatMapRespDTO dto = signClient.studySeatList(form).getData();
+        StudyRoomSignSeatListRespDTO dto = signClient.studySeatList(form).getData();
         StudyRoomSignSeatMapVO vo = MapstructUtils.convert(dto, StudyRoomSignSeatMapVO.class);
         return R.ok(vo);
     }
@@ -86,7 +88,7 @@ public class StudyRoomSignController extends BaseController {
     /**
      * 换座座位图
      */
-    @PostMapping("/change/seat/list")
+    @PostMapping(value = "/change/seat/list")
     public R<StudyRoomSignSeatMapVO> studyChangeSeatList(@RequestBody StudyRoomChangeSeatReqDTO form) {
         StudyRoomSignSeatMapRespDTO dto = signClient.studyChangeSeatList(form).getData();
         StudyRoomSignSeatMapVO vo = MapstructUtils.convert(dto, StudyRoomSignSeatMapVO.class);
@@ -96,7 +98,7 @@ public class StudyRoomSignController extends BaseController {
     /**
      * 签退可选结算套餐
      */
-    @PostMapping("/settle-package/select")
+    @PostMapping(value = "/settle-package/select")
     public R<List<StudyRoomSettlePackageVO>> studySettlePackageSelect(@RequestBody StudyRoomSettlePackageReqDTO form) {
         List<StudyRoomSettlePackageRespDTO> dto = signClient.studySettlePackageSelect(form).getData();
         List<StudyRoomSettlePackageVO> vo = MapstructUtils.convert(dto, StudyRoomSettlePackageVO.class);
@@ -106,8 +108,8 @@ public class StudyRoomSignController extends BaseController {
     /**
      * 是否可再签一个座位
      */
-    @GetMapping("/another/check")
-    public R<StudyRoomSignAnotherCheckVO> studySignAnotherCheck(@RequestParam("venueId") Integer venueId) {
+    @GetMapping(value = "/another/check")
+    public R<StudyRoomSignAnotherCheckVO> studySignAnotherCheck(@RequestParam(value = "venueId") Integer venueId) {
         StudyRoomSignAnotherCheckRespDTO dto = signClient.studySignAnotherCheck(venueId).getData();
         StudyRoomSignAnotherCheckVO vo = MapstructUtils.convert(dto, StudyRoomSignAnotherCheckVO.class);
         return R.ok(vo);
@@ -116,7 +118,7 @@ public class StudyRoomSignController extends BaseController {
     /**
      * 签退（扫码签退），返回结算结果
      */
-    @PostMapping("/out")
+    @PostMapping(value = "/out")
     public R<StudyRoomSignOutVO> studySignOut(@RequestBody StudyRoomSignOutReqDTO form) {
         StudyRoomSignOutRespDTO dto = signClient.studySignOut(form).getData();
         StudyRoomSignOutVO vo = MapstructUtils.convert(dto, StudyRoomSignOutVO.class);
@@ -126,7 +128,7 @@ public class StudyRoomSignController extends BaseController {
     /**
      * 学习排行榜
      */
-    @PostMapping("/rank/index")
+    @PostMapping(value = "/rank/index")
     public R<StudyRoomRankVO> studyRank(@RequestBody StudyRoomRankReqDTO form) {
         StudyRoomRankRespDTO dto = signClient.studyRank(form).getData();
         StudyRoomRankVO vo = MapstructUtils.convert(dto, StudyRoomRankVO.class);
@@ -136,7 +138,7 @@ public class StudyRoomSignController extends BaseController {
     /**
      * 签到选座确认（真正入座）
      */
-    @PostMapping("/seat/confirm")
+    @PostMapping(value = "/seat/confirm")
     public R<StudyRoomSeatConfirmVO> studySeatConfirm(@RequestBody StudyRoomSeatConfirmReqDTO form) {
         StudyRoomSeatConfirmRespDTO dto = signClient.studySeatConfirm(form).getData();
         StudyRoomSeatConfirmVO vo = MapstructUtils.convert(dto, StudyRoomSeatConfirmVO.class);
@@ -146,7 +148,7 @@ public class StudyRoomSignController extends BaseController {
     /**
      * 换座确认
      */
-    @PostMapping("/change/seat/confirm")
+    @PostMapping(value = "/change/seat/confirm")
     public R<StudyRoomChangeSeatConfirmVO> studyChangeSeatConfirm(@RequestBody StudyRoomChangeSeatConfirmReqDTO form) {
         StudyRoomChangeSeatConfirmRespDTO dto = signClient.studyChangeSeatConfirm(form).getData();
         StudyRoomChangeSeatConfirmVO vo = MapstructUtils.convert(dto, StudyRoomChangeSeatConfirmVO.class);
@@ -156,7 +158,7 @@ public class StudyRoomSignController extends BaseController {
     /**
      * 进入签退结算：返回结算明细 + 可选结算套餐
      */
-    @PostMapping("/settlement")
+    @PostMapping(value = "/settlement")
     public R<StudyRoomSettlementVO> studySettlement(@RequestBody StudyRoomSettlementReqDTO form) {
         StudyRoomSettlementRespDTO dto = signClient.studySettlement(form).getData();
         StudyRoomSettlementVO vo = MapstructUtils.convert(dto, StudyRoomSettlementVO.class);
@@ -166,7 +168,7 @@ public class StudyRoomSignController extends BaseController {
     /**
      * 确认签退结算套餐（选套餐扣费）
      */
-    @PostMapping("/user-package/confirm")
+    @PostMapping(value = "/user-package/confirm")
     public R<StudyRoomUserPackageConfirmVO> studyUserPackageConfirm(@RequestBody StudyRoomUserPackageConfirmReqDTO form) {
         StudyRoomUserPackageConfirmRespDTO dto = signClient.studyUserPackageConfirm(form).getData();
         StudyRoomUserPackageConfirmVO vo = MapstructUtils.convert(dto, StudyRoomUserPackageConfirmVO.class);
@@ -176,8 +178,8 @@ public class StudyRoomSignController extends BaseController {
     /**
      * 座位灯控（开灯 / 关灯）
      */
-    @PostMapping("/esp-light/turn")
-    public R<Void> espLightTurn(@RequestBody StudyRoomEspLightTurnReqDTO form) {
+    @PostMapping(value = "/esp-light/turn")
+    public R<Void> espLightTurn(@Valid @RequestBody StudyRoomEspLightTurnReqDTO form) {
         signClient.espLightTurn(form);
         return R.ok();
     }

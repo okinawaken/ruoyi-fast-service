@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("study_room_auto_reserve_setting")
+@TableName(value = "study_room_auto_reserve_setting")
 public class StudyRoomAutoReserveSettingPO extends BaseEntity {
 
     /**

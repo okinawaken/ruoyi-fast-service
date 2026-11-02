@@ -18,5 +18,5 @@ public class StudyRoomReceiptConsumeReqDTO {
     /**
      * 团购券码（必填）
      */
-    private String code;
+    private String receiptCode;
 }

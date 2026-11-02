@@ -9,7 +9,7 @@ import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.redis.utils.CacheUtils;
-import com.ruoyi.system.domain.bo.SysDictDataBO;
+import com.ruoyi.system.domain.dto.SysDictDataDTO;
 import com.ruoyi.system.domain.entity.SysDictDataPO;
 import com.ruoyi.system.mapper.SysDictDataMapper;
 import com.ruoyi.system.service.SysDictDataService;
@@ -18,6 +18,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,74 +32,87 @@ public class SysDictDataServiceImpl implements SysDictDataService {
     private final SysDictDataMapper dictDataMapper;
 
     @Override
-    public IPage<SysDictDataBO> selectPageDictDataList(SysDictDataBO dictData, PageQuery pageQuery) {
+    public IPage<SysDictDataDTO> selectPageDictDataList(SysDictDataDTO dictData, PageQuery pageQuery) {
         LambdaQueryWrapper<SysDictDataPO> lqw = this.buildQueryWrapper(dictData);
-        return dictDataMapper.selectVoPage(pageQuery.build(), lqw, SysDictDataBO.class);
+        IPage<SysDictDataPO> poPage = dictDataMapper.selectPage(pageQuery.build(), lqw);
+        return poPage.convert(po -> MapstructUtils.convert(po, SysDictDataDTO.class));
     }
 
     @Override
-    public List<SysDictDataBO> selectDictDataList(SysDictDataBO dictData) {
+    public List<SysDictDataDTO> selectDictDataList(SysDictDataDTO dictData) {
         LambdaQueryWrapper<SysDictDataPO> lqw = this.buildQueryWrapper(dictData);
-        return dictDataMapper.selectVoList(lqw, SysDictDataBO.class);
-    }
-
-    private LambdaQueryWrapper<SysDictDataPO> buildQueryWrapper(SysDictDataBO bo) {
-        LambdaQueryWrapper<SysDictDataPO> lqw = Wrappers.lambdaQuery();
-        lqw.eq(Objects.nonNull(bo.getDictSort()), SysDictDataPO::getDictSort, bo.getDictSort());
-        lqw.like(StringUtils.isNotBlank(bo.getDictLabel()), SysDictDataPO::getDictLabel, bo.getDictLabel());
-        lqw.eq(StringUtils.isNotBlank(bo.getDictType()), SysDictDataPO::getDictType, bo.getDictType());
-        lqw.orderByAsc(SysDictDataPO::getDictSort);
-        return lqw;
+        List<SysDictDataPO> poList = dictDataMapper.selectList(lqw);
+        return MapstructUtils.convert(poList, SysDictDataDTO.class);
     }
 
     @Override
-    public SysDictDataBO selectDictDataById(Long dictCode) {
-        return dictDataMapper.selectVoById(dictCode, SysDictDataBO.class);
+    public SysDictDataDTO selectDictDataById(Long dictCode) {
+        SysDictDataPO data = dictDataMapper.selectById(dictCode);
+        return MapstructUtils.convert(data, SysDictDataDTO.class);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteDictDataByIds(Long[] dictCodes) {
-        for (Long dictCode : dictCodes) {
-            SysDictDataPO data = dictDataMapper.selectById(dictCode);
-            dictDataMapper.deleteById(dictCode);
-            CacheUtils.evict(CacheNames.SYS_DICT, data.getDictType());
+        if (dictCodes.length == 0) {
+            return;
         }
+        List<Long> idList = Arrays.asList(dictCodes);
+        List<SysDictDataPO> dataList = dictDataMapper.selectByIds(idList);
+        if (dataList.isEmpty()) {
+            return;
+        }
+        dataList.stream()
+            .map(SysDictDataPO::getDictType)
+            .distinct()
+            .forEach(dictType -> CacheUtils.evict(CacheNames.SYS_DICT, dictType));
+        dictDataMapper.deleteByIds(idList);
     }
 
     @Override
-    @CachePut(cacheNames = CacheNames.SYS_DICT, key = "#bo.dictType")
+    @CachePut(cacheNames = CacheNames.SYS_DICT, key = "#dto.dictType")
     @Transactional(rollbackFor = Exception.class)
-    public List<SysDictDataBO> insertDictData(SysDictDataBO bo) {
-        SysDictDataPO data = MapstructUtils.convert(bo, SysDictDataPO.class);
-        int row = dictDataMapper.insert(data);
-        if (row > 0) {
-            return dictDataMapper.selectDictDataByType(data.getDictType());
+    public List<SysDictDataDTO> insertDictData(SysDictDataDTO dto) {
+        SysDictDataPO data = MapstructUtils.convert(dto, SysDictDataPO.class);
+        if (dictDataMapper.insert(data) <= 0) {
+            throw new ServiceException("操作失败");
         }
-        throw new ServiceException("操作失败");
+        return dictDataMapper.selectDictDataByType(data.getDictType());
     }
 
     @Override
-    @CachePut(cacheNames = CacheNames.SYS_DICT, key = "#bo.dictType")
+    @CachePut(cacheNames = CacheNames.SYS_DICT, key = "#dto.dictType")
     @Transactional(rollbackFor = Exception.class)
-    public List<SysDictDataBO> updateDictData(SysDictDataBO bo) {
-        SysDictDataPO data = MapstructUtils.convert(bo, SysDictDataPO.class);
-        int row = dictDataMapper.updateById(data);
-        if (row > 0) {
-            return dictDataMapper.selectDictDataByType(data.getDictType());
+    public List<SysDictDataDTO> updateDictData(SysDictDataDTO dto) {
+        SysDictDataPO data = MapstructUtils.convert(dto, SysDictDataPO.class);
+        SysDictDataPO oldData = Objects.isNull(data.getId()) ? null : dictDataMapper.selectById(data.getId());
+        if (Objects.isNull(oldData)) {
+            throw new ServiceException("字典数据不存在");
         }
-        throw new ServiceException("操作失败");
+        if (dictDataMapper.updateById(data) <= 0) {
+            throw new ServiceException("操作失败");
+        }
+        if (!Objects.equals(oldData.getDictType(), data.getDictType())) {
+            CacheUtils.evict(CacheNames.SYS_DICT, oldData.getDictType());
+        }
+        return dictDataMapper.selectDictDataByType(data.getDictType());
     }
 
     @Override
-    public boolean checkDictDataUnique(SysDictDataBO dictData) {
-        Long dictCode = Objects.isNull(dictData.getId()) ? -1L : dictData.getId();
-        SysDictDataPO entity = dictDataMapper.selectOne(new LambdaQueryWrapper<SysDictDataPO>()
-            .eq(SysDictDataPO::getDictType, dictData.getDictType()).eq(SysDictDataPO::getDictValue, dictData.getDictValue()));
-        if (Objects.nonNull(entity) && !Objects.equals(dictCode, entity.getId())) {
-            return false;
-        }
-        return true;
+    public boolean checkDictDataUnique(SysDictDataDTO dictData) {
+        LambdaQueryWrapper<SysDictDataPO> lqw = Wrappers.lambdaQuery();
+        lqw.eq(SysDictDataPO::getDictType, dictData.getDictType())
+            .eq(SysDictDataPO::getDictValue, dictData.getDictValue())
+            .ne(Objects.nonNull(dictData.getId()), SysDictDataPO::getId, dictData.getId());
+        return !dictDataMapper.exists(lqw);
     }
 
+    private LambdaQueryWrapper<SysDictDataPO> buildQueryWrapper(SysDictDataDTO dto) {
+        LambdaQueryWrapper<SysDictDataPO> lqw = Wrappers.lambdaQuery();
+        lqw.eq(Objects.nonNull(dto.getDictSort()), SysDictDataPO::getDictSort, dto.getDictSort());
+        lqw.like(StringUtils.isNotBlank(dto.getDictLabel()), SysDictDataPO::getDictLabel, dto.getDictLabel());
+        lqw.eq(StringUtils.isNotBlank(dto.getDictType()), SysDictDataPO::getDictType, dto.getDictType());
+        lqw.orderByAsc(SysDictDataPO::getDictSort);
+        return lqw;
+    }
 }

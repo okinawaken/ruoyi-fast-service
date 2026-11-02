@@ -14,12 +14,6 @@
     <description>ruoyi-common-core 核心模块</description>
 
     <dependencies>
-        <!-- Spring 核心工具 -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-        </dependency>
-
         <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework</groupId>

@@ -4,7 +4,7 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
-import com.ruoyi.system.domain.bo.SysConfigBO;
+import com.ruoyi.system.domain.dto.SysConfigDTO;
 import com.ruoyi.system.domain.entity.SysConfigPO;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -20,9 +20,9 @@ import java.time.LocalDateTime;
  */
 @Data
 @ExcelIgnoreUnannotated
-@AutoMappers({
+@AutoMappers(value = {
     @AutoMapper(target = SysConfigPO.class),
-    @AutoMapper(target = SysConfigBO.class)
+    @AutoMapper(target = SysConfigDTO.class)
 })
 public class SysConfigVO implements Serializable {
 
@@ -54,11 +54,11 @@ public class SysConfigVO implements Serializable {
     private String configValue;
 
     /**
-     * 系统内置（1是 0否）
+     * 是否系统内置（1是 0否）
      */
     @ExcelProperty(value = "系统内置", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_yes_no")
-    private Integer configType;
+    private Integer isSystem;
 
     /**
      * 备注

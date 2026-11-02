@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.business.study.domain.bo.StudyRoomAutoReserveTaskRecordDetailBO;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
@@ -15,7 +16,8 @@ import java.time.LocalDate;
  * @author Amadeus
  */
 @Data
-@TableName("study_room_auto_reserve_task_record")
+@EqualsAndHashCode(callSuper = true)
+@TableName(value = "study_room_auto_reserve_task_record")
 public class StudyRoomAutoReserveTaskRecordPO extends BaseEntity {
 
     /**

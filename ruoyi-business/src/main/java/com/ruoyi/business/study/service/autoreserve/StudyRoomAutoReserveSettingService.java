@@ -2,6 +2,8 @@ package com.ruoyi.business.study.service.autoreserve;
 
 import com.ruoyi.business.study.domain.bo.StudyRoomAutoReserveUserConfigBO;
 
+import java.util.Map;
+
 /**
  * 自动预约用户设置服务
  *
@@ -15,6 +17,13 @@ public interface StudyRoomAutoReserveSettingService {
      * @param userId 系统用户 ID
      */
     StudyRoomAutoReserveUserConfigBO getConfig(Long userId);
+
+    /**
+     * 读取全部用户配置，key 为系统用户 ID
+     * <p>
+     * 仅包含已落库的配置；未落库的用户不在结果中，其默认值请用 {@link #getConfig(Long)} 获取。
+     */
+    Map<Long, StudyRoomAutoReserveUserConfigBO> listAllConfigs();
 
     /**
      * 覆盖写用户配置

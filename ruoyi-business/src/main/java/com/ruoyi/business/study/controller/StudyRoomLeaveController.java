@@ -25,18 +25,16 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/business/study/leave")
+@RequestMapping(value = "/business/study/leave")
 public class StudyRoomLeaveController extends BaseController {
 
     private final StudyRoomLeaveClient leaveClient;
 
     /**
      * 进入请假页（校验可请假套餐）
-     *
-     * @param userPackageId 用户套餐 ID
      */
-    @GetMapping("/enter")
-    public R<StudyRoomUserLeaveEnterVO> userLeaveEnter(@RequestParam("userPackageId") Long userPackageId) {
+    @GetMapping(value = "/enter")
+    public R<StudyRoomUserLeaveEnterVO> userLeaveEnter(@RequestParam(value = "userPackageId") Long userPackageId) {
         StudyRoomUserLeaveEnterRespDTO dto = leaveClient.userLeaveEnter(userPackageId).getData();
         StudyRoomUserLeaveEnterVO vo = MapstructUtils.convert(dto, StudyRoomUserLeaveEnterVO.class);
         return R.ok(vo);
@@ -45,7 +43,7 @@ public class StudyRoomLeaveController extends BaseController {
     /**
      * 确认请假
      */
-    @PostMapping("/confirm")
+    @PostMapping(value = "/confirm")
     public R<Integer> userLeaveConfirm(@RequestBody StudyRoomUserLeaveConfirmReqDTO form) {
         Integer data = leaveClient.userLeaveConfirm(form).getData();
         return R.ok(data);
@@ -54,7 +52,7 @@ public class StudyRoomLeaveController extends BaseController {
     /**
      * 取消请假
      */
-    @PostMapping("/cancel")
+    @PostMapping(value = "/cancel")
     public R<Integer> userLeaveCancel(@RequestBody StudyRoomUserLeaveCancelReqDTO form) {
         Integer data = leaveClient.userLeaveCancel(form).getData();
         return R.ok(data);

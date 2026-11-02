@@ -20,24 +20,6 @@
             <artifactId>ruoyi-common-core</artifactId>
         </dependency>
 
-        <!-- Excel -->
-        <dependency>
-            <groupId>com.ruoyi</groupId>
-            <artifactId>ruoyi-common-excel</artifactId>
-        </dependency>
-
-        <!-- 日志 -->
-        <dependency>
-            <groupId>com.ruoyi</groupId>
-            <artifactId>ruoyi-common-log</artifactId>
-        </dependency>
-
-        <!-- 脱敏 -->
-        <dependency>
-            <groupId>com.ruoyi</groupId>
-            <artifactId>ruoyi-common-sensitive</artifactId>
-        </dependency>
-
         <!-- 缓存 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
@@ -50,18 +32,6 @@
             <artifactId>ruoyi-common-web</artifactId>
         </dependency>
 
-        <!-- 防重提交 -->
-        <dependency>
-            <groupId>com.ruoyi</groupId>
-            <artifactId>ruoyi-common-idempotent</artifactId>
-        </dependency>
-
-        <!-- 安全 -->
-        <dependency>
-            <groupId>com.ruoyi</groupId>
-            <artifactId>ruoyi-common-security</artifactId>
-        </dependency>
-
         <!-- 数据库 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
@@ -70,8 +40,8 @@
 
         <!-- HTTP 客户端 -->
         <dependency>
-            <groupId>com.dtflys.forest</groupId>
-            <artifactId>forest-spring-boot-starter</artifactId>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-common-http</artifactId>
         </dependency>
     </dependencies>
 </project>

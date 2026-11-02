@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 切面方法参数处理工具类
@@ -34,7 +35,7 @@ public class ArgsUtils {
      * @return true 表示需要排除，不参与序列化
      */
     public static boolean isFilterObject(final Object arg) {
-        if (arg == null) {
+        if (Objects.isNull(arg)) {
             return true;
         }
         Class<?> clazz = arg.getClass();

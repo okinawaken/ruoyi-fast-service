@@ -22,10 +22,6 @@ import java.io.File;
 
 /**
  * 用户域：登录、token、资料、头像
- * <p>
- * 小程序用户相关接口：登录换 token、授权手机号、刷新 sessionKey、资料查询与修改、头像、注销。
- * <p>
- * 公共请求配置（baseURL / appid / token 拦截器 / 超时）见 {@link StudyRoomBaseClient}。
  *
  * @author Amadeus
  */
@@ -96,7 +92,7 @@ public interface StudyRoomUserClient extends StudyRoomBaseClient {
      * 上传授权头像（文件形式，multipart 字段名 {@code files}）
      */
     @Post(url = "/mp/user/authorize/headImg/upload", contentType = "multipart/form-data")
-    StudyRoomApiResultDTO<StudyRoomFileRespDTO> uploadAuthorizeHeadImg(@DataFile("files") File file);
+    StudyRoomApiResultDTO<StudyRoomFileRespDTO> uploadAuthorizeHeadImg(@DataFile(value = "files") File file);
 
     /**
      * 解除授权（退出登录）
@@ -110,7 +106,7 @@ public interface StudyRoomUserClient extends StudyRoomBaseClient {
      * 入参 {@code id} 传 0 即可；返回 {@code {list:[StudyRoomUserSignRespDTO]}}。
      */
     @Get(url = "/mp/user/userSign/list")
-    StudyRoomApiResultDTO<StudyRoomUserSignListRespDTO> userSignList(@Query("id") Long id);
+    StudyRoomApiResultDTO<StudyRoomUserSignListRespDTO> userSignList(@Query(value = "id") Long id);
 
     /**
      * 更早的签到记录（分页续拉，无入参）

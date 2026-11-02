@@ -5,6 +5,7 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 操作日志事件
@@ -32,9 +33,9 @@ public class OperLogEvent implements Serializable {
     private Integer businessType;
 
     /**
-     * 业务类型数组
+     * 业务类型列表
      */
-    private Integer[] businessTypes;
+    private List<Integer> businessTypes;
 
     /**
      * 请求方法
@@ -55,11 +56,6 @@ public class OperLogEvent implements Serializable {
      * 操作人员
      */
     private String operName;
-
-    /**
-     * 部门名称
-     */
-    private String deptName;
 
     /**
      * 请求url

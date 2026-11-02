@@ -2,19 +2,18 @@ package com.ruoyi.common.json.utils;
 
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.ruoyi.common.core.utils.SpringUtils;
 import com.ruoyi.common.core.utils.StringUtils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.exc.MismatchedInputException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * JSON 工具类
@@ -36,12 +35,12 @@ public class JsonUtils {
      * @throws RuntimeException 如果转换过程中发生JSON处理异常，则抛出运行时异常
      */
     public static String toJsonString(Object object) {
-        if (ObjectUtil.isNull(object)) {
+        if (Objects.isNull(object)) {
             return null;
         }
         try {
             return OBJECT_MAPPER.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
     }
@@ -61,7 +60,7 @@ public class JsonUtils {
         }
         try {
             return OBJECT_MAPPER.readValue(text, clazz);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
     }
@@ -81,7 +80,7 @@ public class JsonUtils {
         }
         try {
             return OBJECT_MAPPER.readValue(bytes, clazz);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
     }
@@ -101,7 +100,7 @@ public class JsonUtils {
         }
         try {
             return OBJECT_MAPPER.readValue(text, typeReference);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
     }
@@ -122,7 +121,7 @@ public class JsonUtils {
         } catch (MismatchedInputException e) {
             // 类型不匹配说明不是json
             return null;
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
     }
@@ -140,7 +139,7 @@ public class JsonUtils {
         }
         try {
             return OBJECT_MAPPER.readValue(text, OBJECT_MAPPER.getTypeFactory().constructCollectionType(List.class, Dict.class));
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
     }
@@ -160,7 +159,7 @@ public class JsonUtils {
         }
         try {
             return OBJECT_MAPPER.readValue(text, OBJECT_MAPPER.getTypeFactory().constructCollectionType(List.class, clazz));
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
     }

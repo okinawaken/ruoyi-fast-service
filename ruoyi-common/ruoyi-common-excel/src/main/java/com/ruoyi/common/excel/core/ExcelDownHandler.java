@@ -3,7 +3,6 @@ package com.ruoyi.common.excel.core;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.EnumUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.excel.metadata.FieldCache;
 import com.alibaba.excel.metadata.FieldWrapper;
 import com.alibaba.excel.util.ClassUtils;
@@ -126,7 +125,7 @@ public class ExcelDownHandler implements SheetWriteHandler {
                 List<Object> values = EnumUtil.getFieldValues(format.enumClass(), format.textField());
                 options = StreamUtils.toList(values, String::valueOf);
             }
-            if (ObjectUtil.isNotEmpty(options)) {
+            if (CollUtil.isNotEmpty(options)) {
                 // 仅当下拉可选项不为空时执行
                 if (options.size() > 20) {
                     // 这里限制如果可选项大于20，则使用额外表形式
@@ -163,7 +162,7 @@ public class ExcelDownHandler implements SheetWriteHandler {
      * @param value    下拉选可选值
      */
     private void dropDownWithSimple(DataValidationHelper helper, Sheet sheet, Integer celIndex, List<String> value) {
-        if (ObjectUtil.isEmpty(value)) {
+        if (CollUtil.isEmpty(value)) {
             return;
         }
         this.markOptionsToSheet(helper, sheet, celIndex, helper.createExplicitListConstraint(ArrayUtil.toArray(value, String.class)));

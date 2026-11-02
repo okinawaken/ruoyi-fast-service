@@ -41,13 +41,4 @@ public enum StudyRoomAutoReserveTaskEnableStatusEnum {
     public static boolean isEnabled(Integer value) {
         return Objects.equals(ENABLED.getValue(), value);
     }
-
-    public static StudyRoomAutoReserveTaskEnableStatusEnum fromValue(Integer value) {
-        for (StudyRoomAutoReserveTaskEnableStatusEnum item : StudyRoomAutoReserveTaskEnableStatusEnum.values()) {
-            if (Objects.equals(item.getValue(), value)) {
-                return item;
-            }
-        }
-        throw new IllegalArgumentException("无效的自动预约任务启用状态");
-    }
 }

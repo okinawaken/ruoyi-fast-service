@@ -36,18 +36,16 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/business/study/user")
+@RequestMapping(value = "/business/study/user")
 public class StudyRoomUserController extends BaseController {
 
     private final StudyRoomUserClient userClient;
 
     /**
      * 小程序登录：用 wx.login 的 code 换 token
-     *
-     * @deprecated 上游已标记废弃，保留接口仅用于兼容
      */
     @Deprecated
-    @PostMapping("/login")
+    @PostMapping(value = "/login")
     public R<StudyRoomLoginVO> login(@RequestBody StudyRoomLoginReqDTO form) {
         StudyRoomLoginRespDTO dto = userClient.login(form).getData();
         StudyRoomLoginVO vo = MapstructUtils.convert(dto, StudyRoomLoginVO.class);
@@ -56,11 +54,9 @@ public class StudyRoomUserController extends BaseController {
 
     /**
      * 授权手机号登录（拿 token）
-     *
-     * @deprecated 上游已标记废弃，保留接口仅用于兼容
      */
     @Deprecated
-    @PostMapping("/bind-mobile")
+    @PostMapping(value = "/bind-mobile")
     public R<StudyRoomLoginVO> bindMobile(@RequestBody StudyRoomBindMobileReqDTO form) {
         StudyRoomLoginRespDTO dto = userClient.bindMobile(form).getData();
         StudyRoomLoginVO vo = MapstructUtils.convert(dto, StudyRoomLoginVO.class);
@@ -69,11 +65,9 @@ public class StudyRoomUserController extends BaseController {
 
     /**
      * 刷新 sessionKey
-     *
-     * @deprecated 上游已标记废弃，保留接口仅用于兼容
      */
     @Deprecated
-    @PostMapping("/refresh-session-key")
+    @PostMapping(value = "/refresh-session-key")
     public R<Void> refreshSessionKey(@RequestBody StudyRoomRefreshSessionReqDTO form) {
         userClient.refreshSessionKey(form);
         return R.ok();
@@ -82,7 +76,7 @@ public class StudyRoomUserController extends BaseController {
     /**
      * 用户概览：头像、手机号、累计签到次数、累计学习时长
      */
-    @GetMapping("/index")
+    @GetMapping(value = "/index")
     public R<StudyRoomUserIndexVO> userIndex() {
         StudyRoomUserIndexRespDTO dto = userClient.userIndex().getData();
         StudyRoomUserIndexVO vo = MapstructUtils.convert(dto, StudyRoomUserIndexVO.class);
@@ -92,7 +86,7 @@ public class StudyRoomUserController extends BaseController {
     /**
      * 用户详情
      */
-    @GetMapping("/detail")
+    @GetMapping(value = "/detail")
     public R<StudyRoomUserDetailVO> userDetail() {
         StudyRoomUserDetailRespDTO dto = userClient.userDetail().getData();
         StudyRoomUserDetailVO vo = MapstructUtils.convert(dto, StudyRoomUserDetailVO.class);
@@ -102,7 +96,7 @@ public class StudyRoomUserController extends BaseController {
     /**
      * 欠费 / 当前签到状态
      */
-    @GetMapping("/fee")
+    @GetMapping(value = "/fee")
     public R<StudyRoomUserFeeVO> userFee() {
         StudyRoomUserFeeRespDTO dto = userClient.userFee().getData();
         StudyRoomUserFeeVO vo = MapstructUtils.convert(dto, StudyRoomUserFeeVO.class);
@@ -112,7 +106,7 @@ public class StudyRoomUserController extends BaseController {
     /**
      * 修改资料
      */
-    @PostMapping("/update-info")
+    @PostMapping(value = "/update-info")
     public R<Integer> updateUserInfo(@RequestBody StudyRoomUpdateUserInfoReqDTO form) {
         Integer data = userClient.updateUserInfo(form).getData();
         return R.ok(data);
@@ -121,7 +115,7 @@ public class StudyRoomUserController extends BaseController {
     /**
      * 更新授权头像（URL 形式）
      */
-    @PostMapping("/authorize/head-img")
+    @PostMapping(value = "/authorize/head-img")
     public R<Void> authorizeHeadImg(@RequestBody StudyRoomAuthorizeHeadImgReqDTO form) {
         userClient.authorizeHeadImg(form);
         return R.ok();
@@ -130,7 +124,7 @@ public class StudyRoomUserController extends BaseController {
     /**
      * 上传授权头像（当前不支持）
      */
-    @PostMapping("/authorize/head-img/upload")
+    @PostMapping(value = "/authorize/head-img/upload")
     public R<Void> uploadAuthorizeHeadImg() {
         return R.fail("暂不支持文件上传");
     }
@@ -138,7 +132,7 @@ public class StudyRoomUserController extends BaseController {
     /**
      * 解除授权（退出登录）
      */
-    @PostMapping("/authorize/cancel")
+    @PostMapping(value = "/authorize/cancel")
     public R<Void> cancelAuthorize() {
         userClient.cancelAuthorize();
         return R.ok();
@@ -147,8 +141,8 @@ public class StudyRoomUserController extends BaseController {
     /**
      * 签到记录列表（最近 N 条），id 传 0 即可
      */
-    @GetMapping("/sign/list")
-    public R<StudyRoomUserSignListVO> userSignList(@RequestParam("id") Long id) {
+    @GetMapping(value = "/sign/list")
+    public R<StudyRoomUserSignListVO> userSignList(@RequestParam(value = "id") Long id) {
         StudyRoomUserSignListRespDTO dto = userClient.userSignList(id).getData();
         StudyRoomUserSignListVO vo = MapstructUtils.convert(dto, StudyRoomUserSignListVO.class);
         return R.ok(vo);
@@ -157,7 +151,7 @@ public class StudyRoomUserController extends BaseController {
     /**
      * 更早的签到记录（分页续拉，无入参）
      */
-    @GetMapping("/sign/list/more")
+    @GetMapping(value = "/sign/list/more")
     public R<StudyRoomUserSignListVO> userSignListMore() {
         StudyRoomUserSignListRespDTO dto = userClient.userSignListMore().getData();
         StudyRoomUserSignListVO vo = MapstructUtils.convert(dto, StudyRoomUserSignListVO.class);

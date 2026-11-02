@@ -11,10 +11,6 @@ import com.ruoyi.business.study.domain.dto.StudyRoomRepairSubmitReqDTO;
 
 /**
  * 报修域：提交报修、报修记录
- * <p>
- * 门店设施报修：提交报修单、报修列表、报修详情。
- * <p>
- * 公共请求配置（baseURL / appid / token 拦截器 / 超时）见 {@link StudyRoomBaseClient}。
  *
  * @author Amadeus
  */
@@ -36,6 +32,6 @@ public interface StudyRoomRepairClient extends StudyRoomBaseClient {
      * 报修详情
      */
     @Get(url = "/mp/userRepair/detail/${id}")
-    StudyRoomApiResultDTO<StudyRoomRepairRespDTO> repairDetail(@Var("id") Long id);
+    StudyRoomApiResultDTO<StudyRoomRepairRespDTO> repairDetail(@Var(value = "id") Long id);
 
 }

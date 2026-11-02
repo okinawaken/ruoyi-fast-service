@@ -20,10 +20,6 @@ import com.ruoyi.business.study.domain.dto.StudyRoomUserReserveListRespDTO;
 
 /**
  * 预约域：座位图、下单、我的预约、取消
- * <p>
- * 座位预约核心链路：资格校验 → 可选日期 → 座位图 → 提交预约 → 我的预约 → 取消预约。
- * <p>
- * 公共请求配置（baseURL / appid / token 拦截器 / 超时）见 {@link StudyRoomBaseClient}。
  *
  * @author Amadeus
  */
@@ -39,7 +35,7 @@ public interface StudyRoomReserveClient extends StudyRoomBaseClient {
      * 可预约日期列表（默认返回今天起 N 天，N 由 sysConfig.reserveMaxDays 决定）
      */
     @Get(url = "/mp/reserve/v2/date/select")
-    StudyRoomApiResultDTO<StudyRoomReserveDateRespDTO> reserveDateList(@Query("venueId") Integer venueId);
+    StudyRoomApiResultDTO<StudyRoomReserveDateRespDTO> reserveDateList(@Query(value = "venueId") Integer venueId);
 
     /**
      * 座位图（v2，推荐）：按日期 + 时间段查询门店全部座位
@@ -77,7 +73,7 @@ public interface StudyRoomReserveClient extends StudyRoomBaseClient {
      * 是否还能再预约一个座位
      */
     @Get(url = "/mp/reserve/another/check")
-    StudyRoomApiResultDTO<StudyRoomReserveAnotherCheckRespDTO> reserveAnotherCheck(@Query("userReserveId") Long userReserveId);
+    StudyRoomApiResultDTO<StudyRoomReserveAnotherCheckRespDTO> reserveAnotherCheck(@Query(value = "userReserveId") Long userReserveId);
 
     /**
      * 我的预约列表（一次性返回全部，无分页）
@@ -89,7 +85,7 @@ public interface StudyRoomReserveClient extends StudyRoomBaseClient {
      * 取消预约前的提示（实测返回 {@code {tipDesc, userReserveId}}）
      */
     @Get(url = "/mp/user/userReserve/cancel/tip")
-    StudyRoomApiResultDTO<StudyRoomUserReserveCancelTipRespDTO> userReserveCancelTip(@Query("userReserveId") Long userReserveId);
+    StudyRoomApiResultDTO<StudyRoomUserReserveCancelTipRespDTO> userReserveCancelTip(@Query(value = "userReserveId") Long userReserveId);
 
     /**
      * 取消预约

@@ -92,10 +92,10 @@ public class SysDictDataServiceImpl implements SysDictDataService {
 
     @Override
     public boolean checkDictDataUnique(SysDictDataBO dictData) {
-        Long dictCode = Objects.isNull(dictData.getDictCode()) ? -1L : dictData.getDictCode();
+        Long dictCode = Objects.isNull(dictData.getId()) ? -1L : dictData.getId();
         SysDictDataPO entity = dictDataMapper.selectOne(new LambdaQueryWrapper<SysDictDataPO>()
             .eq(SysDictDataPO::getDictType, dictData.getDictType()).eq(SysDictDataPO::getDictValue, dictData.getDictValue()));
-        if (Objects.nonNull(entity) && !Objects.equals(dictCode, entity.getDictCode())) {
+        if (Objects.nonNull(entity) && !Objects.equals(dictCode, entity.getId())) {
             return false;
         }
         return true;

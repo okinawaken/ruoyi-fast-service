@@ -33,7 +33,7 @@ public class SysDictDataVO implements Serializable {
      * 字典编码
      */
     @ExcelProperty(value = "字典编码")
-    private Long dictCode;
+    private Long id;
 
     /**
      * 字典排序
@@ -70,18 +70,18 @@ public class SysDictDataVO implements Serializable {
     private String listClass;
 
     /**
-     * 是否默认（Y是 N否）
+     * 是否默认（1是 0否）
      */
     @ExcelProperty(value = "是否默认", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_yes_no")
-    private String isDefault;
+    private Integer isDefault;
 
     /**
      * 状态（1正常 0停用）
      */
     @ExcelProperty(value = "状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_normal_disable")
-    private String status;
+    private Integer status;
 
     /**
      * 备注

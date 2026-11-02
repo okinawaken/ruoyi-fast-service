@@ -90,8 +90,8 @@ public class SysUserController extends BaseController {
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public R<Void> edit(@Validated @RequestBody SysUserBO user) {
-        userService.checkUserAllowed(user.getUserId());
-        userService.checkUserDataScope(user.getUserId());
+        userService.checkUserAllowed(user.getId());
+        userService.checkUserDataScope(user.getId());
         if (!userService.checkUserNameUnique(user)) {
             return R.fail("修改用户'" + user.getUserName() + "'失败，登录账号已存在");
         } else if (StringUtils.isNotEmpty(user.getPhoneNumber()) && !userService.checkPhoneUnique(user)) {
@@ -122,11 +122,11 @@ public class SysUserController extends BaseController {
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/resetPwd")
     public R<Void> resetPwd(@RequestBody SysUserBO user) {
-        userService.checkUserAllowed(user.getUserId());
-        userService.checkUserDataScope(user.getUserId());
+        userService.checkUserAllowed(user.getId());
+        userService.checkUserDataScope(user.getId());
         String hashedPassword = BCrypt.hashpw(user.getPassword());
         user.setPassword(hashedPassword);
-        return this.toAjax(userService.resetUserPwd(user.getUserId(), user.getPassword()));
+        return this.toAjax(userService.resetUserPwd(user.getId(), user.getPassword()));
     }
 
     /**
@@ -136,9 +136,9 @@ public class SysUserController extends BaseController {
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
     public R<Void> changeStatus(@RequestBody SysUserBO user) {
-        userService.checkUserAllowed(user.getUserId());
-        userService.checkUserDataScope(user.getUserId());
-        return this.toAjax(userService.updateUserStatus(user.getUserId(), user.getStatus()));
+        userService.checkUserAllowed(user.getId());
+        userService.checkUserDataScope(user.getId());
+        return this.toAjax(userService.updateUserStatus(user.getId(), user.getStatus()));
     }
 
 }

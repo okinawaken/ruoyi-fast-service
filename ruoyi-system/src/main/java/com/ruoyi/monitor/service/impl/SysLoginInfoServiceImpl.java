@@ -91,12 +91,12 @@ public class SysLoginInfoServiceImpl implements SysLoginInfoService {
         Map<String, Object> params = loginInfo.getParams();
         LambdaQueryWrapper<SysLoginInfoPO> lqw = new LambdaQueryWrapper<SysLoginInfoPO>()
             .like(StringUtils.isNotBlank(loginInfo.getIpaddr()), SysLoginInfoPO::getIpaddr, loginInfo.getIpaddr())
-            .eq(StringUtils.isNotBlank(loginInfo.getStatus()), SysLoginInfoPO::getStatus, loginInfo.getStatus())
+            .eq(Objects.nonNull(loginInfo.getStatus()), SysLoginInfoPO::getStatus, loginInfo.getStatus())
             .like(StringUtils.isNotBlank(loginInfo.getUserName()), SysLoginInfoPO::getUserName, loginInfo.getUserName())
             .between(Objects.nonNull(params.get("beginTime")) && Objects.nonNull(params.get("endTime")),
                 SysLoginInfoPO::getLoginTime, params.get("beginTime"), params.get("endTime"));
         if (StringUtils.isBlank(pageQuery.getOrderByColumn())) {
-            pageQuery.setOrderByColumn("info_id");
+            pageQuery.setOrderByColumn("id");
             pageQuery.setIsAsc("desc");
         }
         return loginInfoMapper.selectVoPage(pageQuery.build(), lqw, SysLoginInfoDTO.class);
@@ -115,11 +115,11 @@ public class SysLoginInfoServiceImpl implements SysLoginInfoService {
         Map<String, Object> params = loginInfo.getParams();
         return loginInfoMapper.selectVoList(new LambdaQueryWrapper<SysLoginInfoPO>()
             .like(StringUtils.isNotBlank(loginInfo.getIpaddr()), SysLoginInfoPO::getIpaddr, loginInfo.getIpaddr())
-            .eq(StringUtils.isNotBlank(loginInfo.getStatus()), SysLoginInfoPO::getStatus, loginInfo.getStatus())
+            .eq(Objects.nonNull(loginInfo.getStatus()), SysLoginInfoPO::getStatus, loginInfo.getStatus())
             .like(StringUtils.isNotBlank(loginInfo.getUserName()), SysLoginInfoPO::getUserName, loginInfo.getUserName())
             .between(Objects.nonNull(params.get("beginTime")) && Objects.nonNull(params.get("endTime")),
                 SysLoginInfoPO::getLoginTime, params.get("beginTime"), params.get("endTime"))
-            .orderByDesc(SysLoginInfoPO::getInfoId), SysLoginInfoDTO.class);
+            .orderByDesc(SysLoginInfoPO::getId), SysLoginInfoDTO.class);
     }
 
     @Override

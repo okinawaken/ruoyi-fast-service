@@ -33,7 +33,7 @@ public class SysConfigVO implements Serializable {
      * 参数主键
      */
     @ExcelProperty(value = "参数主键")
-    private Long configId;
+    private Long id;
 
     /**
      * 参数名称
@@ -54,11 +54,11 @@ public class SysConfigVO implements Serializable {
     private String configValue;
 
     /**
-     * 系统内置（Y是 N否）
+     * 系统内置（1是 0否）
      */
     @ExcelProperty(value = "系统内置", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_yes_no")
-    private String configType;
+    private Integer configType;
 
     /**
      * 备注

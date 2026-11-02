@@ -125,10 +125,10 @@ public class LogAspect {
     /**
      * 填充注解中声明的操作描述、业务类型与请求响应数据
      *
-     * @param joinPoint       切点
-     * @param logAnnotation   操作日志注解
-     * @param operLog         操作日志实体
-     * @param jsonResult      方法返回结果
+     * @param joinPoint     切点
+     * @param logAnnotation 操作日志注解
+     * @param operLog       操作日志实体
+     * @param jsonResult    方法返回结果
      */
     private void fillAnnotationInfo(JoinPoint joinPoint, Log logAnnotation, OperLogEvent operLog, Object jsonResult) {
         operLog.setBusinessType(logAnnotation.businessType().ordinal());

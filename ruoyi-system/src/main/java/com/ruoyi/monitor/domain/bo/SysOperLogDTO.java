@@ -26,7 +26,7 @@ public class SysOperLogDTO {
     /**
      * 日志主键
      */
-    private Long operId;
+    private Long id;
 
     /**
      * 模块标题

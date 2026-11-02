@@ -2,7 +2,6 @@ package com.ruoyi.system.domain.entity;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
@@ -21,13 +20,6 @@ import lombok.EqualsAndHashCode;
 @TableName("sys_config")
 @ExcelIgnoreUnannotated
 public class SysConfigPO extends BaseEntity {
-
-    /**
-     * 参数主键
-     */
-    @ExcelProperty(value = "参数主键")
-    @TableId(value = "config_id")
-    private Long configId;
 
     /**
      * 参数名称
@@ -54,11 +46,11 @@ public class SysConfigPO extends BaseEntity {
     private String configValue;
 
     /**
-     * 系统内置（Y是 N否）
+     * 系统内置（1是 0否）
      */
     @ExcelProperty(value = "系统内置", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_yes_no")
-    private String configType;
+    private Integer configType;
 
     /**
      * 备注

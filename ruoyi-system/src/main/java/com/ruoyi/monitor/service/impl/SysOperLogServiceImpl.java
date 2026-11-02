@@ -63,7 +63,7 @@ public class SysOperLogServiceImpl implements SysOperLogService {
             .between(Objects.nonNull(params.get("beginTime")) && Objects.nonNull(params.get("endTime")),
                 SysOperLogPO::getOperTime, params.get("beginTime"), params.get("endTime"));
         if (StringUtils.isBlank(pageQuery.getOrderByColumn())) {
-            pageQuery.setOrderByColumn("oper_id");
+            pageQuery.setOrderByColumn("id");
             pageQuery.setIsAsc("desc");
         }
         return operLogMapper.selectVoPage(pageQuery.build(), lqw, SysOperLogDTO.class);
@@ -95,7 +95,7 @@ public class SysOperLogServiceImpl implements SysOperLogService {
             .like(StringUtils.isNotBlank(operLog.getOperName()), SysOperLogPO::getOperName, operLog.getOperName())
             .between(Objects.nonNull(params.get("beginTime")) && Objects.nonNull(params.get("endTime")),
                 SysOperLogPO::getOperTime, params.get("beginTime"), params.get("endTime"))
-            .orderByDesc(SysOperLogPO::getOperId), SysOperLogDTO.class);
+            .orderByDesc(SysOperLogPO::getId), SysOperLogDTO.class);
     }
 
     @Override

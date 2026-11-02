@@ -1,3 +1,4 @@
+CREATE DATABASE IF NOT EXISTS `ruoyi_fast` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE `ruoyi_fast`;
 
 -- ----------------------------
@@ -18,7 +19,7 @@ CREATE TABLE `study_room_user_token`
     UNIQUE KEY `uk_user_id` (`user_id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_general_ci COMMENT = '系统用户与微信小程序token映射表'
+  COLLATE = utf8mb4_0900_ai_ci COMMENT = '系统用户与微信小程序token映射表'
   ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -39,7 +40,7 @@ CREATE TABLE `study_room_auto_reserve_setting`
     UNIQUE KEY `uk_user_id` (`user_id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_general_ci COMMENT = '自动预约用户设置表'
+  COLLATE = utf8mb4_0900_ai_ci COMMENT = '自动预约用户设置表'
   ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -65,7 +66,7 @@ CREATE TABLE `study_room_auto_reserve_task`
     KEY `idx_user_id_enable_status` (`user_id`, `enable_status`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_general_ci COMMENT = '自动预约任务表'
+  COLLATE = utf8mb4_0900_ai_ci COMMENT = '自动预约任务表'
   ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -90,5 +91,5 @@ CREATE TABLE `study_room_auto_reserve_task_record`
     KEY `idx_task_id` (`task_id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_general_ci COMMENT = '自动预约执行记录表'
+  COLLATE = utf8mb4_0900_ai_ci COMMENT = '自动预约执行记录表'
   ROW_FORMAT = Dynamic;

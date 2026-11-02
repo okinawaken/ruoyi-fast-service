@@ -28,7 +28,7 @@ public class SysUserVO implements Serializable {
     /**
      * 用户ID
      */
-    private Long userId;
+    private Long id;
 
     /**
      * 用户账号
@@ -49,7 +49,7 @@ public class SysUserVO implements Serializable {
     /**
      * 用户性别
      */
-    private String sex;
+    private Integer sex;
 
     /**
      * 密码
@@ -59,14 +59,9 @@ public class SysUserVO implements Serializable {
     private String password;
 
     /**
-     * 帐号状态（1正常 0停用）
+     * 账号状态（1正常 0停用）
      */
-    private String status;
-
-    /**
-     * 删除标志（0代表存在 1代表删除）
-     */
-    private String delFlag;
+    private Integer status;
 
     /**
      * 最后登录IP

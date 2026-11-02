@@ -20,11 +20,6 @@ import lombok.EqualsAndHashCode;
 public class SysDictTypeBO extends BaseEntity {
 
     /**
-     * 字典主键
-     */
-    private Long dictId;
-
-    /**
      * 字典名称
      */
     @NotBlank(message = "字典名称不能为空")
@@ -42,7 +37,7 @@ public class SysDictTypeBO extends BaseEntity {
     /**
      * 状态（1正常 0停用）
      */
-    private String status;
+    private Integer status;
 
     /**
      * 备注

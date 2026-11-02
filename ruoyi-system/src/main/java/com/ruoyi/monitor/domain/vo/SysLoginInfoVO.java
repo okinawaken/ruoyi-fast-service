@@ -36,7 +36,7 @@ public class SysLoginInfoVO implements Serializable {
      * 访问ID
      */
     @ExcelProperty(value = "序号")
-    private Long infoId;
+    private Long id;
 
     /**
      * 用户账号
@@ -56,7 +56,7 @@ public class SysLoginInfoVO implements Serializable {
      */
     @ExcelProperty(value = "登录状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_common_status")
-    private String status;
+    private Integer status;
 
     /**
      * 登录IP地址

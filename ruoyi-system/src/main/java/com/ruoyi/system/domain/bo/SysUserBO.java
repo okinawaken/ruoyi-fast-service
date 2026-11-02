@@ -20,11 +20,6 @@ import java.util.Objects;
 @AutoMapper(target = SysUserPO.class)
 public class SysUserBO extends BaseEntity {
     /**
-     * 用户ID
-     */
-    private Long userId;
-
-    /**
      * 用户账号
      */
     @Xss(message = "用户账号不能包含脚本字符")
@@ -45,7 +40,7 @@ public class SysUserBO extends BaseEntity {
     /**
      * 用户性别
      */
-    private String sex;
+    private Integer sex;
 
     /**
      * 密码
@@ -53,14 +48,9 @@ public class SysUserBO extends BaseEntity {
     private String password;
 
     /**
-     * 帐号状态（1正常 0停用）
+     * 账号状态（1正常 0停用）
      */
-    private String status;
-
-    /**
-     * 删除标志（0代表存在 1代表删除）
-     */
-    private String delFlag;
+    private Integer status;
 
     /**
      * 最后登录IP
@@ -77,11 +67,11 @@ public class SysUserBO extends BaseEntity {
      */
     private String remark;
 
-    public SysUserBO(Long userId) {
-        this.userId = userId;
+    public SysUserBO(Long id) {
+        this.setId(id);
     }
 
     public boolean isAdmin() {
-        return Objects.equals(UserConstants.ADMIN_ID, this.userId);
+        return Objects.equals(UserConstants.ADMIN_ID, this.getId());
     }
 }

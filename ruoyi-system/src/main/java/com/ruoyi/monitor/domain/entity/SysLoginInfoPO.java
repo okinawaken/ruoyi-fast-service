@@ -2,18 +2,13 @@ package com.ruoyi.monitor.domain.entity;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
+import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import lombok.Data;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 系统访问记录表 sys_login_info
@@ -21,17 +16,7 @@ import java.util.Map;
 @Data
 @TableName("sys_login_info")
 @ExcelIgnoreUnannotated
-public class SysLoginInfoPO implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * ID
-     */
-    @ExcelProperty(value = "序号")
-    @TableId(value = "info_id")
-    private Long infoId;
+public class SysLoginInfoPO extends BaseEntity {
 
     /**
      * 用户账号
@@ -44,7 +29,7 @@ public class SysLoginInfoPO implements Serializable {
      */
     @ExcelProperty(value = "登录状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_common_status")
-    private String status;
+    private Integer status;
 
     /**
      * 登录IP地址
@@ -81,11 +66,5 @@ public class SysLoginInfoPO implements Serializable {
      */
     @ExcelProperty(value = "访问时间")
     private LocalDateTime loginTime;
-
-    /**
-     * 请求参数
-     */
-    @TableField(exist = false)
-    private Map<String, Object> params = new HashMap<>();
 
 }

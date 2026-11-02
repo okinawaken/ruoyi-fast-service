@@ -2,7 +2,6 @@ package com.ruoyi.system.domain.entity;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
@@ -22,13 +21,6 @@ import lombok.EqualsAndHashCode;
 @TableName("sys_dict_type")
 @ExcelIgnoreUnannotated
 public class SysDictTypePO extends BaseEntity {
-
-    /**
-     * 字典主键
-     */
-    @ExcelProperty(value = "字典主键")
-    @TableId(value = "dict_id")
-    private Long dictId;
 
     /**
      * 字典名称
@@ -52,7 +44,7 @@ public class SysDictTypePO extends BaseEntity {
      */
     @ExcelProperty(value = "状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_normal_disable")
-    private String status;
+    private Integer status;
 
     /**
      * 备注

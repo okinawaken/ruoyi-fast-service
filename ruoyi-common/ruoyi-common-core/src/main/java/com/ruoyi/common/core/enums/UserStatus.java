@@ -12,12 +12,12 @@ public enum UserStatus {
     /**
      * 正常
      */
-    OK("1", "正常"),
+    OK(1, "正常"),
     /**
      * 停用
      */
-    DISABLE("0", "停用");
+    DISABLE(0, "停用");
 
-    private final String code;
+    private final Integer code;
     private final String info;
 }

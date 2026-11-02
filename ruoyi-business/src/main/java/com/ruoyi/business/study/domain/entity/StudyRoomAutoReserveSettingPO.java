@@ -1,7 +1,5 @@
 package com.ruoyi.business.study.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.business.study.domain.bo.StudyRoomAutoReserveUserConfigBO;
 import com.ruoyi.common.mybatis.core.domain.BaseEntity;
@@ -19,12 +17,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @TableName("study_room_auto_reserve_setting")
 public class StudyRoomAutoReserveSettingPO extends BaseEntity {
-
-    /**
-     * 主键
-     */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
 
     /**
      * 系统用户 ID

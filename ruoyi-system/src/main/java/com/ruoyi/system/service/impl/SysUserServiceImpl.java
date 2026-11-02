@@ -49,12 +49,12 @@ public class SysUserServiceImpl implements SysUserService {
     private Wrapper<SysUserPO> buildQueryWrapper(SysUserBO user) {
         Map<String, Object> params = user.getParams();
         return Wrappers.<SysUserPO>lambdaQuery()
-            .select(SysUserPO::getUserId, SysUserPO::getUserName, SysUserPO::getPhoneNumber, SysUserPO::getSex,
-                SysUserPO::getStatus, SysUserPO::getDelFlag, SysUserPO::getLoginIp, SysUserPO::getLoginDate,
+            .select(SysUserPO::getId, SysUserPO::getUserName, SysUserPO::getPhoneNumber, SysUserPO::getSex,
+                SysUserPO::getStatus, SysUserPO::getLoginIp, SysUserPO::getLoginDate,
                 SysUserPO::getCreateTime, SysUserPO::getRemark)
-            .eq(Objects.nonNull(user.getUserId()), SysUserPO::getUserId, user.getUserId())
+            .eq(Objects.nonNull(user.getId()), SysUserPO::getId, user.getId())
             .like(StringUtils.isNotBlank(user.getUserName()), SysUserPO::getUserName, user.getUserName())
-            .eq(StringUtils.isNotBlank(user.getStatus()), SysUserPO::getStatus, user.getStatus())
+            .eq(Objects.nonNull(user.getStatus()), SysUserPO::getStatus, user.getStatus())
             .like(StringUtils.isNotBlank(user.getPhoneNumber()), SysUserPO::getPhoneNumber, user.getPhoneNumber())
             .between(Objects.nonNull(params.get("beginTime")) && Objects.nonNull(params.get("endTime")),
                 SysUserPO::getCreateTime, params.get("beginTime"), params.get("endTime"));
@@ -74,7 +74,7 @@ public class SysUserServiceImpl implements SysUserService {
     public boolean checkUserNameUnique(SysUserBO user) {
         boolean exist = userMapper.exists(new LambdaQueryWrapper<SysUserPO>()
             .eq(SysUserPO::getUserName, user.getUserName())
-            .ne(Objects.nonNull(user.getUserId()), SysUserPO::getUserId, user.getUserId()));
+            .ne(Objects.nonNull(user.getId()), SysUserPO::getId, user.getId()));
         return !exist;
     }
 
@@ -82,7 +82,7 @@ public class SysUserServiceImpl implements SysUserService {
     public boolean checkPhoneUnique(SysUserBO user) {
         boolean exist = userMapper.exists(new LambdaQueryWrapper<SysUserPO>()
             .eq(SysUserPO::getPhoneNumber, user.getPhoneNumber())
-            .ne(Objects.nonNull(user.getUserId()), SysUserPO::getUserId, user.getUserId()));
+            .ne(Objects.nonNull(user.getId()), SysUserPO::getId, user.getId()));
         return !exist;
     }
 
@@ -101,7 +101,7 @@ public class SysUserServiceImpl implements SysUserService {
         if (LoginHelper.isAdmin()) {
             return;
         }
-        if (!userMapper.exists(new LambdaQueryWrapper<SysUserPO>().eq(SysUserPO::getUserId, userId))) {
+        if (!userMapper.exists(new LambdaQueryWrapper<SysUserPO>().eq(SysUserPO::getId, userId))) {
             throw new ServiceException("没有权限访问用户数据！");
         }
     }
@@ -112,7 +112,7 @@ public class SysUserServiceImpl implements SysUserService {
         SysUserPO sysUserPO = MapstructUtils.convert(user, SysUserPO.class);
         // 新增用户信息
         int rows = userMapper.insert(sysUserPO);
-        user.setUserId(sysUserPO.getUserId());
+        user.setId(sysUserPO.getId());
         return rows;
     }
 
@@ -125,11 +125,11 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateUserStatus(Long userId, String status) {
+    public int updateUserStatus(Long userId, Integer status) {
         return userMapper.update(null,
             new LambdaUpdateWrapper<SysUserPO>()
                 .set(SysUserPO::getStatus, status)
-                .eq(SysUserPO::getUserId, userId));
+                .eq(SysUserPO::getId, userId));
     }
 
     @Override
@@ -138,7 +138,7 @@ public class SysUserServiceImpl implements SysUserService {
         return userMapper.update(null,
             new LambdaUpdateWrapper<SysUserPO>()
                 .set(SysUserPO::getPassword, password)
-                .eq(SysUserPO::getUserId, userId));
+                .eq(SysUserPO::getId, userId));
     }
 
     @Override
@@ -161,7 +161,7 @@ public class SysUserServiceImpl implements SysUserService {
     @Cacheable(cacheNames = CacheNames.SYS_USER_NAME, key = "#userId")
     public String selectUserNameById(Long userId) {
         SysUserPO sysUserPO = userMapper.selectOne(new LambdaQueryWrapper<SysUserPO>()
-            .select(SysUserPO::getUserName).eq(SysUserPO::getUserId, userId));
+            .select(SysUserPO::getUserName).eq(SysUserPO::getId, userId));
         return Objects.isNull(sysUserPO) ? null : sysUserPO.getUserName();
     }
 

@@ -1,7 +1,6 @@
 package com.ruoyi.system.domain.entity;
 
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.core.constant.UserConstants;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
@@ -22,13 +21,6 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_dict_data")
 public class SysDictDataPO extends BaseEntity {
-
-    /**
-     * 字典编码
-     */
-    @ExcelProperty(value = "字典编码")
-    @TableId(value = "dict_code")
-    private Long dictCode;
 
     /**
      * 字典排序
@@ -72,18 +64,18 @@ public class SysDictDataPO extends BaseEntity {
     private String listClass;
 
     /**
-     * 是否默认（Y是 N否）
+     * 是否默认（1是 0否）
      */
     @ExcelProperty(value = "是否默认", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_yes_no")
-    private String isDefault;
+    private Integer isDefault;
 
     /**
      * 状态（1正常 0停用）
      */
     @ExcelProperty(value = "状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_normal_disable")
-    private String status;
+    private Integer status;
 
     /**
      * 备注

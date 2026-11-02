@@ -1,7 +1,5 @@
 package com.ruoyi.business.study.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.business.study.domain.bo.StudyRoomAutoReserveTaskConfigBO;
 import com.ruoyi.business.study.enums.StudyRoomAutoReserveTaskEnableStatusEnum;
@@ -20,12 +18,6 @@ import java.time.LocalDate;
 @Data
 @TableName("study_room_auto_reserve_task")
 public class StudyRoomAutoReserveTaskPO extends BaseEntity {
-
-    /**
-     * 主键
-     */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
 
     /**
      * 系统用户 ID

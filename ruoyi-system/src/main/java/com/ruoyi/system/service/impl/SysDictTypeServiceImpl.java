@@ -64,7 +64,7 @@ public class SysDictTypeServiceImpl implements SysDictTypeService {
         lqw.like(StringUtils.isNotBlank(bo.getDictType()), SysDictTypePO::getDictType, bo.getDictType());
         lqw.between(Objects.nonNull(params.get("beginTime")) && Objects.nonNull(params.get("endTime")),
             SysDictTypePO::getCreateTime, params.get("beginTime"), params.get("endTime"));
-        lqw.orderByAsc(SysDictTypePO::getDictId);
+        lqw.orderByAsc(SysDictTypePO::getId);
         return lqw;
     }
 
@@ -149,7 +149,7 @@ public class SysDictTypeServiceImpl implements SysDictTypeService {
     @Transactional(rollbackFor = Exception.class)
     public List<SysDictDataBO> updateDictType(SysDictTypeBO bo) {
         SysDictTypePO dict = MapstructUtils.convert(bo, SysDictTypePO.class);
-        SysDictTypePO oldDict = dictTypeMapper.selectById(dict.getDictId());
+        SysDictTypePO oldDict = dictTypeMapper.selectById(dict.getId());
         dictDataMapper.update(null, new LambdaUpdateWrapper<SysDictDataPO>()
             .set(SysDictDataPO::getDictType, dict.getDictType())
             .eq(SysDictDataPO::getDictType, oldDict.getDictType()));
@@ -165,7 +165,7 @@ public class SysDictTypeServiceImpl implements SysDictTypeService {
     public boolean checkDictTypeUnique(SysDictTypeBO dictType) {
         boolean exists = dictTypeMapper.exists(new LambdaQueryWrapper<SysDictTypePO>()
             .eq(SysDictTypePO::getDictType, dictType.getDictType())
-            .ne(Objects.nonNull(dictType.getDictId()), SysDictTypePO::getDictId, dictType.getDictId()));
+            .ne(Objects.nonNull(dictType.getId()), SysDictTypePO::getId, dictType.getId()));
         return !exists;
     }
 

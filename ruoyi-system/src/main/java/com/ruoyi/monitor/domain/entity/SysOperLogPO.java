@@ -3,19 +3,15 @@ package com.ruoyi.monitor.domain.entity;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.excel.annotation.ExcelDictFormat;
 import com.ruoyi.common.excel.convert.ExcelDictConvert;
 import com.ruoyi.common.log.event.OperLogEvent;
+import com.ruoyi.common.mybatis.core.domain.BaseEntity;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 操作日志记录表 oper_log
@@ -24,17 +20,7 @@ import java.util.Map;
 @TableName("sys_oper_log")
 @ExcelIgnoreUnannotated
 @AutoMapper(target = OperLogEvent.class)
-public class SysOperLogPO implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * 日志主键
-     */
-    @ExcelProperty(value = "日志主键")
-    @TableId(value = "oper_id")
-    private Long operId;
+public class SysOperLogPO extends BaseEntity {
 
     /**
      * 操作模块
@@ -134,11 +120,5 @@ public class SysOperLogPO implements Serializable {
      */
     @ExcelProperty(value = "操作时间")
     private LocalDateTime operTime;
-
-    /**
-     * 请求参数
-     */
-    @TableField(exist = false)
-    private Map<String, Object> params = new HashMap<>();
 
 }

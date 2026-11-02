@@ -98,7 +98,7 @@ public interface SysUserService extends UserService {
      * @param status 帐号状态
      * @return 结果
      */
-    int updateUserStatus(Long userId, String status);
+    int updateUserStatus(Long userId, Integer status);
 
     /**
      * 重置用户密码

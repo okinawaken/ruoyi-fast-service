@@ -33,7 +33,7 @@ public class SysDictTypeVO implements Serializable {
      * 字典主键
      */
     @ExcelProperty(value = "字典主键")
-    private Long dictId;
+    private Long id;
 
     /**
      * 字典名称
@@ -58,7 +58,7 @@ public class SysDictTypeVO implements Serializable {
      */
     @ExcelProperty(value = "状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_normal_disable")
-    private String status;
+    private Integer status;
 
 
     /**

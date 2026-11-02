@@ -18,11 +18,6 @@ import lombok.EqualsAndHashCode;
 public class SysDictDataBO extends BaseEntity {
 
     /**
-     * 字典编码
-     */
-    private Long dictCode;
-
-    /**
      * 字典排序
      */
     private Integer dictSort;
@@ -60,14 +55,14 @@ public class SysDictDataBO extends BaseEntity {
     private String listClass;
 
     /**
-     * 是否默认（Y是 N否）
+     * 是否默认（1是 0否）
      */
-    private String isDefault;
+    private Integer isDefault;
 
     /**
      * 状态（1正常 0停用）
      */
-    private String status;
+    private Integer status;
 
     /**
      * 备注

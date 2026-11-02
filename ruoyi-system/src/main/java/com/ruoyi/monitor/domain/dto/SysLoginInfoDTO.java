@@ -19,7 +19,7 @@ public class SysLoginInfoDTO {
     /**
      * 访问ID
      */
-    private Long infoId;
+    private Long id;
 
     /**
      * 用户账号
@@ -54,7 +54,7 @@ public class SysLoginInfoDTO {
     /**
      * 登录状态（0失败 1成功）
      */
-    private String status;
+    private Integer status;
 
     /**
      * 提示消息

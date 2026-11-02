@@ -18,11 +18,6 @@ import lombok.EqualsAndHashCode;
 public class SysConfigBO extends BaseEntity {
 
     /**
-     * 参数主键
-     */
-    private Long configId;
-
-    /**
      * 参数名称
      */
     @NotBlank(message = "参数名称不能为空")
@@ -44,9 +39,9 @@ public class SysConfigBO extends BaseEntity {
     private String configValue;
 
     /**
-     * 系统内置（Y是 N否）
+     * 系统内置（1是 0否）
      */
-    private String configType;
+    private Integer configType;
 
     /**
      * 备注

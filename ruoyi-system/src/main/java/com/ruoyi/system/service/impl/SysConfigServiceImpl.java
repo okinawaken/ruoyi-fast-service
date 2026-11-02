@@ -67,11 +67,11 @@ public class SysConfigServiceImpl implements SysConfigService {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<SysConfigPO> lqw = Wrappers.lambdaQuery();
         lqw.like(StringUtils.isNotBlank(bo.getConfigName()), SysConfigPO::getConfigName, bo.getConfigName());
-        lqw.eq(StringUtils.isNotBlank(bo.getConfigType()), SysConfigPO::getConfigType, bo.getConfigType());
+        lqw.eq(Objects.nonNull(bo.getConfigType()), SysConfigPO::getConfigType, bo.getConfigType());
         lqw.like(StringUtils.isNotBlank(bo.getConfigKey()), SysConfigPO::getConfigKey, bo.getConfigKey());
         lqw.between(Objects.nonNull(params.get("beginTime")) && Objects.nonNull(params.get("endTime")),
             SysConfigPO::getCreateTime, params.get("beginTime"), params.get("endTime"));
-        lqw.orderByAsc(SysConfigPO::getConfigId);
+        lqw.orderByAsc(SysConfigPO::getId);
         return lqw;
     }
 
@@ -93,8 +93,8 @@ public class SysConfigServiceImpl implements SysConfigService {
     public String updateConfig(SysConfigBO bo) {
         int row = 0;
         SysConfigPO config = MapstructUtils.convert(bo, SysConfigPO.class);
-        if (Objects.nonNull(config.getConfigId())) {
-            SysConfigPO oldConfig = configMapper.selectById(config.getConfigId());
+        if (Objects.nonNull(config.getId())) {
+            SysConfigPO oldConfig = configMapper.selectById(config.getId());
             if (!Objects.equals(oldConfig.getConfigKey(), config.getConfigKey())) {
                 CacheUtils.evict(CacheNames.SYS_CONFIG, oldConfig.getConfigKey());
             }
@@ -142,9 +142,9 @@ public class SysConfigServiceImpl implements SysConfigService {
 
     @Override
     public boolean checkConfigKeyUnique(SysConfigBO config) {
-        long configId = Objects.isNull(config.getConfigId()) ? -1L : config.getConfigId();
+        long configId = Objects.isNull(config.getId()) ? -1L : config.getId();
         SysConfigPO info = configMapper.selectOne(new LambdaQueryWrapper<SysConfigPO>().eq(SysConfigPO::getConfigKey, config.getConfigKey()));
-        if (Objects.nonNull(info) && !Objects.equals(info.getConfigId(), configId)) {
+        if (Objects.nonNull(info) && !Objects.equals(info.getId(), configId)) {
             return false;
         }
         return true;

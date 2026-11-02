@@ -1,7 +1,9 @@
 package com.ruoyi.common.mybatis.core.domain;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,6 +24,12 @@ public class BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 主键
+     */
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     /**
      * 创建者

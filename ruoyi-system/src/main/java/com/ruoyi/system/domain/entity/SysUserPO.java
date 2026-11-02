@@ -2,8 +2,6 @@ package com.ruoyi.system.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.core.constant.UserConstants;
 import com.ruoyi.common.core.xss.Xss;
@@ -30,12 +28,6 @@ import java.util.Objects;
 public class SysUserPO extends BaseEntity {
 
     /**
-     * 用户ID
-     */
-    @TableId(value = "user_id")
-    private Long userId;
-
-    /**
      * 用户账号
      */
     @Xss(message = "用户账号不能包含脚本字符")
@@ -57,7 +49,7 @@ public class SysUserPO extends BaseEntity {
     /**
      * 用户性别
      */
-    private String sex;
+    private Integer sex;
 
     /**
      * 密码
@@ -70,15 +62,9 @@ public class SysUserPO extends BaseEntity {
     private String password;
 
     /**
-     * 帐号状态（1正常 0停用）
+     * 账号状态（1正常 0停用）
      */
-    private String status;
-
-    /**
-     * 删除标志（0代表存在 1代表删除）
-     */
-    @TableLogic
-    private String delFlag;
+    private Integer status;
 
     /**
      * 最后登录IP
@@ -95,12 +81,12 @@ public class SysUserPO extends BaseEntity {
      */
     private String remark;
 
-    public SysUserPO(Long userId) {
-        this.userId = userId;
+    public SysUserPO(Long id) {
+        this.setId(id);
     }
 
     public boolean isAdmin() {
-        return Objects.equals(UserConstants.ADMIN_ID, this.userId);
+        return Objects.equals(UserConstants.ADMIN_ID, this.getId());
     }
 
 }

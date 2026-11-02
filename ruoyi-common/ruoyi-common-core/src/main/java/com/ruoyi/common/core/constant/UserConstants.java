@@ -6,11 +6,6 @@ package com.ruoyi.common.core.constant;
 public interface UserConstants {
 
     /**
-     * 未被删除用户
-     */
-    String NOT_DELETED = "0";
-
-    /**
      * 角色正常状态
      */
     String ROLE_NORMAL = "1";
@@ -43,12 +38,12 @@ public interface UserConstants {
     /**
      * 字典正常状态
      */
-    String DICT_NORMAL = "1";
+    Integer DICT_NORMAL = 1;
 
     /**
      * 是否为系统默认（是）
      */
-    String YES = "Y";
+    Integer YES = 1;
 
     /**
      * 是否菜单外链（是）

@@ -61,7 +61,7 @@ public class SysLoginServiceImpl implements SysLoginService {
         LoginHelper.loginByDevice(loginUser, DeviceType.PC);
 
         this.recordLoginInfo(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success"));
-        this.recordLoginInfo(user.getUserId(), username);
+        this.recordLoginInfo(user.getId(), username);
         return StpUtil.getTokenValue();
     }
 
@@ -113,7 +113,7 @@ public class SysLoginServiceImpl implements SysLoginService {
      */
     private LoginUser buildLoginUser(SysUserBO user) {
         LoginUser loginUser = new LoginUser();
-        loginUser.setUserId(user.getUserId());
+        loginUser.setUserId(user.getId());
         loginUser.setUsername(user.getUserName());
         loginUser.setUserType(user.getUserType());
         return loginUser;
@@ -123,7 +123,7 @@ public class SysLoginServiceImpl implements SysLoginService {
     @Transactional(rollbackFor = Exception.class)
     public void recordLoginInfo(Long userId, String username) {
         SysUserPO sysUserPO = new SysUserPO();
-        sysUserPO.setUserId(userId);
+        sysUserPO.setId(userId);
         sysUserPO.setLoginIp(ServletUtils.getClientIP());
         sysUserPO.setLoginDate(DateUtils.getNowDate());
         sysUserPO.setUpdateBy(username);

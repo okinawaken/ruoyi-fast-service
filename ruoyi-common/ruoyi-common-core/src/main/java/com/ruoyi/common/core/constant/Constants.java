@@ -33,12 +33,12 @@ public interface Constants {
     /**
      * 通用成功标识
      */
-    String SUCCESS = "1";
+    Integer SUCCESS = 1;
 
     /**
      * 通用失败标识
      */
-    String FAIL = "0";
+    Integer FAIL = 0;
 
     /**
      * 登录成功
@@ -64,9 +64,6 @@ public interface Constants {
      * 令牌
      */
     String TOKEN = "token";
-
-    Integer NOT_DELETED = 0;
-    Integer DELETED = 1;
 
 }
 

@@ -32,10 +32,10 @@ public @interface RepeatSubmit {
     TimeUnit timeUnit() default TimeUnit.MILLISECONDS;
 
     /**
-     * 配置重复提交时的提示消息，支持 {code} 格式的国际化键。
+     * 配置重复提交时的提示消息。
      *
-     * @return 提示消息或国际化键
+     * @return 提示消息
      */
-    String message() default "{repeat.submit.message}";
+    String message() default "不允许重复提交，请稍候再试";
 
 }

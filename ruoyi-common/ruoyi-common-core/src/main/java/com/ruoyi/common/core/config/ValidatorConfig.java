@@ -2,7 +2,6 @@ package com.ruoyi.common.core.config;
 
 import jakarta.validation.Validator;
 import org.hibernate.validator.HibernateValidator;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -19,9 +18,8 @@ public class ValidatorConfig {
      * 配置校验框架 快速返回模式
      */
     @Bean
-    public Validator validator(MessageSource messageSource) {
+    public Validator validator() {
         LocalValidatorFactoryBean factoryBean = new LocalValidatorFactoryBean();
-        factoryBean.setValidationMessageSource(messageSource);
         factoryBean.setProviderClass(HibernateValidator.class);
         Properties properties = new Properties();
         properties.setProperty("hibernate.validator.fail_fast", "true");

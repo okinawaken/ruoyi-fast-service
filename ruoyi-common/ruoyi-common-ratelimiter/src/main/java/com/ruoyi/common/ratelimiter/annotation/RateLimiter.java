@@ -44,9 +44,9 @@ public @interface RateLimiter {
     LimitType limitType() default LimitType.DEFAULT;
 
     /**
-     * 配置超限时的提示消息，支持 {code} 格式的国际化键。
+     * 配置超限时的提示消息。
      *
-     * @return 提示消息或国际化键
+     * @return 提示消息
      */
-    String message() default "{rate.limiter.message}";
+    String message() default "访问过于频繁，请稍候再试";
 }

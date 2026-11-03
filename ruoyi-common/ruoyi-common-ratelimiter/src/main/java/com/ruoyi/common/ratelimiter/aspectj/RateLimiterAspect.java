@@ -2,7 +2,6 @@ package com.ruoyi.common.ratelimiter.aspectj;
 
 import com.ruoyi.common.core.constant.GlobalConstants;
 import com.ruoyi.common.core.exception.ServiceException;
-import com.ruoyi.common.core.utils.MessageUtils;
 import com.ruoyi.common.core.utils.ServletUtils;
 import com.ruoyi.common.core.utils.SpringUtils;
 import com.ruoyi.common.core.utils.StringUtils;
@@ -66,11 +65,7 @@ public class RateLimiterAspect {
             }
             long number = RedisUtils.rateLimiter(combineKey, rateType, count, time);
             if (number == -1) {
-                String message = rateLimiter.message();
-                if (StringUtils.startsWith(message, "{") && StringUtils.endsWith(message, "}")) {
-                    message = MessageUtils.message(StringUtils.substring(message, 1, message.length() - 1));
-                }
-                throw new ServiceException(message);
+                throw new ServiceException(rateLimiter.message());
             }
             log.info("限制令牌 => {}, 剩余令牌 => {}, 缓存key => '{}'", count, number, combineKey);
         } catch (Exception e) {

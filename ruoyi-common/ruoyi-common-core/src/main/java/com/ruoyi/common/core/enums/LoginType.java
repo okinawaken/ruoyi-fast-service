@@ -13,7 +13,7 @@ public enum LoginType {
     /**
      * 密码登录
      */
-    PASSWORD("user.password.retry.limit.exceed", "user.password.retry.limit.count");
+    PASSWORD("密码输入错误超过{}次，帐户锁定{}分钟", "密码输入错误{}次");
 
     /**
      * 登录重试超出限制提示

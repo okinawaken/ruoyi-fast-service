@@ -6,8 +6,6 @@ server:
 spring:
   application:
     name: ruoyi-fast-service
-  messages:
-    basename: i18n/messages
   servlet:
     multipart:
       location: /data/ruoyi-fast/upload

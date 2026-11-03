@@ -7,7 +7,6 @@ import com.ruoyi.common.core.constant.GlobalConstants;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.ArgsUtils;
-import com.ruoyi.common.core.utils.MessageUtils;
 import com.ruoyi.common.core.utils.ServletUtils;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.idempotent.annotation.RepeatSubmit;
@@ -61,11 +60,7 @@ public class RepeatSubmitAspect {
         if (RedisUtils.setObjectIfAbsent(cacheRepeatKey, "", Duration.ofMillis(interval))) {
             KEY_CACHE.set(cacheRepeatKey);
         } else {
-            String message = repeatSubmit.message();
-            if (StringUtils.startsWith(message, "{") && StringUtils.endsWith(message, "}")) {
-                message = MessageUtils.message(StringUtils.substring(message, 1, message.length() - 1));
-            }
-            throw new ServiceException(message);
+            throw new ServiceException(repeatSubmit.message());
         }
     }
 

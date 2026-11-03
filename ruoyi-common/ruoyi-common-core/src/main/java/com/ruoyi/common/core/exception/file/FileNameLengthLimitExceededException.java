@@ -1,5 +1,7 @@
 package com.ruoyi.common.core.exception.file;
 
+import com.ruoyi.common.core.utils.StringUtils;
+
 import java.io.Serial;
 
 /**
@@ -11,6 +13,6 @@ public class FileNameLengthLimitExceededException extends FileException {
     private static final long serialVersionUID = 1L;
 
     public FileNameLengthLimitExceededException(int defaultFileNameLength) {
-        super("upload.filename.exceed.length", new Object[]{defaultFileNameLength});
+        super(StringUtils.format("上传的文件名最长{}个字符", defaultFileNameLength));
     }
 }

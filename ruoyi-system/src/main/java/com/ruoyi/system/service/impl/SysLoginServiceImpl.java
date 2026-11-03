@@ -130,10 +130,10 @@ public class SysLoginServiceImpl implements SysLoginService {
         SysUserDTO user = MapstructUtils.convert(sysUserPO, SysUserDTO.class);
         if (Objects.isNull(user)) {
             log.info("登录用户：{} 不存在.", username);
-            throw new UserException("user.not.exists", username);
+            throw new UserException("对不起, 您的账号：{} 不存在.", username);
         } else if (Objects.equals(UserStatus.DISABLE.getCode(), user.getStatus())) {
             log.info("登录用户：{} 已被停用.", username);
-            throw new UserException("user.blocked", username);
+            throw new UserException("对不起，您的账号：{} 已禁用，请联系管理员", username);
         }
         return user;
     }

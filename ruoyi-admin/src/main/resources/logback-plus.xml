@@ -2,7 +2,7 @@
 <configuration>
     <springProperty scope="context" name="log.path" source="logging.file.path" defaultValue="/data/ruoyi-fast/logs"/>
     <property name="console.log.pattern"
-              value="%red(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{36}%n) - %msg%n"/>
+              value="%red(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{36}) - %msg%n"/>
     <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"/>
 
     <!-- 控制台输出 -->
@@ -13,12 +13,13 @@
         </encoder>
     </appender>
 
-    <!-- 控制台输出 -->
+    <!-- 控制台日志文件输出（全量，按天滚动，仅保留 1 天） -->
     <appender name="file_console" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${log.path}/sys-console.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${log.path}/sys-console.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>1</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
         <encoder>
             <pattern>${log.pattern}</pattern>
@@ -29,37 +30,47 @@
         </filter>
     </appender>
 
-    <!-- 系统日志输出 -->
+    <!-- 系统日志输出（INFO 及以上，含 WARN、ERROR） -->
     <appender name="file_info" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${log.path}/sys-info.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${log.path}/sys-info.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>60</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
         <encoder>
             <pattern>${log.pattern}</pattern>
+            <charset>utf-8</charset>
         </encoder>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
     </appender>
 
+    <!-- 错误日志输出 -->
     <appender name="file_error" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${log.path}/sys-error.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${log.path}/sys-error.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>60</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
         <encoder>
             <pattern>${log.pattern}</pattern>
+            <charset>utf-8</charset>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
+    </appender>
+
+    <!-- 控制台日志文件异步输出 -->
+    <appender name="async_console" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>512</queueSize>
+        <appender-ref ref="file_console"/>
     </appender>
 
     <!-- info异步输出 -->
@@ -76,12 +87,12 @@
         <appender-ref ref="file_error"/>
     </appender>
 
-    <!--系统操作日志-->
+    <!-- 根日志输出 -->
     <root level="info">
         <appender-ref ref="console"/>
         <appender-ref ref="async_info"/>
         <appender-ref ref="async_error"/>
-        <appender-ref ref="file_console"/>
+        <appender-ref ref="async_console"/>
     </root>
 
 </configuration>

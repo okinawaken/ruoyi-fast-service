@@ -17,19 +17,13 @@
         <!-- Jackson 3 自动配置 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-jackson</artifactId>
+            <artifactId>spring-boot-starter-jackson</artifactId>
         </dependency>
 
         <!-- 核心模块 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-core</artifactId>
-        </dependency>
-
-        <!-- JSON 工具类 -->
-        <dependency>
-            <groupId>tools.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
         </dependency>
     </dependencies>
 </project>

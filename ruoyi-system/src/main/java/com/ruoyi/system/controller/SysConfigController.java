@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.excel.utils.ExcelUtil;
-import com.ruoyi.common.log.annotation.Log;
-import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.web.core.BaseController;
@@ -51,7 +49,6 @@ public class SysConfigController extends BaseController {
     /**
      * 导出参数配置列表
      */
-    @Log(title = "参数管理", businessType = BusinessType.EXPORT)
     @SaCheckPermission(value = "system:config:export")
     @PostMapping(value = "/export")
     public void export(SysConfigDTO sysConfigDTO, HttpServletResponse response) {
@@ -88,7 +85,6 @@ public class SysConfigController extends BaseController {
      * 新增参数配置
      */
     @SaCheckPermission(value = "system:config:add")
-    @Log(title = "参数管理", businessType = BusinessType.INSERT)
     @PostMapping
     public R<Void> add(@Validated @RequestBody SysConfigDTO config) {
         boolean checkConfigKeyUnique = configService.checkConfigKeyUnique(config);
@@ -103,7 +99,6 @@ public class SysConfigController extends BaseController {
      * 修改参数配置
      */
     @SaCheckPermission(value = "system:config:edit")
-    @Log(title = "参数管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public R<Void> edit(@Validated @RequestBody SysConfigDTO config) {
         boolean checkConfigKeyUnique = configService.checkConfigKeyUnique(config);
@@ -118,7 +113,6 @@ public class SysConfigController extends BaseController {
      * 根据参数键名修改参数配置
      */
     @SaCheckPermission(value = "system:config:edit")
-    @Log(title = "参数管理", businessType = BusinessType.UPDATE)
     @PutMapping(value = "/updateByKey")
     public R<Void> updateByKey(@RequestBody SysConfigDTO config) {
         configService.updateConfig(config);
@@ -131,7 +125,6 @@ public class SysConfigController extends BaseController {
      * @param configIds 参数ID串
      */
     @SaCheckPermission(value = "system:config:remove")
-    @Log(title = "参数管理", businessType = BusinessType.DELETE)
     @DeleteMapping(value = "/{configIds}")
     public R<Void> remove(@PathVariable List<Long> configIds) {
         configService.deleteConfigByIds(configIds);
@@ -142,7 +135,6 @@ public class SysConfigController extends BaseController {
      * 刷新参数缓存
      */
     @SaCheckPermission(value = "system:config:remove")
-    @Log(title = "参数管理", businessType = BusinessType.CLEAN)
     @DeleteMapping(value = "/refreshCache")
     public R<Void> refreshCache() {
         configService.resetConfigCache();

@@ -4,8 +4,6 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.utils.MapstructUtils;
-import com.ruoyi.common.log.annotation.Log;
-import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.satoken.utils.LoginHelper;
@@ -68,7 +66,6 @@ public class SysUserController extends BaseController {
      * 新增用户
      */
     @SaCheckPermission(value = "system:user:add")
-    @Log(title = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping
     public R<Void> add(@Validated @RequestBody SysUserDTO user) {
         boolean checkUserNameUnique = userService.checkUserNameUnique(user);
@@ -83,7 +80,6 @@ public class SysUserController extends BaseController {
      * 修改用户
      */
     @SaCheckPermission(value = "system:user:edit")
-    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public R<Void> edit(@Validated @RequestBody SysUserDTO user) {
         if (Objects.isNull(user.getId())) {
@@ -102,7 +98,6 @@ public class SysUserController extends BaseController {
      * 删除用户
      */
     @SaCheckPermission(value = "system:user:remove")
-    @Log(title = "用户管理", businessType = BusinessType.DELETE)
     @DeleteMapping(value = "/{userIds}")
     public R<Void> remove(@PathVariable List<Long> userIds) {
         if (userIds.contains(LoginHelper.getUserId())) {
@@ -116,7 +111,6 @@ public class SysUserController extends BaseController {
      * 重置密码
      */
     @SaCheckPermission(value = "system:user:resetPwd")
-    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping(value = "/resetPwd")
     public R<Void> resetPwd(@RequestBody SysUserDTO user) {
         userService.checkUserAllowed(user.getId());
@@ -128,7 +122,6 @@ public class SysUserController extends BaseController {
      * 状态修改
      */
     @SaCheckPermission(value = "system:user:edit")
-    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping(value = "/changeStatus")
     public R<Void> changeStatus(@RequestBody SysUserDTO user) {
         userService.checkUserAllowed(user.getId());

@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.excel.utils.ExcelUtil;
-import com.ruoyi.common.log.annotation.Log;
-import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.web.core.BaseController;
@@ -53,7 +51,6 @@ public class SysDictDataController extends BaseController {
     /**
      * 导出字典数据列表
      */
-    @Log(title = "字典数据", businessType = BusinessType.EXPORT)
     @SaCheckPermission(value = "system:dict:export")
     @PostMapping(value = "/export")
     public void export(SysDictDataDTO dictData, HttpServletResponse response) {
@@ -91,7 +88,6 @@ public class SysDictDataController extends BaseController {
      * 新增字典数据
      */
     @SaCheckPermission(value = "system:dict:add")
-    @Log(title = "字典数据", businessType = BusinessType.INSERT)
     @PostMapping
     public R<Void> add(@Validated @RequestBody SysDictDataDTO dict) {
         boolean checkDictDataUnique = dictDataService.checkDictDataUnique(dict);
@@ -106,7 +102,6 @@ public class SysDictDataController extends BaseController {
      * 修改保存字典数据
      */
     @SaCheckPermission(value = "system:dict:edit")
-    @Log(title = "字典数据", businessType = BusinessType.UPDATE)
     @PutMapping
     public R<Void> edit(@Validated @RequestBody SysDictDataDTO dict) {
         boolean checkDictDataUnique = dictDataService.checkDictDataUnique(dict);
@@ -123,7 +118,6 @@ public class SysDictDataController extends BaseController {
      * @param dictCodes 字典code串
      */
     @SaCheckPermission(value = "system:dict:remove")
-    @Log(title = "字典数据", businessType = BusinessType.DELETE)
     @DeleteMapping(value = "/{dictCodes}")
     public R<Void> remove(@PathVariable Long[] dictCodes) {
         dictDataService.deleteDictDataByIds(dictCodes);

@@ -25,7 +25,6 @@
         <module>ruoyi-common-web</module>
         <module>ruoyi-common-security</module>
         <module>ruoyi-common-mybatis</module>
-        <module>ruoyi-common-log</module>
         <module>ruoyi-common-ratelimiter</module>
         <module>ruoyi-common-sensitive</module>
         <module>ruoyi-common-idempotent</module>

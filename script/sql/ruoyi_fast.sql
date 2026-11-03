@@ -90,7 +90,6 @@ VALUES (1, '用户性别', 'sys_user_sex', 1, '用户性别列表', 'admin', '20
        (3, '系统开关', 'sys_normal_disable', 1, '系统开关列表', 'admin', '2024-06-13 16:06:35', '',
         '2024-06-13 16:06:35'),
        (6, '系统是否', 'sys_yes_no', 1, '系统是否列表', 'admin', '2024-06-13 16:06:35', '', '2024-06-13 16:06:35'),
-       (9, '操作类型', 'sys_oper_type', 1, '操作类型列表', 'admin', '2024-06-13 16:06:35', '', '2024-06-13 16:06:35'),
        (10, '系统状态', 'sys_common_status', 1, '登录状态列表', 'admin', '2024-06-13 16:06:36', '',
         '2024-06-13 16:06:36');
 
@@ -140,58 +139,7 @@ VALUES (1, 1, '男', '0', 'sys_user_sex', '', '', 1, 1, '性别男', 'admin', '2
         '2024-06-13 16:06:36'),
        (13, 2, '否', '0', 'sys_yes_no', '', 'danger', 0, 1, '系统默认否', 'admin', '2024-06-13 16:06:36', '',
         '2024-06-13 16:06:36'),
-       (18, 1, '新增', '1', 'sys_oper_type', '', 'info', 0, 1, '新增操作', 'admin', '2024-06-13 16:06:36', '',
-        '2024-06-13 16:06:36'),
-       (19, 2, '修改', '2', 'sys_oper_type', '', 'info', 0, 1, '修改操作', 'admin', '2024-06-13 16:06:36', '',
-        '2024-06-13 16:06:36'),
-       (20, 3, '删除', '3', 'sys_oper_type', '', 'danger', 0, 1, '删除操作', 'admin', '2024-06-13 16:06:37', '',
-        '2024-06-13 16:06:37'),
-       (21, 4, '授权', '4', 'sys_oper_type', '', 'primary', 0, 1, '授权操作', 'admin', '2024-06-13 16:06:37', '',
-        '2024-06-13 16:06:37'),
-       (22, 5, '导出', '5', 'sys_oper_type', '', 'warning', 0, 1, '导出操作', 'admin', '2024-06-13 16:06:37', '',
-        '2024-06-13 16:06:37'),
-       (23, 6, '导入', '6', 'sys_oper_type', '', 'warning', 0, 1, '导入操作', 'admin', '2024-06-13 16:06:37', '',
-        '2024-06-13 16:06:37'),
-       (24, 7, '强退', '7', 'sys_oper_type', '', 'danger', 0, 1, '强退操作', 'admin', '2024-06-13 16:06:37', '',
-        '2024-06-13 16:06:37'),
-       (25, 8, '生成代码', '8', 'sys_oper_type', '', 'warning', 0, 1, '生成操作', 'admin', '2024-06-13 16:06:37', '',
-        '2024-06-13 16:06:37'),
-       (26, 9, '清空数据', '9', 'sys_oper_type', '', 'danger', 0, 1, '清空操作', 'admin', '2024-06-13 16:06:37', '',
-        '2024-06-13 16:06:37'),
        (27, 1, '失败', '0', 'sys_common_status', '', 'danger', 0, 1, '失败状态', 'admin', '2024-06-13 16:06:37',
         'admin', '2024-07-15 10:50:52'),
        (28, 2, '成功', '1', 'sys_common_status', '', 'success', 0, 1, '成功状态', 'admin', '2024-06-13 16:06:37',
-        'admin', '2024-07-15 10:51:05'),
-       (29, 99, '其他', '0', 'sys_oper_type', '', 'info', 0, 1, '其他操作', 'admin', '2024-06-13 16:06:36', '',
-        '2024-06-13 16:06:36');
-
--- ----------------------------
--- Table structure for sys_oper_log
--- ----------------------------
-DROP TABLE IF EXISTS `sys_oper_log`;
-CREATE TABLE `sys_oper_log`
-(
-    `id`             bigint unsigned  NOT NULL AUTO_INCREMENT COMMENT '日志主键',
-    `title`          varchar(50)      NOT NULL DEFAULT '' COMMENT '模块标题',
-    `business_type`  tinyint unsigned NOT NULL DEFAULT 0 COMMENT '业务类型（0其它 1新增 2修改 3删除）',
-    `method`         varchar(100)     NOT NULL DEFAULT '' COMMENT '方法名称',
-    `request_method` varchar(10)      NOT NULL DEFAULT '' COMMENT '请求方式',
-    `operator_type`  tinyint unsigned NOT NULL DEFAULT 0 COMMENT '操作类别（0其它 1后台用户 2手机端用户）',
-    `oper_name`      varchar(50)      NOT NULL DEFAULT '' COMMENT '操作人员',
-    `oper_url`       varchar(255)     NOT NULL DEFAULT '' COMMENT '请求URL',
-    `oper_ip`        varchar(45)      NOT NULL DEFAULT '' COMMENT '主机地址',
-    `oper_location`  varchar(255)     NOT NULL DEFAULT '' COMMENT '操作地点',
-    `oper_param`     varchar(2000)    NOT NULL DEFAULT '' COMMENT '请求参数',
-    `json_result`    varchar(2000)    NOT NULL DEFAULT '' COMMENT '返回参数',
-    `status`         tinyint unsigned NOT NULL DEFAULT 0 COMMENT '操作状态（0异常 1正常）',
-    `error_msg`      varchar(2000)    NOT NULL DEFAULT '' COMMENT '错误消息',
-    `create_by`      varchar(64)      NOT NULL DEFAULT '' COMMENT '创建者',
-    `create_time`    datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_by`      varchar(64)      NOT NULL DEFAULT '' COMMENT '更新者',
-    `update_time`    datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    PRIMARY KEY (`id`),
-    INDEX `idx_create_time` (`create_time`)
-) ENGINE = InnoDB
-  CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci COMMENT = '操作日志记录'
-  ROW_FORMAT = Dynamic;
+        'admin', '2024-07-15 10:51:05');

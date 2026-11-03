@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.core.utils.MapstructUtils;
 import com.ruoyi.common.excel.utils.ExcelUtil;
-import com.ruoyi.common.log.annotation.Log;
-import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.mybatis.core.page.PageQuery;
 import com.ruoyi.common.mybatis.core.page.TableDataInfo;
 import com.ruoyi.common.web.core.BaseController;
@@ -51,7 +49,6 @@ public class SysDictTypeController extends BaseController {
     /**
      * 导出字典类型列表
      */
-    @Log(title = "字典类型", businessType = BusinessType.EXPORT)
     @SaCheckPermission(value = "system:dict:export")
     @PostMapping(value = "/export")
     public void export(SysDictTypeDTO dictType, HttpServletResponse response) {
@@ -77,7 +74,6 @@ public class SysDictTypeController extends BaseController {
      * 新增字典类型
      */
     @SaCheckPermission(value = "system:dict:add")
-    @Log(title = "字典类型", businessType = BusinessType.INSERT)
     @PostMapping
     public R<Void> add(@Validated @RequestBody SysDictTypeDTO dictType) {
         boolean checkDictTypeUnique = dictTypeService.checkDictTypeUnique(dictType);
@@ -92,7 +88,6 @@ public class SysDictTypeController extends BaseController {
      * 修改字典类型
      */
     @SaCheckPermission(value = "system:dict:edit")
-    @Log(title = "字典类型", businessType = BusinessType.UPDATE)
     @PutMapping
     public R<Void> edit(@Validated @RequestBody SysDictTypeDTO dictType) {
         boolean checkDictTypeUnique = dictTypeService.checkDictTypeUnique(dictType);
@@ -109,7 +104,6 @@ public class SysDictTypeController extends BaseController {
      * @param dictIds 字典ID串
      */
     @SaCheckPermission(value = "system:dict:remove")
-    @Log(title = "字典类型", businessType = BusinessType.DELETE)
     @DeleteMapping(value = "/{dictIds}")
     public R<Void> remove(@PathVariable Long[] dictIds) {
         dictTypeService.deleteDictTypeByIds(dictIds);
@@ -120,7 +114,6 @@ public class SysDictTypeController extends BaseController {
      * 刷新字典缓存
      */
     @SaCheckPermission(value = "system:dict:remove")
-    @Log(title = "字典类型", businessType = BusinessType.CLEAN)
     @DeleteMapping(value = "/refreshCache")
     public R<Void> refreshCache() {
         dictTypeService.resetDictCache();

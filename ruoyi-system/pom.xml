@@ -26,12 +26,6 @@
             <artifactId>ruoyi-common-excel</artifactId>
         </dependency>
 
-        <!-- 日志 -->
-        <dependency>
-            <groupId>com.ruoyi</groupId>
-            <artifactId>ruoyi-common-log</artifactId>
-        </dependency>
-
         <!-- 脱敏 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
